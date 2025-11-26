@@ -1,0 +1,11 @@
+html,
+body {
+  height: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  direction: rtl;
+}
+
+* {
+  font-family: theme('fontFamily.iran-sans');
+}
