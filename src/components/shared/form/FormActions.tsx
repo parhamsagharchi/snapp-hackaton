@@ -18,7 +18,7 @@ export const FormActions = ({
     <div className="flex justify-end gap-2">
       <button
         type="submit"
-        className="rounded-lg bg-primary px-4 py-1.5 text-sm font-medium text-white transition hover:bg-primary/90"
+        className="rounded-lg bg-primary px-4 py-1.5 text-xs font-normal text-white transition hover:bg-primary/90"
       >
         {submitLabel || (isEditing ? "ویرایش" : "افزودن")}
       </button>
@@ -26,7 +26,7 @@ export const FormActions = ({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-slate-600 px-4 py-1.5 text-sm font-medium text-slate-300 transition hover:bg-slate-700/50"
+          className="rounded-lg border border-slate-600 px-4 py-1.5 text-xs font-normal text-slate-300 transition hover:bg-slate-700/50"
         >
           {cancelLabel}
         </button>

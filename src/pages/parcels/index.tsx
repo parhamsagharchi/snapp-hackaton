@@ -76,7 +76,7 @@ function ParcelsPage() {
     <PageLayout title="مدیریت بسته‌ها">
       {/* Form */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">
+        <h2 className="text-base font-medium text-white">
           {editingIndex !== null ? "ویرایش بسته" : "افزودن بسته جدید"}
         </h2>
         <form

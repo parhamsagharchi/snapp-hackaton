@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Edit2, Trash2 } from "lucide-react";
 
 interface Column<T> {
@@ -45,13 +45,13 @@ export function DataTable<T = Record<string, unknown>>({
               {columns.map((column, idx) => (
                 <th
                   key={idx}
-                  className={`px-4 py-3 text-right text-sm font-semibold text-slate-300 ${column.className || ""}`}
+                  className={`px-4 py-3 text-right text-xs font-medium text-slate-300 ${column.className || ""}`}
                 >
                   {column.header}
                 </th>
               ))}
               {showActions && (onEdit || onDelete) && (
-                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-300">
+                <th className="px-4 py-3 text-right text-xs font-medium text-slate-300">
                   عملیات
                 </th>
               )}
@@ -76,7 +76,7 @@ export function DataTable<T = Record<string, unknown>>({
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-4 py-3 text-sm text-slate-300 ${column.className || ""}`}
+                      className={`px-4 py-3 text-xs text-slate-300 ${column.className || ""}`}
                     >
                       {renderCell(column, row, rowIndex)}
                     </td>

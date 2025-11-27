@@ -134,7 +134,7 @@ export const Markers = () => {
                 <div>
                   <strong>{passenger.displayName || `مسافر ${index + 1}`}</strong>
                   <div>
-                    سفر عجله‌ای: {passenger.isActiveRideInHurry ? "بله" : "خیر"}
+                    عجله دارم: {passenger.isActiveRideInHurry ? "بله" : "خیر"}
                   </div>
                   <div>بار دارد: {passenger.hasLuggage ? "بله" : "خیر"}</div>
                 </div>

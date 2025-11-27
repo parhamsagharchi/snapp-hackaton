@@ -80,10 +80,10 @@ function PassengersPage() {
   };
 
   return (
-    <PageLayout title="مدیریت مسافران">
+    <PageLayout title="مدیریت مسافر‌ها">
       {/* Form */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">
+        <h2 className="text-base font-medium text-white">
           {editingIndex !== null ? "ویرایش مسافر" : "افزودن مسافر جدید"}
         </h2>
         <form
@@ -103,7 +103,7 @@ function PassengersPage() {
 
           <div className="flex items-center gap-6">
             <CheckboxInput
-              label="سفر عجله‌ای"
+              label="عجله دارم"
               {...register("isActiveRideInHurry")}
             />
             <CheckboxInput label="بار دارد" {...register("hasLuggage")} />
@@ -137,7 +137,7 @@ function PassengersPage() {
               `${passenger.lat.toFixed(4)}, ${passenger.lng.toFixed(4)}`,
           },
           {
-            header: "سفر عجله‌ای",
+            header: "عجله دارم",
             accessor: (passenger) =>
               passenger.isActiveRideInHurry ? (
                 <span className="text-green-400">بله</span>

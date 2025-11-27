@@ -11,7 +11,7 @@ interface LocationDisplayProps {
 export const LocationDisplay = ({ activePin }: LocationDisplayProps) => {
   return (
     <div className="rounded-lg border border-slate-600 bg-slate-700/30 p-3">
-      <div className="flex items-center gap-2 text-sm text-slate-300">
+      <div className="flex items-center gap-2 text-xs text-slate-300">
         <MapPin className="h-4 w-4" />
         {activePin ? (
           <span>

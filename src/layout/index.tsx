@@ -6,7 +6,7 @@ import { LeafletMapItems } from "@/components/leaflet-map/components";
 
 const navItems = [
   { to: "/", label: "صفحه اصلی", end: true },
-  { to: "/passengers", label: "مسافران" },
+  { to: "/passengers", label: "مسافر‌ها" },
   { to: "/parcels", label: "بسته‌ها" },
   { to: "/driver", label: "راننده" },
   { to: "/settings", label: "تنظیمات" },
@@ -28,7 +28,7 @@ export function Layout() {
                   end={item.end}
                   className={({ isActive }) =>
                     clsx(
-                      "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300",
+                      "px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300",
                       isActive
                         ? "bg-white text-primary shadow-lg shadow-white/20"
                         : "border border-white/30 text-white/90 hover:border-white/50 hover:text-white hover:bg-white/5"
@@ -76,7 +76,7 @@ export function Layout() {
           </div>
 
           <footer className="mt-10 border-t border-slate-800/80 pt-4 text-xs text-neutral">
-            © ۱۴۰۴ اسنپ هکاتون. تمامی حقوق محفوظ است.
+            © ۱۴۰۴ هکاتون اسنپ. تمامی حقوق محفوظ است.
           </footer>
         </div>
       </main>

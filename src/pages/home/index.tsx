@@ -1,11 +1,12 @@
+import { PageLayout } from "@/components/shared/layout/PageLayout";
+
 function HomePage() {
   return (
-    <div>
-      <h1 className="text-xl font-semibold text-white">صفحه اصلی</h1>
-      <p className="mt-2 text-sm text-slate-300">
+    <PageLayout title="صفحه اصلی">
+      <p className="mt-2 text-xs text-slate-300">
         این صفحه اصلی است. از این بخش برای محتوای داشبورد استفاده کنید.
       </p>
-    </div>
+    </PageLayout>
   );
 }
 

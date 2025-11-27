@@ -54,15 +54,15 @@ export const CustomMarker = ({
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
-            font-size: ${isHovered || draggable ? "12px" : "10px"};
+            font-weight: 600;
+            font-size: ${isHovered || draggable ? "10px" : "9px"};
           ">${markerLabel}</div>
           <div style="
             background: white;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 500;
             color: #333;
             white-space: nowrap;
             box-shadow: ${

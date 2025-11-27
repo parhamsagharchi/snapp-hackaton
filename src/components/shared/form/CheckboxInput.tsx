@@ -11,7 +11,7 @@ interface CheckboxInputProps
 export const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>(
   ({ label, className = "", ...props }, ref) => {
     return (
-      <label className={`flex items-center gap-2 text-sm text-slate-300 ${className}`}>
+      <label className={`flex items-center gap-2 text-xs text-slate-300 ${className}`}>
         <input
           ref={ref}
           type="checkbox"

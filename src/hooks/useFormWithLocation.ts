@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useForm, type UseFormReturn } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useMapStore } from "@/store/map.store";
-import type { IMapPin } from "@/store/map.store";
 import { toastMessages } from "@/utils/toast-messages";
 
 interface UseFormWithLocationOptions<T> {
