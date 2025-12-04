@@ -5,14 +5,20 @@ function SettingPage() {
   const routeOrderPreference = useSettingsStore(
     (state) => state.routeOrderPreference
   );
-  const packageSelectionRadius = useSettingsStore(
-    (state) => state.packageSelectionRadius
+  const originSelectionRadius = useSettingsStore(
+    (state) => state.originSelectionRadius
+  );
+  const destinationSelectionRadius = useSettingsStore(
+    (state) => state.destinationSelectionRadius
   );
   const setRouteOrderPreference = useSettingsStore(
     (state) => state.setRouteOrderPreference
   );
-  const setPackageSelectionRadius = useSettingsStore(
-    (state) => state.setPackageSelectionRadius
+  const setOriginSelectionRadius = useSettingsStore(
+    (state) => state.setOriginSelectionRadius
+  );
+  const setDestinationSelectionRadius = useSettingsStore(
+    (state) => state.setDestinationSelectionRadius
   );
 
   return (
@@ -76,13 +82,13 @@ function SettingPage() {
           </div>
         </div>
 
-        {/* Package Selection Radius */}
+        {/* Origin Selection Radius */}
         <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
           <h3 className="mb-4 text-lg font-semibold text-slate-100">
-            شعاع انتخاب بسته
+            شعاع انتخاب مبدا (بین مبدا مسافر و مبدا بسته)
           </h3>
           <p className="mb-4 text-sm text-slate-300">
-            تعیین کنید که بسته‌ها در چه شعاعی از مسافر قابل انتخاب باشند
+            تعیین کنید که مبدا بسته‌ها باید در چه شعاعی از مبدا مسافر باشند
           </p>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
@@ -91,19 +97,51 @@ function SettingPage() {
                 min="1000"
                 max="2000"
                 step="100"
-                value={packageSelectionRadius}
+                value={originSelectionRadius}
                 onChange={(e) =>
-                  setPackageSelectionRadius(Number(e.target.value))
+                  setOriginSelectionRadius(Number(e.target.value))
                 }
                 className="flex-1 cursor-pointer accent-primary"
               />
               <div className="min-w-[80px] text-right text-sm font-medium text-slate-100">
-                {(packageSelectionRadius / 1000).toFixed(1)} کیلومتر
+                {(originSelectionRadius / 1000).toFixed(1)} کیلومتر
               </div>
             </div>
             <div className="text-xs text-slate-400">
-              محدوده فعلی: {packageSelectionRadius.toLocaleString()} متر (
-              {(packageSelectionRadius / 1000).toFixed(1)} کیلومتر)
+              محدوده فعلی: {originSelectionRadius.toLocaleString()} متر (
+              {(originSelectionRadius / 1000).toFixed(1)} کیلومتر)
+            </div>
+          </div>
+        </div>
+
+        {/* Destination Selection Radius */}
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
+          <h3 className="mb-4 text-lg font-semibold text-slate-100">
+            شعاع انتخاب مقصد (بین مقصد مسافر و مقصد بسته)
+          </h3>
+          <p className="mb-4 text-sm text-slate-300">
+            تعیین کنید که مقصد بسته‌ها باید در چه شعاعی از مقصد مسافر باشند
+          </p>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min="1000"
+                max="2000"
+                step="100"
+                value={destinationSelectionRadius}
+                onChange={(e) =>
+                  setDestinationSelectionRadius(Number(e.target.value))
+                }
+                className="flex-1 cursor-pointer accent-primary"
+              />
+              <div className="min-w-[80px] text-right text-sm font-medium text-slate-100">
+                {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر
+              </div>
+            </div>
+            <div className="text-xs text-slate-400">
+              محدوده فعلی: {destinationSelectionRadius.toLocaleString()} متر (
+              {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر)
             </div>
           </div>
         </div>

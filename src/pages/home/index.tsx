@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { PageLayout } from "@/components/shared/layout/PageLayout";
 import { useMapStore, type IPassenger, type IParcel } from "@/store/map.store";
 import { useSettingsStore } from "@/store/settings.store";
@@ -20,11 +20,15 @@ function HomePage() {
   const routeOrderPreference = useSettingsStore(
     (state) => state.routeOrderPreference
   );
-  const packageSelectionRadius = useSettingsStore(
-    (state) => state.packageSelectionRadius
+  const originSelectionRadius = useSettingsStore(
+    (state) => state.originSelectionRadius
+  );
+  const destinationSelectionRadius = useSettingsStore(
+    (state) => state.destinationSelectionRadius
   );
 
-  const [simulationActive, setSimulationActive] = useState(false);
+  const simulationActive = useMapStore((state) => state.simulationActive);
+  const setSimulationActive = useMapStore((state) => state.setSimulationActive);
 
   // Filter out passengers with orderOptionsActive = true
   const availablePassengers = passengers.filter((p) => !p.orderOptionsActive);
@@ -39,11 +43,12 @@ function HomePage() {
         parcels,
         routeOrderPreference === "package_first",
         5,
-        packageSelectionRadius
+        originSelectionRadius,
+        destinationSelectionRadius
       );
     }
     return [];
-  }, [selectedPassenger, driver, parcels, routeOrderPreference, packageSelectionRadius]);
+  }, [selectedPassenger, driver, parcels, routeOrderPreference, originSelectionRadius, destinationSelectionRadius]);
 
   const handleSelectPassenger = (passenger: IPassenger) => {
     if (passenger.orderOptionsActive) {
@@ -62,10 +67,36 @@ function HomePage() {
       return;
     }
 
-    const distance = calculateDistance(selectedPassenger, parcel) * 1000; // Convert to meters
-    if (distance > packageSelectionRadius) {
+    // Check origin radius
+    const originDistance = calculateDistance(selectedPassenger, parcel) * 1000; // Convert to meters
+    
+    // Use passenger destination or default
+    const passengerDest = selectedPassenger.destination || {
+      lat: selectedPassenger.lat + 0.05,
+      lng: selectedPassenger.lng + 0.05,
+    };
+    
+    // Use parcel destination or default
+    const parcelDest = parcel.destination || {
+      lat: parcel.lat + 0.05,
+      lng: parcel.lng + 0.05,
+    };
+    
+    // Check destination radius
+    const destinationDistance = calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
+    
+    if (originDistance > originSelectionRadius) {
       toast.error(
-        `این بسته خارج از محدوده انتخاب است (${(distance / 1000).toFixed(
+        `مبدا این بسته خارج از محدوده انتخاب است (${(originDistance / 1000).toFixed(
+          1
+        )} کیلومتر)`
+      );
+      return;
+    }
+    
+    if (destinationDistance > destinationSelectionRadius) {
+      toast.error(
+        `مقصد این بسته خارج از محدوده انتخاب است (${(destinationDistance / 1000).toFixed(
           1
         )} کیلومتر)`
       );

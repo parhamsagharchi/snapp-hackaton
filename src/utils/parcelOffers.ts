@@ -12,7 +12,9 @@ export interface ParcelOffer {
 /**
  * Find best parcel offers for a driver and passenger using TSP algorithm
  * Returns top N offers sorted by score (lower is better)
- * Only includes parcels within the specified selection radius from passenger
+ * Filters parcels based on two radii:
+ * 1. Origin radius: distance between passenger origin and parcel origin
+ * 2. Destination radius: distance between passenger destination and parcel destination
  */
 export function findBestParcelOffers(
   driver: IDriver,
@@ -20,7 +22,8 @@ export function findBestParcelOffers(
   parcels: IParcel[],
   packageFirst: boolean = false,
   maxOffers: number = 5,
-  packageSelectionRadius: number = 2000 // in meters, default 2km
+  originSelectionRadius: number = 2000, // in meters, default 2km
+  destinationSelectionRadius: number = 2000 // in meters, default 2km
 ): ParcelOffer[] {
   if (parcels.length === 0) return [];
 
@@ -33,12 +36,26 @@ export function findBestParcelOffers(
   // Calculate direct passenger route distance (baseline)
   const directPassengerRoute = calculateDistance(passenger, passengerDest);
 
-  // Filter parcels within selection radius from passenger
+  // Filter parcels based on both origin and destination radii
   // Add a small tolerance (50m) to account for rounding errors and make the filter more user-friendly
   const tolerance = 50; // meters
   const parcelsInRadius = parcels.filter((parcel) => {
-    const distanceFromPassenger = calculateDistance(passenger, parcel) * 1000; // Convert to meters
-    return distanceFromPassenger <= packageSelectionRadius + tolerance;
+    // Check origin radius: distance between passenger origin and parcel origin
+    const originDistance = calculateDistance(passenger, parcel) * 1000; // Convert to meters
+    const originInRadius = originDistance <= originSelectionRadius + tolerance;
+
+    // Use parcel destination or default offset
+    const parcelDest = parcel.destination || {
+      lat: parcel.lat + 0.05, // ~7 km away
+      lng: parcel.lng + 0.05,
+    };
+
+    // Check destination radius: distance between passenger destination and parcel destination
+    const destinationDistance = calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
+    const destinationInRadius = destinationDistance <= destinationSelectionRadius + tolerance;
+
+    // Parcel must satisfy both conditions
+    return originInRadius && destinationInRadius;
   });
 
   if (parcelsInRadius.length === 0) return [];

@@ -31,6 +31,7 @@ interface IMapStore {
   selectedPassenger: IPassenger | null;
   selectedParcel: IParcel | null;
   optimizedRoute: IMapPin[] | null; // TSP optimized route
+  simulationActive: boolean;
 
   // Passengers methods
   pushPassenger: (passenger: IPassenger) => void;
@@ -61,9 +62,13 @@ interface IMapStore {
   // Route methods
   setOptimizedRoute: (route: IMapPin[] | null) => void;
 
-  // Active pin
-  setActivePin: (pin: IMapPin | null) => void;
-  resetMapState: () => void;
+      // Active pin
+      setActivePin: (pin: IMapPin | null) => void;
+      
+      // Simulation
+      setSimulationActive: (active: boolean) => void;
+      
+      resetMapState: () => void;
 }
 
 const initialDriver: IDriver = {
@@ -199,6 +204,7 @@ export const useMapStore = create<IMapStore>()(
       selectedPassenger: null,
       selectedParcel: null,
       optimizedRoute: null,
+      simulationActive: false,
 
       // Passengers methods
       pushPassenger: (passenger) =>
@@ -306,6 +312,12 @@ export const useMapStore = create<IMapStore>()(
           activePin: pin,
         }),
 
+      // Simulation
+      setSimulationActive: (active) =>
+        set({
+          simulationActive: active,
+        }),
+
       resetMapState: () =>
         set({
           passengers: initialPassengers,
@@ -315,6 +327,7 @@ export const useMapStore = create<IMapStore>()(
           selectedPassenger: null,
           selectedParcel: null,
           optimizedRoute: null,
+          simulationActive: false,
         }),
     }),
     {
@@ -337,6 +350,7 @@ export const useMapStore = create<IMapStore>()(
             selectedPassenger: null,
             selectedParcel: null,
             optimizedRoute: null,
+            simulationActive: false,
           } as IMapStore;
         }
 

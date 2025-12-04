@@ -22,6 +22,8 @@ export const Markers = () => {
     (state) => state.updatePassengerByIndex
   );
   const updateParcelByIndex = useMapStore((state) => state.updateParcelByIndex);
+  const setSelectedPassenger = useMapStore((state) => state.setSelectedPassenger);
+  const setSelectedParcel = useMapStore((state) => state.setSelectedParcel);
 
   // Calculate optimized route when passenger and parcel are selected
   useRouteOptimization();
@@ -79,6 +81,45 @@ export const Markers = () => {
     };
     updateParcelByIndex(index, updatedParcel);
     setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
+  };
+
+  // Handle drag end for passenger destination
+  const handlePassengerDestinationDragEnd = (e: L.DragEndEvent) => {
+    if (!selectedPassenger) return;
+    const marker = e.target;
+    const newPosition = marker.getLatLng();
+    const passengerIndex = passengers.findIndex(
+      (p) =>
+        p.lat === selectedPassenger.lat && p.lng === selectedPassenger.lng
+    );
+    if (passengerIndex !== -1) {
+      const updatedPassenger = {
+        ...selectedPassenger,
+        destination: { lat: newPosition.lat, lng: newPosition.lng },
+      };
+      updatePassengerByIndex(passengerIndex, updatedPassenger);
+      setSelectedPassenger(updatedPassenger); // Update selected passenger
+      setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
+    }
+  };
+
+  // Handle drag end for parcel destination
+  const handleParcelDestinationDragEnd = (e: L.DragEndEvent) => {
+    if (!selectedParcel) return;
+    const marker = e.target;
+    const newPosition = marker.getLatLng();
+    const parcelIndex = parcels.findIndex(
+      (p) => p.lat === selectedParcel.lat && p.lng === selectedParcel.lng
+    );
+    if (parcelIndex !== -1) {
+      const updatedParcel = {
+        ...selectedParcel,
+        destination: { lat: newPosition.lat, lng: newPosition.lng },
+      };
+      updateParcelByIndex(parcelIndex, updatedParcel);
+      setSelectedParcel(updatedParcel); // Update selected parcel
+      setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
+    }
   };
 
   // Determine which markers to show based on current route
@@ -184,42 +225,112 @@ export const Markers = () => {
             );
           })}
 
-      {/* Parcels Markers */}
-      {showParcels &&
-        parcels?.map((parcel, index) => {
-          const parcelIsActive = isActivePin(parcel.lat, parcel.lng);
-          const isSelected =
-            selectedParcel &&
-            selectedParcel.lat === parcel.lat &&
-            selectedParcel.lng === parcel.lng;
-          const shortLabel = parcel.displayName
-            ? parcel.displayName.charAt(0)
-            : `${index + 1}`;
+      {/* Passenger Destination Markers - only show when passenger is selected */}
+      {showPassengers &&
+        selectedPassenger &&
+        (() => {
+          const passengerDest = selectedPassenger.destination || {
+            lat: selectedPassenger.lat + 0.05,
+            lng: selectedPassenger.lng + 0.05,
+          };
+          const passengerDestIsActive = isActivePin(passengerDest.lat, passengerDest.lng);
           return (
             <CustomMarker
-              key={`parcel-${index}-${parcels.length}-${parcel.lat}-${parcel.lng}-${id}`}
-              position={[parcel.lat, parcel.lng]}
-              label={parcel.displayName || `بسته ${index + 1}`}
-              shortLabel={shortLabel}
-              color={isSelected ? "#D97706" : "#F59E0B"}
-              onClick={() => handleOnClickPin(parcel)}
-              draggable={parcelIsActive}
-              onDragEnd={handleParcelDragEnd(index)}
+              key={`passenger-dest-${selectedPassenger.lat}-${selectedPassenger.lng}-${id}`}
+              position={[passengerDest.lat, passengerDest.lng]}
+              label={`مقصد ${selectedPassenger.displayName || "مسافر"}`}
+              shortLabel="م"
+              color="#059669"
+              onClick={() => handleOnClickPin(passengerDest)}
+              draggable={passengerDestIsActive}
+              onDragEnd={handlePassengerDestinationDragEnd}
             >
               <Popup>
                 <div>
-                  <strong>{parcel.displayName || `بسته ${index + 1}`}</strong>
-                  {isSelected && (
-                    <div className="mt-1 text-xs font-semibold text-orange-400">
-                      ✓ انتخاب شده
-                    </div>
-                  )}
-                  <div>حجم: {parcel.volume} لیتر</div>
+                  <strong>مقصد {selectedPassenger.displayName || "مسافر"}</strong>
                 </div>
               </Popup>
             </CustomMarker>
           );
-        })}
+        })()}
+
+      {/* Parcels Markers */}
+      {showParcels &&
+        parcels
+          ?.filter((parcel) => {
+            // On home page, when a parcel is selected, only show the selected parcel
+            if (currentPath === "/" && selectedParcel) {
+              return (
+                selectedParcel.lat === parcel.lat &&
+                selectedParcel.lng === parcel.lng
+              );
+            }
+            // Otherwise, show all parcels
+            return true;
+          })
+          .map((parcel, index) => {
+            const parcelIsActive = isActivePin(parcel.lat, parcel.lng);
+            const isSelected =
+              selectedParcel &&
+              selectedParcel.lat === parcel.lat &&
+              selectedParcel.lng === parcel.lng;
+            const shortLabel = parcel.displayName
+              ? parcel.displayName.charAt(0)
+              : `${index + 1}`;
+            return (
+              <CustomMarker
+                key={`parcel-${index}-${parcels.length}-${parcel.lat}-${parcel.lng}-${id}`}
+                position={[parcel.lat, parcel.lng]}
+                label={parcel.displayName || `بسته ${index + 1}`}
+                shortLabel={shortLabel}
+                color={isSelected ? "#D97706" : "#F59E0B"}
+                onClick={() => handleOnClickPin(parcel)}
+                draggable={parcelIsActive}
+                onDragEnd={handleParcelDragEnd(index)}
+              >
+                <Popup>
+                  <div>
+                    <strong>{parcel.displayName || `بسته ${index + 1}`}</strong>
+                    {isSelected && (
+                      <div className="mt-1 text-xs font-semibold text-orange-400">
+                        ✓ انتخاب شده
+                      </div>
+                    )}
+                    <div>حجم: {parcel.volume} لیتر</div>
+                  </div>
+                </Popup>
+              </CustomMarker>
+            );
+          })}
+
+      {/* Parcel Destination Markers - only show when parcel is selected */}
+      {showParcels &&
+        selectedParcel &&
+        (() => {
+          const parcelDest = selectedParcel.destination || {
+            lat: selectedParcel.lat + 0.05,
+            lng: selectedParcel.lng + 0.05,
+          };
+          const parcelDestIsActive = isActivePin(parcelDest.lat, parcelDest.lng);
+          return (
+            <CustomMarker
+              key={`parcel-dest-${selectedParcel.lat}-${selectedParcel.lng}-${id}`}
+              position={[parcelDest.lat, parcelDest.lng]}
+              label={`مقصد ${selectedParcel.displayName || "بسته"}`}
+              shortLabel="م"
+              color="#D97706"
+              onClick={() => handleOnClickPin(parcelDest)}
+              draggable={parcelDestIsActive}
+              onDragEnd={handleParcelDestinationDragEnd}
+            >
+              <Popup>
+                <div>
+                  <strong>مقصد {selectedParcel.displayName || "بسته"}</strong>
+                </div>
+              </Popup>
+            </CustomMarker>
+          );
+        })()}
     </>
   );
 };
