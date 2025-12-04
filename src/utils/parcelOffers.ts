@@ -1,13 +1,18 @@
-import type { IPassenger, IParcel, IDriver } from "@/store/map.store";
+import type { IPassenger, IParcel, IDriver } from "@/store/map.types";
 import { calculateDistance, optimizeDriverRoute } from "./tsp";
+import type { ParcelOffer } from "./parcelOffers.types";
+import { getDefaultDestination } from "./parcelValidation";
+import {
+  RADIUS_TOLERANCE,
+  MAX_PARCEL_VOLUME,
+  MAX_ROUTE_ALIGNMENT_DISTANCE,
+  AVERAGE_SPEED_KMH,
+  SCORING_WEIGHTS,
+  DEFAULT_MAX_OFFERS,
+} from "./constants";
 
-export interface ParcelOffer {
-  parcel: IParcel;
-  score: number;
-  totalDistance: number;
-  detourDistance: number;
-  estimatedTime: number; // in minutes
-}
+// Re-export types for backward compatibility
+export type { ParcelOffer } from "./parcelOffers.types";
 
 /**
  * Find best parcel offers for a driver and passenger using TSP algorithm
@@ -21,38 +26,31 @@ export function findBestParcelOffers(
   passenger: IPassenger,
   parcels: IParcel[],
   packageFirst: boolean = false,
-  maxOffers: number = 5,
+  maxOffers: number = DEFAULT_MAX_OFFERS,
   originSelectionRadius: number = 2000, // in meters, default 2km
   destinationSelectionRadius: number = 2000 // in meters, default 2km
 ): ParcelOffer[] {
   if (parcels.length === 0) return [];
 
   // Use passenger destination or default offset (more realistic distance)
-  const passengerDest = passenger.destination || {
-    lat: passenger.lat + 0.05, // ~7 km away
-    lng: passenger.lng + 0.05,
-  };
+  const passengerDest = passenger.destination || getDefaultDestination(passenger);
 
   // Calculate direct passenger route distance (baseline)
   const directPassengerRoute = calculateDistance(passenger, passengerDest);
 
   // Filter parcels based on both origin and destination radii
-  // Add a small tolerance (50m) to account for rounding errors and make the filter more user-friendly
-  const tolerance = 50; // meters
+  // Add a small tolerance to account for rounding errors and make the filter more user-friendly
   const parcelsInRadius = parcels.filter((parcel) => {
     // Check origin radius: distance between passenger origin and parcel origin
     const originDistance = calculateDistance(passenger, parcel) * 1000; // Convert to meters
-    const originInRadius = originDistance <= originSelectionRadius + tolerance;
+    const originInRadius = originDistance <= originSelectionRadius + RADIUS_TOLERANCE;
 
     // Use parcel destination or default offset
-    const parcelDest = parcel.destination || {
-      lat: parcel.lat + 0.05, // ~7 km away
-      lng: parcel.lng + 0.05,
-    };
+    const parcelDest = parcel.destination || getDefaultDestination(parcel);
 
     // Check destination radius: distance between passenger destination and parcel destination
     const destinationDistance = calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
-    const destinationInRadius = destinationDistance <= destinationSelectionRadius + tolerance;
+    const destinationInRadius = destinationDistance <= destinationSelectionRadius + RADIUS_TOLERANCE;
 
     // Parcel must satisfy both conditions
     return originInRadius && destinationInRadius;
@@ -64,10 +62,7 @@ export function findBestParcelOffers(
   const offers: ParcelOffer[] = parcelsInRadius
     .map((parcel) => {
       // Use parcel destination or default offset (more realistic distance)
-      const parcelDest = parcel.destination || {
-        lat: parcel.lat + 0.05, // ~7 km away
-        lng: parcel.lng + 0.05,
-      };
+      const parcelDest = parcel.destination || getDefaultDestination(parcel);
 
       // Calculate optimized route using TSP
       const route = optimizeDriverRoute(
@@ -96,25 +91,23 @@ export function findBestParcelOffers(
         passengerRouteMidpoint
       );
 
-      // Scoring algorithm (lower is better):
-      // 1. Total distance (weight: 0.30)
-      // 2. Detour distance (weight: 0.25)
-      // 3. Distance from driver to first pickup (weight: 0.15)
-      // 4. Parcel volume factor (weight: 0.10) - smaller parcels preferred
-      // 5. Route alignment (weight: 0.20) - parcel destination close to passenger route
-
-      const volumeFactor = Math.min(parcel.volume / 500, 1); // Normalize volume (max 500L)
-      const routeAlignmentFactor = Math.min(parcelDestToRoute / 10, 1); // Normalize (max 10km)
+      // Scoring algorithm (lower is better)
+      const volumeFactor = Math.min(parcel.volume / MAX_PARCEL_VOLUME, 1);
+      const routeAlignmentFactor = Math.min(
+        parcelDestToRoute / MAX_ROUTE_ALIGNMENT_DISTANCE,
+        1
+      );
 
       const score =
-        totalDistance * 0.3 +
-        Math.max(detourDistance, 0) * 0.25 +
-        Math.min(driverToParcel, driverToPassenger) * 0.15 +
-        volumeFactor * 5 * 0.1 +
-        routeAlignmentFactor * 10 * 0.2;
+        totalDistance * SCORING_WEIGHTS.TOTAL_DISTANCE +
+        Math.max(detourDistance, 0) * SCORING_WEIGHTS.DETOUR_DISTANCE +
+        Math.min(driverToParcel, driverToPassenger) *
+          SCORING_WEIGHTS.FIRST_PICKUP_DISTANCE +
+        volumeFactor * 5 * SCORING_WEIGHTS.VOLUME_FACTOR +
+        routeAlignmentFactor * 10 * SCORING_WEIGHTS.ROUTE_ALIGNMENT;
 
-      // Estimate time (assuming average speed of 50 km/h)
-      const estimatedTime = (totalDistance / 50) * 60;
+      // Estimate time (assuming average speed)
+      const estimatedTime = (totalDistance / AVERAGE_SPEED_KMH) * 60;
 
       return {
         parcel,

@@ -1,23 +1,21 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import type { ISettingsStore } from "./settings.types";
+import {
+  DEFAULT_ROUTE_ORDER_PREFERENCE,
+  DEFAULT_ORIGIN_SELECTION_RADIUS,
+  DEFAULT_DESTINATION_SELECTION_RADIUS,
+} from "./settings.constant";
 
-export type RouteOrderPreference = "passenger_first" | "package_first";
-
-interface ISettingsStore {
-  routeOrderPreference: RouteOrderPreference;
-  originSelectionRadius: number; // in meters - radius between passenger origin and parcel origin
-  destinationSelectionRadius: number; // in meters - radius between passenger destination and parcel destination
-  setRouteOrderPreference: (preference: RouteOrderPreference) => void;
-  setOriginSelectionRadius: (radius: number) => void;
-  setDestinationSelectionRadius: (radius: number) => void;
-}
+// Re-export types for backward compatibility
+export type { RouteOrderPreference } from "./settings.types";
 
 export const useSettingsStore = create<ISettingsStore>()(
   persist(
     (set) => ({
-      routeOrderPreference: "passenger_first",
-      originSelectionRadius: 1500, // 1.5km default (max: 2km) - radius between passenger origin and parcel origin
-      destinationSelectionRadius: 1500, // 1.5km default (max: 2km) - radius between passenger destination and parcel destination
+      routeOrderPreference: DEFAULT_ROUTE_ORDER_PREFERENCE,
+      originSelectionRadius: DEFAULT_ORIGIN_SELECTION_RADIUS,
+      destinationSelectionRadius: DEFAULT_DESTINATION_SELECTION_RADIUS,
 
       setRouteOrderPreference: (preference) =>
         set({

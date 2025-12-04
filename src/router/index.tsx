@@ -11,6 +11,7 @@ const Passengers = lazy(() => import("../pages/passengers"));
 const Parcels = lazy(() => import("../pages/parcels"));
 const Driver = lazy(() => import("../pages/driver"));
 const Algorithm = lazy(() => import("../pages/algorithm"));
+const Pitch = lazy(() => import("../pages/pitch"));
 
 /**
  * پیکربندی مسیرها
@@ -65,6 +66,14 @@ const routes = [
         element: (
           <Suspense fallback={<Spinner size="md" color="secondary" />}>
             <Algorithm />
+          </Suspense>
+        ),
+      },
+      {
+        path: "pitch",
+        element: (
+          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+            <Pitch />
           </Suspense>
         ),
       },

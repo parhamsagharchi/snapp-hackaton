@@ -1,8 +1,10 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import clsx from "clsx";
 import logo from "@/assets/images/logo.svg";
+import hackathonLogo from "@/assets/images/hackathon-logo.webp";
 import LeafletMap from "@/components/leaflet-map";
 import { LeafletMapItems } from "@/components/leaflet-map/components";
+import { isContentOnlyPage } from "./content-only-pages.constant";
 
 const navItems = [
   { to: "/", label: "صفحه اصلی", end: true },
@@ -11,11 +13,12 @@ const navItems = [
   { to: "/driver", label: "راننده" },
   { to: "/settings", label: "تنظیمات" },
   { to: "/algorithm", label: "الگوریتم" },
+  { to: "/pitch", label: "ارائه ایده" },
 ];
 
 export function Layout() {
   const location = useLocation();
-  const isAlgorithmPage = location.pathname === "/algorithm";
+  const isContentOnly = isContentOnlyPage(location.pathname);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 overflow-x-hidden">
@@ -52,13 +55,13 @@ export function Layout() {
       </header>
 
       {/* Main content with overlap */}
-      <main className="-mt-28 pb-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-          {isAlgorithmPage ? (
-            /* Full width for algorithm page */
-            <section className="rounded-2xl border border-slate-700/70 bg-slate-800/80 p-3 shadow-xl shadow-black/40 overflow-y-auto max-h-[calc(100vh-200px)]">
+      <main className="-mt-28 pb-12 bg-slate-900">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full pt-2">
+          {isContentOnly ? (
+            /* Content-only pages: full width, page scroll, no box container */
+            <div className="w-full">
               <Outlet />
-            </section>
+            </div>
           ) : (
             /* Two sections: Page Content and Map */
             <div className="grid gap-6 lg:grid-cols-[minmax(0,2.25fr)_minmax(0,1.75fr)] w-full">
@@ -88,8 +91,28 @@ export function Layout() {
             </div>
           )}
 
-          <footer className="mt-10 border-t border-slate-800/80 pt-4 text-xs text-neutral">
-            © ۱۴۰۴ هکاتون اسنپ. تمامی حقوق محفوظ است.
+          <footer className="mt-12 border-t border-slate-700/40 pt-5 pb-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+              {/* Logo */}
+              <img
+                src={hackathonLogo}
+                alt="لوگوی هکاتون اسنپ"
+                className="h-8 w-auto opacity-60 hover:opacity-80 transition-opacity"
+              />
+
+              {/* Divider */}
+              <div className="hidden sm:block w-px h-6 bg-slate-700/50"></div>
+
+              {/* Team Info */}
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs text-slate-500">تیم شماره</span>
+                <span className="text-base font-bold text-primary">۲۷</span>
+                <span className="text-xs text-slate-600">•</span>
+                <span className="text-sm font-semibold text-slate-300">
+                  SnappShare
+                </span>
+              </div>
+            </div>
           </footer>
         </div>
       </main>

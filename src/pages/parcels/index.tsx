@@ -3,6 +3,7 @@ import { useMapStore, type IParcel } from "@/store/map.store";
 import {
   TextInput,
   NumberInput,
+  SelectInput,
   LocationDisplay,
   FormActions,
 } from "@/components/shared/form";
@@ -11,10 +12,19 @@ import { PageLayout } from "@/components/shared/layout/PageLayout";
 import { validationRules } from "@/utils/validation";
 import { toastMessages } from "@/utils/toast-messages";
 import { useFormWithLocation } from "@/hooks/useFormWithLocation";
+import { areCoordinatesEqual, formatCoordinates } from "@/utils/coordinates";
+
+const VENDORS = [
+  { value: "اسنپ‌شاپ", label: "اسنپ‌شاپ" },
+  { value: "اسنپ‌دکتر", label: "اسنپ‌دکتر" },
+  { value: "اسنپ‌مارکت", label: "اسنپ‌مارکت" },
+  { value: "اسنپ‌باکس", label: "اسنپ‌باکس" },
+];
 
 type ParcelFormData = {
   displayName: string;
   volume: number;
+  vendor: string;
 };
 
 function ParcelsPage() {
@@ -36,6 +46,7 @@ function ParcelsPage() {
     defaultValues: {
       displayName: "",
       volume: 0,
+      vendor: "",
     },
   });
 
@@ -62,13 +73,14 @@ function ParcelsPage() {
     const parcel = parcels[index];
     setValue("displayName", parcel.displayName || "");
     setValue("volume", parcel.volume);
+    setValue("vendor", parcel.vendor || "");
     setActivePin({ lat: parcel.lat, lng: parcel.lng });
     setEditingIndex(index);
   };
 
   const handleDelete = (index: number) => {
     const parcel = parcels[index];
-    if (selectedParcel && selectedParcel.lat === parcel.lat && selectedParcel.lng === parcel.lng) {
+    if (selectedParcel && areCoordinatesEqual(selectedParcel, parcel)) {
       setSelectedParcel(null);
     }
     removeParcelByIndex(index);
@@ -107,6 +119,14 @@ function ParcelsPage() {
             error={errors.volume}
           />
 
+          <SelectInput
+            label="ونچر"
+            placeholder="انتخاب ونچر"
+            options={VENDORS}
+            {...register("vendor")}
+            error={errors.vendor}
+          />
+
           <LocationDisplay activePin={activePin} />
 
           <FormActions
@@ -130,9 +150,14 @@ function ParcelsPage() {
             className: "text-white",
           },
           {
+            header: "ونچر",
+            accessor: (parcel: IParcel) => (
+              <span className="text-white">{parcel.vendor || "-"}</span>
+            ),
+          },
+          {
             header: "موقعیت",
-            accessor: (parcel: IParcel) =>
-              `${parcel.lat.toFixed(4)}, ${parcel.lng.toFixed(4)}`,
+            accessor: (parcel: IParcel) => formatCoordinates(parcel),
           },
           {
             header: "حجم (لیتر)",

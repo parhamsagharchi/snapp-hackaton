@@ -1,20 +1,5 @@
-import type { ReactNode } from "react";
 import { Edit2, Trash2 } from "lucide-react";
-
-interface Column<T> {
-  header: string;
-  accessor: keyof T | ((row: T, index: number) => ReactNode);
-  className?: string;
-}
-
-interface DataTableProps<T> {
-  data: T[];
-  columns: Column<T>[];
-  emptyMessage: string;
-  onEdit?: (index: number) => void;
-  onDelete?: (index: number) => void;
-  showActions?: boolean;
-}
+import type { DataTableProps, Column } from "./DataTable.types";
 
 /**
  * Reusable data table component following Single Responsibility and Open-Closed Principles

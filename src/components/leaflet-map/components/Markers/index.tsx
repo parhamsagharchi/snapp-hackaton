@@ -6,6 +6,7 @@ import { useMapStore } from "@/store/map.store";
 import type { ICoordinates } from "../../leaflet-map.types";
 import { CustomMarker } from "./CustomMarker";
 import { useRouteOptimization } from "@/hooks/useRouteOptimization";
+import { areCoordinatesEqual } from "@/utils/coordinates";
 
 export const Markers = () => {
   const id = useId();
@@ -173,10 +174,7 @@ export const Markers = () => {
           ?.filter((passenger) => {
             // On home page, when a passenger is selected, only show the selected passenger
             if (currentPath === "/" && selectedPassenger) {
-              return (
-                selectedPassenger.lat === passenger.lat &&
-                selectedPassenger.lng === passenger.lng
-              );
+              return areCoordinatesEqual(selectedPassenger, passenger);
             }
             // Otherwise, show all passengers
             return true;
@@ -184,9 +182,7 @@ export const Markers = () => {
           .map((passenger, index) => {
             const passengerIsActive = isActivePin(passenger.lat, passenger.lng);
             const isSelected =
-              selectedPassenger &&
-              selectedPassenger.lat === passenger.lat &&
-              selectedPassenger.lng === passenger.lng;
+              selectedPassenger && areCoordinatesEqual(selectedPassenger, passenger);
             const shortLabel = passenger.displayName
               ? passenger.displayName.charAt(0)
               : `${index + 1}`;
@@ -260,10 +256,7 @@ export const Markers = () => {
           ?.filter((parcel) => {
             // On home page, when a parcel is selected, only show the selected parcel
             if (currentPath === "/" && selectedParcel) {
-              return (
-                selectedParcel.lat === parcel.lat &&
-                selectedParcel.lng === parcel.lng
-              );
+              return areCoordinatesEqual(selectedParcel, parcel);
             }
             // Otherwise, show all parcels
             return true;
@@ -271,9 +264,7 @@ export const Markers = () => {
           .map((parcel, index) => {
             const parcelIsActive = isActivePin(parcel.lat, parcel.lng);
             const isSelected =
-              selectedParcel &&
-              selectedParcel.lat === parcel.lat &&
-              selectedParcel.lng === parcel.lng;
+              selectedParcel && areCoordinatesEqual(selectedParcel, parcel);
             const shortLabel = parcel.displayName
               ? parcel.displayName.charAt(0)
               : `${index + 1}`;

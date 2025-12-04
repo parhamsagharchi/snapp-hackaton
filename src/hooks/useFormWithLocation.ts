@@ -2,15 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useMapStore } from "@/store/map.store";
 import { toastMessages } from "@/utils/toast-messages";
-
-interface UseFormWithLocationOptions<T> {
-  onAdd: (data: T) => void;
-  onUpdate: (index: number, data: T) => void;
-  successMessages: {
-    add: string;
-    update: string;
-  };
-}
+import type { UseFormWithLocationOptions } from "./useFormWithLocation.types";
 
 /**
  * Custom hook for form handling with location following DRY and Single Responsibility

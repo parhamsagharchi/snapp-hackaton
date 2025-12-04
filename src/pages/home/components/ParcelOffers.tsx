@@ -1,0 +1,50 @@
+import type { IParcel, IPassenger } from "@/store/map.store";
+import type { ParcelOffer } from "@/utils/parcelOffers.types";
+import { ParcelOfferCard } from "./ParcelOfferCard";
+
+interface ParcelOffersProps {
+  selectedPassenger: IPassenger;
+  selectedParcel: IParcel | null;
+  parcelOffers: ParcelOffer[];
+  onSelectParcel: (parcel: IParcel) => void;
+}
+
+export function ParcelOffers({
+  selectedPassenger,
+  selectedParcel,
+  parcelOffers,
+  onSelectParcel,
+}: ParcelOffersProps) {
+  if (parcelOffers.length === 0) {
+    return (
+      <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+        <h3 className="mb-2 text-sm font-semibold text-slate-100">
+          پیشنهادات بسته (الگوریتم TSP)
+        </h3>
+        <p className="text-xs text-slate-400">
+          بسته مناسبی در محدوده انتخاب شده یافت نشد
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+      <h3 className="mb-2 text-sm font-semibold text-slate-100">
+        پیشنهادات بسته (الگوریتم TSP)
+      </h3>
+      <div className="space-y-2">
+        {parcelOffers.map((offer, index) => (
+          <ParcelOfferCard
+            key={index}
+            offer={offer}
+            index={index}
+            selectedPassenger={selectedPassenger}
+            selectedParcel={selectedParcel}
+            onSelect={onSelectParcel}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

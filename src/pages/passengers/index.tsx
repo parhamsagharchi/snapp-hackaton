@@ -11,6 +11,7 @@ import { PageLayout } from "@/components/shared/layout/PageLayout";
 import { validationRules } from "@/utils/validation";
 import { toastMessages } from "@/utils/toast-messages";
 import { useFormWithLocation } from "@/hooks/useFormWithLocation";
+import { areCoordinatesEqual, formatCoordinates } from "@/utils/coordinates";
 
 type PassengerFormData = {
   displayName: string;
@@ -76,8 +77,7 @@ function PassengersPage() {
     const passenger = passengers[index];
     if (
       selectedPassenger &&
-      selectedPassenger.lat === passenger.lat &&
-      selectedPassenger.lng === passenger.lng
+      areCoordinatesEqual(selectedPassenger, passenger)
     ) {
       setSelectedPassenger(null);
     }
@@ -139,8 +139,7 @@ function PassengersPage() {
           },
           {
             header: "موقعیت",
-            accessor: (passenger: IPassenger) =>
-              `${passenger.lat.toFixed(4)}, ${passenger.lng.toFixed(4)}`,
+            accessor: (passenger: IPassenger) => formatCoordinates(passenger),
           },
           {
             header: "گزینه های سفارش",

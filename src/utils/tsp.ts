@@ -1,20 +1,19 @@
-import type { IMapPin } from "@/store/map.store";
+import type { IMapPin } from "@/store/map.types";
+import type { TSPPoint, TSPRoute } from "./tsp.types";
+import {
+  EARTH_RADIUS_KM,
+  MAX_2OPT_ITERATIONS,
+  MIN_POINTS_FOR_2OPT,
+} from "./constants";
 
-export interface TSPPoint extends IMapPin {
-  id: string;
-  type: "driver" | "passenger_origin" | "passenger_destination" | "parcel_origin" | "parcel_destination";
-}
-
-export interface TSPRoute {
-  points: TSPPoint[];
-  totalDistance: number;
-}
+// Re-export types for backward compatibility
+export type { TSPPoint, TSPRoute } from "./tsp.types";
 
 /**
  * Calculate distance between two points using Haversine formula (in kilometers)
  */
 export function calculateDistance(point1: IMapPin, point2: IMapPin): number {
-  const R = 6371; // Earth's radius in km
+  const R = EARTH_RADIUS_KM;
   const dLat = ((point2.lat - point1.lat) * Math.PI) / 180;
   const dLng = ((point2.lng - point1.lng) * Math.PI) / 180;
   const a =
@@ -84,7 +83,7 @@ function nearestNeighborTSP(points: TSPPoint[], startIndex: number): TSPRoute {
 function twoOptImprovement(route: TSPRoute): TSPRoute {
   let improved = true;
   let bestRoute = { ...route };
-  const maxIterations = 100;
+  const maxIterations = MAX_2OPT_ITERATIONS;
   let iterations = 0;
 
   while (improved && iterations < maxIterations) {
@@ -132,8 +131,8 @@ export function solveTSP(points: TSPPoint[], startIndex: number = 0): TSPRoute {
   // Start with nearest neighbor
   let route = nearestNeighborTSP(points, startIndex);
 
-  // Improve with 2-opt if we have more than 3 points
-  if (points.length > 3) {
+  // Improve with 2-opt if we have enough points
+  if (points.length > MIN_POINTS_FOR_2OPT) {
     route = twoOptImprovement(route);
   }
 

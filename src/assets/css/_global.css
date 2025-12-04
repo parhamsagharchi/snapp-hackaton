@@ -4,10 +4,11 @@ body {
   overflow-x: hidden;
   margin: 0;
   direction: rtl;
+  background-color: rgb(15, 23, 42); /* slate-900 */
 }
 
 * {
-  font-family: theme('fontFamily.iran-sans');
+  font-family: theme("fontFamily.iran-sans");
 }
 
 /* Custom Scrollbar Styles */
