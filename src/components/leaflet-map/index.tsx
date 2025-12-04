@@ -6,7 +6,6 @@ import type {
   ICoordinates,
   LeafletMapRef,
 } from "./leaflet-map.types";
-import { useMapStore } from "@/store/map.store";
 import {
   DEFAULT_MAP_ZOOM,
   TTILE_LAYER_ATTRIBUTION,
@@ -18,7 +17,6 @@ import {
 const initializedMaps = new WeakSet<HTMLDivElement>();
 
 function LeafletMap({ ref, style = {}, render, className }: ILeafletMap) {
-  const activePin = useMapStore((state) => state.activePin);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
@@ -28,10 +26,8 @@ function LeafletMap({ ref, style = {}, render, className }: ILeafletMap) {
   );
 
   const [isReady, setIsReady] = useState(false);
-  const [mapCenter, setMapCenter] = useState<[number, number]>(
-    activePin
-      ? [activePin.lat, activePin.lng]
-      : (DEFAULT_MAP_CENTER as [number, number])
+  const [mapCenter] = useState<[number, number]>(
+    DEFAULT_MAP_CENTER as [number, number]
   );
 
   useEffect(() => {
@@ -55,12 +51,8 @@ function LeafletMap({ ref, style = {}, render, className }: ILeafletMap) {
     };
   }, []);
 
-  useEffect(() => {
-    if (activePin && mapRef.current) {
-      const newCenter: [number, number] = [activePin.lat, activePin.lng];
-      mapRef.current.setView(newCenter, mapRef.current.getZoom());
-    }
-  }, [activePin]);
+  // Removed useEffect that was causing map to jump when clicking on map
+  // The map should stay in place when user clicks directly on it
 
   useImperativeHandle(ref, () => {
     const map = mapRef.current;
@@ -70,7 +62,6 @@ function LeafletMap({ ref, style = {}, render, className }: ILeafletMap) {
     return {
       ...map,
       setCenter: (coordinates: ICoordinates) => {
-        setMapCenter([coordinates.lat, coordinates.lng]);
         map.setView([coordinates.lat, coordinates.lng], map.getZoom());
       },
     } as LeafletMapRef;

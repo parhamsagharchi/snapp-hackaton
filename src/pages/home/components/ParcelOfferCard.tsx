@@ -95,14 +95,6 @@ export function ParcelOfferCard({
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-medium">
-                حجم:
-              </span>
-              <span className="text-[10px] text-slate-200 font-semibold">
-                {offer.parcel.volume} لیتر
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-500 font-medium">
                 فاصله کل:
               </span>
               <span className="text-[10px] text-slate-200 font-semibold">

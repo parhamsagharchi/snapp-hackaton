@@ -16,7 +16,6 @@ export const useMapStore = create<IMapStore>()(
       passengers: initialPassengers,
       parcels: initialParcels,
       driver: initialDriver,
-      activePin: null,
       selectedPassenger: null,
       selectedParcel: null,
       optimizedRoute: null,
@@ -122,12 +121,6 @@ export const useMapStore = create<IMapStore>()(
           optimizedRoute: route,
         }),
 
-      // Active pin
-      setActivePin: (pin) =>
-        set({
-          activePin: pin,
-        }),
-
       // Simulation
       setSimulationActive: (active) =>
         set({
@@ -139,7 +132,6 @@ export const useMapStore = create<IMapStore>()(
           passengers: initialPassengers,
           parcels: initialParcels,
           driver: initialDriver,
-          activePin: null,
           selectedPassenger: null,
           selectedParcel: null,
           optimizedRoute: null,
@@ -162,7 +154,6 @@ export const useMapStore = create<IMapStore>()(
             passengers: initialPassengers,
             parcels: initialParcels,
             driver: initialDriver,
-            activePin: null,
             selectedPassenger: null,
             selectedParcel: null,
             optimizedRoute: null,

@@ -4,7 +4,6 @@ import type { ParcelOffer } from "./parcelOffers.types";
 import { getDefaultDestination } from "./parcelValidation";
 import {
   RADIUS_TOLERANCE,
-  MAX_PARCEL_VOLUME,
   MAX_ROUTE_ALIGNMENT_DISTANCE,
   AVERAGE_SPEED_KMH,
   SCORING_WEIGHTS,
@@ -92,7 +91,6 @@ export function findBestParcelOffers(
       );
 
       // Scoring algorithm (lower is better)
-      const volumeFactor = Math.min(parcel.volume / MAX_PARCEL_VOLUME, 1);
       const routeAlignmentFactor = Math.min(
         parcelDestToRoute / MAX_ROUTE_ALIGNMENT_DISTANCE,
         1
@@ -103,7 +101,6 @@ export function findBestParcelOffers(
         Math.max(detourDistance, 0) * SCORING_WEIGHTS.DETOUR_DISTANCE +
         Math.min(driverToParcel, driverToPassenger) *
           SCORING_WEIGHTS.FIRST_PICKUP_DISTANCE +
-        volumeFactor * 5 * SCORING_WEIGHTS.VOLUME_FACTOR +
         routeAlignmentFactor * 10 * SCORING_WEIGHTS.ROUTE_ALIGNMENT;
 
       // Estimate time (assuming average speed)

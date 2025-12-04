@@ -11,21 +11,18 @@ export interface IPassenger extends IMapPin {
 
 export interface IParcel extends IMapPin {
   displayName: string;
-  volume: number; // in litres
   destination?: IMapPin; // Optional destination for parcel
   vendor?: string; // Vendor name (e.g., اسنپ‌شاپ, اسنپ‌دکتر, اسنپ‌مارکت, اسنپ‌باکس)
 }
 
 export interface IDriver extends IMapPin {
   displayName: string;
-  capacityVolume: number; // in litres
 }
 
 export interface IMapStore {
   passengers: IPassenger[];
   parcels: IParcel[];
   driver: IDriver;
-  activePin: IMapPin | null;
   selectedPassenger: IPassenger | null;
   selectedParcel: IParcel | null;
   optimizedRoute: IMapPin[] | null; // TSP optimized route
@@ -59,9 +56,6 @@ export interface IMapStore {
 
   // Route methods
   setOptimizedRoute: (route: IMapPin[] | null) => void;
-
-  // Active pin
-  setActivePin: (pin: IMapPin | null) => void;
   
   // Simulation
   setSimulationActive: (active: boolean) => void;

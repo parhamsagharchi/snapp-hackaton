@@ -10,7 +10,6 @@ export const RADIUS_TOLERANCE = 50; // meters - for rounding errors and user-fri
 
 // Distance constants (in kilometers)
 export const DEFAULT_DESTINATION_OFFSET = 0.05; // ~7 km away
-export const MAX_PARCEL_VOLUME = 500; // liters
 export const MAX_ROUTE_ALIGNMENT_DISTANCE = 10; // kilometers
 
 // Coordinate comparison tolerance
@@ -26,10 +25,9 @@ export const EARTH_RADIUS_KM = 6371; // kilometers
 
 // Scoring algorithm weights
 export const SCORING_WEIGHTS = {
-  TOTAL_DISTANCE: 0.3,
-  DETOUR_DISTANCE: 0.25,
+  TOTAL_DISTANCE: 0.35,
+  DETOUR_DISTANCE: 0.3,
   FIRST_PICKUP_DISTANCE: 0.15,
-  VOLUME_FACTOR: 0.1,
   ROUTE_ALIGNMENT: 0.2,
 } as const;
 

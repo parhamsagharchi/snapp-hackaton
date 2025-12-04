@@ -23,10 +23,10 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 overflow-x-hidden">
       {/* Top header */}
-      <header className="bg-primary pb-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+      <header className="fixed top-0 z-50 bg-primary shadow-md w-full">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-2">
           {/* Row 1: navigation + logo */}
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between">
             <nav className="flex items-center gap-2">
               {navItems.map((item) => (
                 <NavLink
@@ -35,7 +35,7 @@ export function Layout() {
                   end={item.end}
                   className={({ isActive }) =>
                     clsx(
-                      "px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300",
+                      "px-2 py-1 rounded-lg text-[10px] font-medium transition-all duration-300",
                       isActive
                         ? "bg-white text-primary shadow-lg shadow-white/20"
                         : "border border-white/30 text-white/90 hover:border-white/50 hover:text-white hover:bg-white/5"
@@ -48,15 +48,15 @@ export function Layout() {
             </nav>
 
             <div className="flex items-center gap-3">
-              <img src={logo} alt="اسنپ" className="h-9" />
+              <img src={logo} alt="اسنپ" className="h-7" />
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main content with overlap */}
-      <main className="-mt-28 pb-12 bg-slate-900">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full pt-2">
+      {/* Main content */}
+      <main className="pb-12 bg-slate-900 pt-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
           {isContentOnly ? (
             /* Content-only pages: full width, page scroll, no box container */
             <div className="w-full">
@@ -77,8 +77,6 @@ export function Layout() {
                     className="h-full w-full"
                     render={
                       <>
-                        <LeafletMapItems.MapClickHandler />
-                        <LeafletMapItems.ActivePinMarker />
                         <LeafletMapItems.Markers />
                         <LeafletMapItems.Polygons />
                         <LeafletMapItems.SelectionCircle />

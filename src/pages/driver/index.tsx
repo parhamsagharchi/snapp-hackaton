@@ -1,11 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useMapStore, type IDriver } from "@/store/map.store";
 import {
   TextInput,
   NumberInput,
-  LocationDisplay,
   FormActions,
 } from "@/components/shared/form";
 import { PageLayout } from "@/components/shared/layout/PageLayout";
@@ -14,34 +13,73 @@ import { toastMessages } from "@/utils/toast-messages";
 
 type DriverFormData = {
   displayName: string;
-  capacityVolume: number;
+  lat: number;
+  lng: number;
 };
 
 function DriverPage() {
   const driver = useMapStore((state) => state.driver);
-  const activePin = useMapStore((state) => state.activePin);
   const updateDriver = useMapStore((state) => state.updateDriver);
-  const setActivePin = useMapStore((state) => state.setActivePin);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<DriverFormData>({
     defaultValues: {
       displayName: "",
-      capacityVolume: 0,
+      lat: 0,
+      lng: 0,
     },
   });
 
+  const isUpdatingFromDriver = useRef(false);
+  const isUpdatingFromForm = useRef(false);
+
   useEffect(() => {
-    if (driver) {
+    if (driver && !isUpdatingFromForm.current) {
+      isUpdatingFromDriver.current = true;
       setValue("displayName", driver.displayName || "");
-      setValue("capacityVolume", driver.capacityVolume);
-      setActivePin({ lat: driver.lat, lng: driver.lng });
+      setValue("lat", driver.lat);
+      setValue("lng", driver.lng);
+      // Reset flag after a short delay to allow form to update
+      setTimeout(() => {
+        isUpdatingFromDriver.current = false;
+      }, 100);
     }
-  }, [driver, setValue, setActivePin]);
+  }, [driver, setValue]);
+
+  // Watch lat/lng changes and update driver position when user manually changes them
+  const lat = watch("lat");
+  const lng = watch("lng");
+  
+  useEffect(() => {
+    if (
+      driver &&
+      !isUpdatingFromDriver.current &&
+      lat !== undefined &&
+      lng !== undefined &&
+      lat !== 0 &&
+      lng !== 0
+    ) {
+      const latDiff = Math.abs(lat - driver.lat) > 0.0001;
+      const lngDiff = Math.abs(lng - driver.lng) > 0.0001;
+      
+      if (latDiff || lngDiff) {
+        isUpdatingFromForm.current = true;
+        updateDriver({
+          ...driver,
+          lat,
+          lng,
+        });
+        setTimeout(() => {
+          isUpdatingFromForm.current = false;
+        }, 100);
+      }
+    }
+  }, [lat, lng]);
 
   if (!driver) {
     return (
@@ -54,19 +92,18 @@ function DriverPage() {
   }
 
   const onSubmit = (data: DriverFormData) => {
-    if (!activePin) {
-      toast.error(toastMessages.errors.locationRequired);
+    if (!driver) {
+      toast.error("راننده یافت نشد");
       return;
     }
 
     const driverData: IDriver = {
-      ...data,
-      lat: activePin.lat,
-      lng: activePin.lng,
+      displayName: data.displayName,
+      lat: data.lat,
+      lng: data.lng,
     };
 
     updateDriver(driverData);
-    setActivePin(null);
     toast.success(toastMessages.success.driverUpdated);
   };
 
@@ -90,13 +127,30 @@ function DriverPage() {
           />
 
           <NumberInput
-            label="ظرفیت (لیتر) *"
-            placeholder="ظرفیت راننده به لیتر"
-            {...register("capacityVolume", validationRules.capacityVolume)}
-            error={errors.capacityVolume}
+            label="عرض جغرافیایی (Latitude) *"
+            placeholder="مثال: 35.72"
+            step="0.0001"
+            {...register("lat", {
+              required: "عرض جغرافیایی الزامی است",
+              valueAsNumber: true,
+              min: { value: -90, message: "عرض جغرافیایی باید بین -90 تا 90 باشد" },
+              max: { value: 90, message: "عرض جغرافیایی باید بین -90 تا 90 باشد" },
+            })}
+            error={errors.lat}
           />
 
-          <LocationDisplay activePin={activePin} />
+          <NumberInput
+            label="طول جغرافیایی (Longitude) *"
+            placeholder="مثال: 51.45"
+            step="0.0001"
+            {...register("lng", {
+              required: "طول جغرافیایی الزامی است",
+              valueAsNumber: true,
+              min: { value: -180, message: "طول جغرافیایی باید بین -180 تا 180 باشد" },
+              max: { value: 180, message: "طول جغرافیایی باید بین -180 تا 180 باشد" },
+            })}
+            error={errors.lng}
+          />
 
           <FormActions isEditing={false} submitLabel="ویرایش" />
         </form>

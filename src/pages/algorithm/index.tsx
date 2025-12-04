@@ -20,8 +20,8 @@ function AlgorithmPage() {
               data-animate="heading"
               className="text-base font-semibold text-white"
             >
-              مقدمه
-            </h2>
+            مقدمه
+          </h2>
           </div>
           <p
             data-animate="text"
@@ -92,8 +92,8 @@ function AlgorithmPage() {
               data-animate="heading"
               className="text-base font-semibold text-white"
             >
-              ۱. محاسبه فاصله با فرمول Haversine
-            </h2>
+            ۱. محاسبه فاصله با فرمول Haversine
+          </h2>
           </div>
           <p
             data-animate="text"
@@ -170,8 +170,8 @@ function AlgorithmPage() {
               data-animate="heading"
               className="text-base font-semibold text-white"
             >
-              ۲. فیلتر کردن بسته‌ها بر اساس شعاع‌های انتخاب
-            </h2>
+            ۲. فیلتر کردن بسته‌ها بر اساس شعاع‌های انتخاب
+          </h2>
           </div>
           <p
             data-animate="text"
@@ -188,7 +188,7 @@ function AlgorithmPage() {
                 <div className="w-1.5 h-1.5 rounded-full bg-green-300"></div>
                 <h3 className="text-xs font-medium text-green-300">
                   شرط ۱: فیلتر بر اساس شعاع انتخاب مبدا
-                </h3>
+              </h3>
               </div>
               <div className="bg-slate-900/40 rounded-lg p-3 mb-2">
                 <BlockMath math="d(P_{passenger}, P_{parcel}) \leq R_{origin} + tolerance" />
@@ -215,8 +215,7 @@ function AlgorithmPage() {
                     <span className="text-green-300 font-mono">R_origin</span>
                     <span className="text-slate-500 mr-2">
                       {" "}
-                      = شعاع انتخاب مبدا (پیش‌فرض: 1500 متر، محدوده: 1000-2000
-                      متر)
+                      = شعاع انتخاب مبدا (پیش‌فرض: 2000 متر)
                     </span>
                   </div>
                   <div>
@@ -235,7 +234,7 @@ function AlgorithmPage() {
                 <div className="w-1.5 h-1.5 rounded-full bg-orange-300"></div>
                 <h3 className="text-xs font-medium text-orange-300">
                   شرط ۲: فیلتر بر اساس شعاع انتخاب مقصد
-                </h3>
+              </h3>
               </div>
               <div className="bg-slate-900/40 rounded-lg p-3 mb-2">
                 <BlockMath math="d(D_{passenger}, D_{parcel}) \leq R_{destination} + tolerance" />
@@ -264,8 +263,7 @@ function AlgorithmPage() {
                     </span>
                     <span className="text-slate-500 mr-2">
                       {" "}
-                      = شعاع انتخاب مقصد (پیش‌فرض: 1500 متر، محدوده: 1000-2000
-                      متر)
+                      = شعاع انتخاب مقصد (پیش‌فرض: 2000 متر)
                     </span>
                   </div>
                   <div>
@@ -306,8 +304,8 @@ function AlgorithmPage() {
               data-animate="heading"
               className="text-base font-semibold text-white"
             >
-              ۳. الگوریتم TSP (مسئله فروشنده دوره‌گرد)
-            </h2>
+            ۳. الگوریتم TSP (مسئله فروشنده دوره‌گرد)
+          </h2>
           </div>
           <p
             data-animate="text"
@@ -323,8 +321,8 @@ function AlgorithmPage() {
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-300"></div>
                 <h3 className="text-xs font-medium text-purple-300">
-                  ۳.۱. الگوریتم Nearest Neighbor (همسایه نزدیک)
-                </h3>
+                ۳.۱. الگوریتم Nearest Neighbor (همسایه نزدیک)
+              </h3>
               </div>
               <p className="mb-3 text-[10px] text-slate-400 leading-relaxed">
                 این الگوریتم یک راه‌حل اولیه سریع ایجاد می‌کند:
@@ -366,8 +364,8 @@ function AlgorithmPage() {
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-yellow-300"></div>
                 <h3 className="text-xs font-medium text-yellow-300">
-                  ۳.۲. بهبود 2-Opt
-                </h3>
+                ۳.۲. بهبود 2-Opt
+              </h3>
               </div>
               <p className="mb-3 text-[10px] text-slate-400 leading-relaxed">
                 این الگوریتم راه‌حل اولیه را با جستجوی محلی بهبود می‌دهد:
@@ -403,7 +401,7 @@ function AlgorithmPage() {
                 <div className="text-[10px] text-slate-500 mt-1">
                   حداکثر iterations:{" "}
                   <strong className="text-yellow-300">100</strong>
-                </div>
+              </div>
               </div>
             </div>
           </div>
@@ -420,8 +418,8 @@ function AlgorithmPage() {
               data-animate="heading"
               className="text-base font-semibold text-white"
             >
-              ۴. بهینه‌سازی مسیر با محدودیت‌ها
-            </h2>
+            ۴. بهینه‌سازی مسیر با محدودیت‌ها
+          </h2>
           </div>
           <p
             data-animate="text"
@@ -461,7 +459,7 @@ function AlgorithmPage() {
                   محدودیت ۳:
                 </div>
                 <div className="text-[10px] text-slate-400">
-                  ترتیب اولیه بر اساس تنظیمات کاربر (مسافر اول یا بسته اول)
+                ترتیب اولیه بر اساس تنظیمات کاربر (مسافر اول یا بسته اول)
                 </div>
               </div>
             </div>
@@ -469,10 +467,10 @@ function AlgorithmPage() {
           <div className="rounded-lg bg-slate-900/50 p-3 border border-slate-700/30">
             <div className="text-[10px] text-slate-300 mb-3">
               برای هر ترتیب معتبر، فاصله کل مسیر محاسبه می‌شود:
-            </div>
+              </div>
             <div className="bg-slate-800/40 rounded-lg p-3 mb-3">
-              <BlockMath math="D_{total} = \sum_{i=1}^{n-1} d(point_i, point_{i+1})" />
-            </div>
+                <BlockMath math="D_{total} = \sum_{i=1}^{n-1} d(point_i, point_{i+1})" />
+              </div>
             <div className="text-[10px] text-slate-500">
               ترتیبی که کمترین <InlineMath math="D_{total}" /> را دارد به عنوان
               مسیر بهینه انتخاب می‌شود.
@@ -492,13 +490,13 @@ function AlgorithmPage() {
               className="text-base font-semibold text-white"
             >
               ۵. سیستم امتیازدهی هوشمند بسته‌ها
-            </h2>
+          </h2>
           </div>
           <p
             data-animate="text"
             className="mb-4 text-xs leading-relaxed text-slate-300"
           >
-            هر بسته بر اساس ۵ معیار مختلف امتیازدهی می‌شود.{" "}
+            هر بسته بر اساس ۴ معیار مختلف امتیازدهی می‌شود.{" "}
             <strong className="text-white">امتیاز کمتر بهتر است</strong> و
             نشان‌دهنده مناسب‌تر بودن بسته برای راننده است.
           </p>
@@ -507,17 +505,17 @@ function AlgorithmPage() {
               فرمول امتیازدهی:
             </div>
             <div className="bg-slate-800/40 rounded-lg p-3 mb-3">
-              <BlockMath math="Score = w_1 \times D_{total} + w_2 \times D_{detour} + w_3 \times D_{first} + w_4 \times V_{norm} + w_5 \times A_{norm}" />
-            </div>
+                <BlockMath math="Score = w_1 \times D_{total} + w_2 \times D_{detour} + w_3 \times D_{first} + w_4 \times A_{norm}" />
+              </div>
             <div className="space-y-2 text-[10px]">
               {[
                 {
-                  w: "w₁ = 0.30",
+                  w: "w₁ = 0.35",
                   desc: "D_total: فاصله کل مسیر (کیلومتر)",
                   color: "text-blue-300",
                 },
                 {
-                  w: "w₂ = 0.25",
+                  w: "w₂ = 0.30",
                   desc: "D_detour: انحراف از مسیر مستقیم مسافر (کیلومتر)",
                   color: "text-red-300",
                 },
@@ -527,12 +525,7 @@ function AlgorithmPage() {
                   color: "text-green-300",
                 },
                 {
-                  w: "w₄ = 0.10",
-                  desc: "V_norm: حجم نرمال‌شده بسته (حداکثر 500 لیتر)",
-                  color: "text-purple-300",
-                },
-                {
-                  w: "w₅ = 0.20",
+                  w: "w₄ = 0.20",
                   desc: "A_norm: هم‌راستایی مسیر (فاصله مقصد بسته تا وسط مسیر مسافر)",
                   color: "text-orange-300",
                 },
@@ -555,14 +548,8 @@ function AlgorithmPage() {
           <div className="rounded-lg bg-blue-900/15 border border-blue-500/25 p-3">
             <div className="text-[10px] font-medium text-blue-300 mb-2">
               فرمول‌های نرمال‌سازی:
-            </div>
-            <div className="space-y-2">
-              <div className="bg-slate-900/40 rounded-lg p-2">
-                <BlockMath math="V_{norm} = \min\left(\frac{volume}{500}, 1\right)" />
-                <div className="text-[10px] text-slate-500 mt-1">
-                  حجم بسته نرمال‌شده (حداکثر 500 لیتر)
-                </div>
               </div>
+            <div className="space-y-2">
               <div className="bg-slate-900/40 rounded-lg p-2">
                 <BlockMath math="A_{norm} = \min\left(\frac{distance\_to\_route}{10}, 1\right)" />
                 <div className="text-[10px] text-slate-500 mt-1">
@@ -590,8 +577,8 @@ function AlgorithmPage() {
               data-animate="heading"
               className="text-base font-semibold text-white"
             >
-              ۶. تخمین زمان سفر
-            </h2>
+            ۶. تخمین زمان سفر
+          </h2>
           </div>
           <p
             data-animate="text"
@@ -601,7 +588,7 @@ function AlgorithmPage() {
           </p>
           <div className="rounded-lg bg-slate-900/50 p-3 border border-slate-700/30">
             <div className="bg-slate-800/40 rounded-lg p-3 mb-3">
-              <BlockMath math="Time = \frac{D_{total}}{V_{avg}} \times 60" />
+                <BlockMath math="Time = \frac{D_{total}}{V_{avg}} \times 60" />
             </div>
             <div className="text-[10px] text-slate-400 space-y-1.5">
               <div className="flex items-center gap-2">
@@ -636,8 +623,8 @@ function AlgorithmPage() {
               className="text-base font-semibold text-white"
             >
               ۷. خلاصه مراحل الگوریتم
-            </h2>
-          </div>
+          </h2>
+            </div>
           <div data-animate="stagger" className="space-y-2">
             {[
               {
@@ -652,7 +639,7 @@ function AlgorithmPage() {
                 num: "۳",
                 text: "برای هر بسته معتبر، محاسبه مسیر بهینه با TSP و رعایت محدودیت‌ها",
               },
-              { num: "۴", text: "محاسبه امتیاز برای هر بسته بر اساس ۵ معیار" },
+              { num: "۴", text: "محاسبه امتیاز برای هر بسته بر اساس ۴ معیار" },
               {
                 num: "۵",
                 text: "مرتب‌سازی بسته‌ها بر اساس امتیاز (صعودی - امتیاز کمتر بهتر است)",
@@ -667,12 +654,12 @@ function AlgorithmPage() {
                 <div className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center">
                   <span className="text-indigo-300 font-semibold text-[10px]">
                     {item.num}
-                  </span>
-                </div>
+              </span>
+            </div>
                 <div className="flex-1 text-xs text-slate-300 leading-relaxed">
                   {item.text}
-                </div>
-              </div>
+            </div>
+            </div>
             ))}
           </div>
         </section>
@@ -689,7 +676,7 @@ function AlgorithmPage() {
               className="text-base font-semibold text-white"
             >
               ۸. تحلیل پیچیدگی الگوریتم
-            </h2>
+          </h2>
           </div>
           <div data-animate="stagger" className="grid gap-3 md:grid-cols-2">
             <div className="rounded-lg bg-pink-900/10 border border-pink-500/20 p-3">

@@ -46,7 +46,7 @@ export function DataTable<T = Record<string, unknown>>({
             {data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={columns.length + (showActions ? 1 : 0)}
+                  colSpan={columns.length}
                   className="px-3 py-6 text-center text-xs text-slate-400"
                 >
                   {emptyMessage}

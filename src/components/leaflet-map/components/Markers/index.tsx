@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { Popup } from "react-leaflet";
 import type L from "leaflet";
 import { useMapStore } from "@/store/map.store";
-import type { ICoordinates } from "../../leaflet-map.types";
 import { CustomMarker } from "./CustomMarker";
 import { useRouteOptimization } from "@/hooks/useRouteOptimization";
 import { areCoordinatesEqual } from "@/utils/coordinates";
@@ -14,10 +13,8 @@ export const Markers = () => {
   const passengers = useMapStore((state) => state.passengers);
   const parcels = useMapStore((state) => state.parcels);
   const driver = useMapStore((state) => state.driver);
-  const activePin = useMapStore((state) => state.activePin);
   const selectedPassenger = useMapStore((state) => state.selectedPassenger);
   const selectedParcel = useMapStore((state) => state.selectedParcel);
-  const setActivePin = useMapStore((state) => state.setActivePin);
   const updateDriver = useMapStore((state) => state.updateDriver);
   const updatePassengerByIndex = useMapStore(
     (state) => state.updatePassengerByIndex
@@ -29,20 +26,6 @@ export const Markers = () => {
   // Calculate optimized route when passenger and parcel are selected
   useRouteOptimization();
 
-  const handleOnClickPin = (pin: ICoordinates) => {
-    setActivePin(pin);
-  };
-
-  // Check if activePin matches a marker position (with small tolerance)
-  const isActivePin = (lat: number, lng: number) => {
-    if (!activePin) return false;
-    const tolerance = 0.0001;
-    return (
-      Math.abs(activePin.lat - lat) < tolerance &&
-      Math.abs(activePin.lng - lng) < tolerance
-    );
-  };
-
   // Handle drag end for driver
   const handleDriverDragEnd = (e: L.DragEndEvent) => {
     const marker = e.target;
@@ -53,7 +36,6 @@ export const Markers = () => {
       lng: newPosition.lng,
     };
     updateDriver(updatedDriver);
-    setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
   };
 
   // Handle drag end for passenger
@@ -67,7 +49,6 @@ export const Markers = () => {
       lng: newPosition.lng,
     };
     updatePassengerByIndex(index, updatedPassenger);
-    setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
   };
 
   // Handle drag end for parcel
@@ -81,7 +62,6 @@ export const Markers = () => {
       lng: newPosition.lng,
     };
     updateParcelByIndex(index, updatedParcel);
-    setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
   };
 
   // Handle drag end for passenger destination
@@ -100,7 +80,6 @@ export const Markers = () => {
       };
       updatePassengerByIndex(passengerIndex, updatedPassenger);
       setSelectedPassenger(updatedPassenger); // Update selected passenger
-      setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
     }
   };
 
@@ -119,7 +98,6 @@ export const Markers = () => {
       };
       updateParcelByIndex(parcelIndex, updatedParcel);
       setSelectedParcel(updatedParcel); // Update selected parcel
-      setActivePin({ lat: newPosition.lat, lng: newPosition.lng });
     }
   };
 
@@ -140,29 +118,30 @@ export const Markers = () => {
     currentPath === "/parcels" || 
     (currentPath === "/" && selectedPassenger !== null);
 
-  const driverIsActive = showDriver && isActivePin(driver.lat, driver.lng);
+  // Driver is always draggable on driver and settings pages
+  const driverIsActive = showDriver && (currentPath === "/driver" || currentPath === "/settings");
   const driverShortLabel = driver.displayName
     ? driver.displayName.charAt(0)
     : "ر";
 
   return (
     <>
-      {/* Driver Marker - Circle Style */}
+      {/* Driver Marker - Car Icon */}
       {showDriver && (
         <CustomMarker
-          key={`driver-${driver.lat}-${driver.lng}-${driver.capacityVolume}-${id}`}
+          key={`driver-${driver.lat}-${driver.lng}-${id}`}
           position={[driver.lat, driver.lng]}
           label={driver.displayName || "راننده"}
           shortLabel={driverShortLabel}
           color="#3B82F6"
-          onClick={() => handleOnClickPin(driver)}
+          iconType="driver"
+          onClick={() => {}}
           draggable={driverIsActive}
           onDragEnd={handleDriverDragEnd}
         >
           <Popup>
             <div>
               <strong>{driver.displayName || "راننده"}</strong>
-              <div>ظرفیت: {driver.capacityVolume} لیتر</div>
             </div>
           </Popup>
         </CustomMarker>
@@ -180,7 +159,6 @@ export const Markers = () => {
             return true;
           })
           .map((passenger, index) => {
-            const passengerIsActive = isActivePin(passenger.lat, passenger.lng);
             const isSelected =
               selectedPassenger && areCoordinatesEqual(selectedPassenger, passenger);
             const shortLabel = passenger.displayName
@@ -193,8 +171,9 @@ export const Markers = () => {
                 label={passenger.displayName || `مسافر ${index + 1}`}
                 shortLabel={shortLabel}
                 color={isSelected ? "#059669" : "#10B981"}
-                onClick={() => handleOnClickPin(passenger)}
-                draggable={passengerIsActive}
+                iconType="passenger"
+                onClick={() => {}}
+                draggable={false}
                 onDragEnd={handlePassengerDragEnd(index)}
               >
                 <Popup>
@@ -229,7 +208,6 @@ export const Markers = () => {
             lat: selectedPassenger.lat + 0.05,
             lng: selectedPassenger.lng + 0.05,
           };
-          const passengerDestIsActive = isActivePin(passengerDest.lat, passengerDest.lng);
           return (
             <CustomMarker
               key={`passenger-dest-${selectedPassenger.lat}-${selectedPassenger.lng}-${id}`}
@@ -237,8 +215,9 @@ export const Markers = () => {
               label={`مقصد ${selectedPassenger.displayName || "مسافر"}`}
               shortLabel="م"
               color="#059669"
-              onClick={() => handleOnClickPin(passengerDest)}
-              draggable={passengerDestIsActive}
+              iconType="passenger"
+              onClick={() => {}}
+              draggable={true}
               onDragEnd={handlePassengerDestinationDragEnd}
             >
               <Popup>
@@ -262,7 +241,6 @@ export const Markers = () => {
             return true;
           })
           .map((parcel, index) => {
-            const parcelIsActive = isActivePin(parcel.lat, parcel.lng);
             const isSelected =
               selectedParcel && areCoordinatesEqual(selectedParcel, parcel);
             const shortLabel = parcel.displayName
@@ -275,8 +253,9 @@ export const Markers = () => {
                 label={parcel.displayName || `بسته ${index + 1}`}
                 shortLabel={shortLabel}
                 color={isSelected ? "#D97706" : "#F59E0B"}
-                onClick={() => handleOnClickPin(parcel)}
-                draggable={parcelIsActive}
+                iconType="parcel"
+                onClick={() => {}}
+                draggable={false}
                 onDragEnd={handleParcelDragEnd(index)}
               >
                 <Popup>
@@ -287,7 +266,6 @@ export const Markers = () => {
                         ✓ انتخاب شده
                       </div>
                     )}
-                    <div>حجم: {parcel.volume} لیتر</div>
                   </div>
                 </Popup>
               </CustomMarker>
@@ -302,7 +280,6 @@ export const Markers = () => {
             lat: selectedParcel.lat + 0.05,
             lng: selectedParcel.lng + 0.05,
           };
-          const parcelDestIsActive = isActivePin(parcelDest.lat, parcelDest.lng);
           return (
             <CustomMarker
               key={`parcel-dest-${selectedParcel.lat}-${selectedParcel.lng}-${id}`}
@@ -310,8 +287,9 @@ export const Markers = () => {
               label={`مقصد ${selectedParcel.displayName || "بسته"}`}
               shortLabel="م"
               color="#D97706"
-              onClick={() => handleOnClickPin(parcelDest)}
-              draggable={parcelDestIsActive}
+              iconType="parcel"
+              onClick={() => {}}
+              draggable={true}
               onDragEnd={handleParcelDestinationDragEnd}
             >
               <Popup>
