@@ -89,8 +89,8 @@ function SettingPage() {
               <input
                 type="range"
                 min="1000"
-                max="20000"
-                step="500"
+                max="2000"
+                step="100"
                 value={packageSelectionRadius}
                 onChange={(e) =>
                   setPackageSelectionRadius(Number(e.target.value))

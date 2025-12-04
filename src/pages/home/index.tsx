@@ -38,11 +38,12 @@ function HomePage() {
         selectedPassenger,
         parcels,
         routeOrderPreference === "package_first",
-        5
+        5,
+        packageSelectionRadius
       );
     }
     return [];
-  }, [selectedPassenger, driver, parcels, routeOrderPreference]);
+  }, [selectedPassenger, driver, parcels, routeOrderPreference, packageSelectionRadius]);
 
   const handleSelectPassenger = (passenger: IPassenger) => {
     if (passenger.orderOptionsActive) {

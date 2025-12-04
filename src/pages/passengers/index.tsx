@@ -84,20 +84,6 @@ function PassengersPage() {
     removePassengerByIndex(index);
   };
 
-  const handleSelect = (index: number) => {
-    const passenger = passengers[index];
-    if (
-      selectedPassenger &&
-      selectedPassenger.lat === passenger.lat &&
-      selectedPassenger.lng === passenger.lng
-    ) {
-      setSelectedPassenger(null);
-    } else {
-      setSelectedPassenger(passenger);
-      setActivePin({ lat: passenger.lat, lng: passenger.lng });
-    }
-  };
-
   const handleCancel = () => {
     handleFormCancel(reset);
   };
@@ -164,27 +150,6 @@ function PassengersPage() {
               ) : (
                 <span className="text-slate-500">غیرفعال</span>
               ),
-          },
-          {
-            header: "عملیات",
-            accessor: (passenger, index) => {
-              const isSelected =
-                selectedPassenger &&
-                selectedPassenger.lat === passenger.lat &&
-                selectedPassenger.lng === passenger.lng;
-              return (
-                <button
-                  onClick={() => handleSelect(index)}
-                  className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
-                    isSelected
-                      ? "bg-primary text-white hover:bg-primary/90"
-                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-                  }`}
-                >
-                  {isSelected ? "لغو انتخاب" : "انتخاب"}
-                </button>
-              );
-            },
           },
         ]}
         emptyMessage="هیچ مسافری ثبت نشده است"

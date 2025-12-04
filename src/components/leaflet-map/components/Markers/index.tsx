@@ -83,10 +83,20 @@ export const Markers = () => {
 
   // Determine which markers to show based on current route
   const currentPath = location.pathname;
-  const showDriver = currentPath === "/" || currentPath === "/driver";
-  const showPassengers = currentPath === "/" || currentPath === "/passengers";
-  // Show parcels when on parcels page OR when a passenger is selected
-  const showParcels = currentPath === "/parcels" || selectedPassenger !== null;
+  
+  // Driver: show on home, settings, and driver pages
+  const showDriver = currentPath === "/" || currentPath === "/driver" || currentPath === "/settings";
+  
+  // Passengers: show on home and passengers pages
+  // On home page, hide other passengers when one is selected (for better visibility)
+  const showPassengers = 
+    currentPath === "/passengers" || 
+    currentPath === "/"; // Always show passengers on home, but filter will hide others when selected
+  
+  // Parcels: show on parcels page or when passenger is selected on home page
+  const showParcels = 
+    currentPath === "/parcels" || 
+    (currentPath === "/" && selectedPassenger !== null);
 
   const driverIsActive = showDriver && isActivePin(driver.lat, driver.lng);
   const driverShortLabel = driver.displayName
@@ -118,49 +128,61 @@ export const Markers = () => {
 
       {/* Passengers Markers */}
       {showPassengers &&
-        passengers?.map((passenger, index) => {
-          const passengerIsActive = isActivePin(passenger.lat, passenger.lng);
-          const isSelected =
-            selectedPassenger &&
-            selectedPassenger.lat === passenger.lat &&
-            selectedPassenger.lng === passenger.lng;
-          const shortLabel = passenger.displayName
-            ? passenger.displayName.charAt(0)
-            : `${index + 1}`;
-          return (
-            <CustomMarker
-              key={`passenger-${index}-${passengers.length}-${passenger.lat}-${passenger.lng}-${id}`}
-              position={[passenger.lat, passenger.lng]}
-              label={passenger.displayName || `مسافر ${index + 1}`}
-              shortLabel={shortLabel}
-              color={isSelected ? "#059669" : "#10B981"}
-              onClick={() => handleOnClickPin(passenger)}
-              draggable={passengerIsActive}
-              onDragEnd={handlePassengerDragEnd(index)}
-            >
-              <Popup>
-                <div>
-                  <strong>
-                    {passenger.displayName || `مسافر ${index + 1}`}
-                  </strong>
-                  {isSelected && (
-                    <div className="mt-1 text-xs font-semibold text-green-400">
-                      ✓ انتخاب شده
-                    </div>
-                  )}
-                  <div className="mt-1">
-                    گزینه های سفارش:{" "}
-                    {passenger.orderOptionsActive ? (
-                      <span className="text-yellow-400">فعال</span>
-                    ) : (
-                      <span className="text-slate-400">غیرفعال</span>
+        passengers
+          ?.filter((passenger) => {
+            // On home page, when a passenger is selected, only show the selected passenger
+            if (currentPath === "/" && selectedPassenger) {
+              return (
+                selectedPassenger.lat === passenger.lat &&
+                selectedPassenger.lng === passenger.lng
+              );
+            }
+            // Otherwise, show all passengers
+            return true;
+          })
+          .map((passenger, index) => {
+            const passengerIsActive = isActivePin(passenger.lat, passenger.lng);
+            const isSelected =
+              selectedPassenger &&
+              selectedPassenger.lat === passenger.lat &&
+              selectedPassenger.lng === passenger.lng;
+            const shortLabel = passenger.displayName
+              ? passenger.displayName.charAt(0)
+              : `${index + 1}`;
+            return (
+              <CustomMarker
+                key={`passenger-${index}-${passengers.length}-${passenger.lat}-${passenger.lng}-${id}`}
+                position={[passenger.lat, passenger.lng]}
+                label={passenger.displayName || `مسافر ${index + 1}`}
+                shortLabel={shortLabel}
+                color={isSelected ? "#059669" : "#10B981"}
+                onClick={() => handleOnClickPin(passenger)}
+                draggable={passengerIsActive}
+                onDragEnd={handlePassengerDragEnd(index)}
+              >
+                <Popup>
+                  <div>
+                    <strong>
+                      {passenger.displayName || `مسافر ${index + 1}`}
+                    </strong>
+                    {isSelected && (
+                      <div className="mt-1 text-xs font-semibold text-green-400">
+                        ✓ انتخاب شده
+                      </div>
                     )}
+                    <div className="mt-1">
+                      گزینه های سفارش:{" "}
+                      {passenger.orderOptionsActive ? (
+                        <span className="text-yellow-400">فعال</span>
+                      ) : (
+                        <span className="text-slate-400">غیرفعال</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Popup>
-            </CustomMarker>
-          );
-        })}
+                </Popup>
+              </CustomMarker>
+            );
+          })}
 
       {/* Parcels Markers */}
       {showParcels &&

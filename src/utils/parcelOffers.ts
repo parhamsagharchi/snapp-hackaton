@@ -12,13 +12,15 @@ export interface ParcelOffer {
 /**
  * Find best parcel offers for a driver and passenger using TSP algorithm
  * Returns top N offers sorted by score (lower is better)
+ * Only includes parcels within the specified selection radius from passenger
  */
 export function findBestParcelOffers(
   driver: IDriver,
   passenger: IPassenger,
   parcels: IParcel[],
   packageFirst: boolean = false,
-  maxOffers: number = 5
+  maxOffers: number = 5,
+  packageSelectionRadius: number = 2000 // in meters, default 2km
 ): ParcelOffer[] {
   if (parcels.length === 0) return [];
 
@@ -31,15 +33,18 @@ export function findBestParcelOffers(
   // Calculate direct passenger route distance (baseline)
   const directPassengerRoute = calculateDistance(passenger, passengerDest);
 
-  // Minimum route distance to avoid filtering out everything for very short routes
-  const minRouteDistance = 2; // km
-  const effectiveRouteDistance = Math.max(
-    directPassengerRoute,
-    minRouteDistance
-  );
+  // Filter parcels within selection radius from passenger
+  // Add a small tolerance (50m) to account for rounding errors and make the filter more user-friendly
+  const tolerance = 50; // meters
+  const parcelsInRadius = parcels.filter((parcel) => {
+    const distanceFromPassenger = calculateDistance(passenger, parcel) * 1000; // Convert to meters
+    return distanceFromPassenger <= packageSelectionRadius + tolerance;
+  });
+
+  if (parcelsInRadius.length === 0) return [];
 
   // Score each parcel
-  const offers: ParcelOffer[] = parcels
+  const offers: ParcelOffer[] = parcelsInRadius
     .map((parcel) => {
       // Use parcel destination or default offset (more realistic distance)
       const parcelDest = parcel.destination || {
@@ -101,13 +106,6 @@ export function findBestParcelOffers(
         detourDistance,
         estimatedTime,
       };
-    })
-    .filter((offer) => {
-      // Filter out offers with too large detour
-      // Allow up to 200% detour, or at least 10km detour for very short routes
-      // This ensures we don't filter out reasonable offers
-      const maxAllowedDetour = Math.max(effectiveRouteDistance * 2.0, 10);
-      return offer.detourDistance <= maxAllowedDetour;
     })
     .sort((a, b) => a.score - b.score)
     .slice(0, maxOffers);
