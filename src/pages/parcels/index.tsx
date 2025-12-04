@@ -7,7 +7,7 @@ function ParcelsPage() {
   const parcels = useMapStore((state) => state.parcels);
 
   return (
-    <PageLayout title="مدیریت بسته‌ها">
+    <PageLayout title="بسته‌ها">
       <DataTable
         data={parcels}
         columns={[

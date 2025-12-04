@@ -183,35 +183,85 @@ export function optimizeDriverRoute(
   };
 
   // Use TSP to optimize the route while respecting constraints:
+  // - Driver must start first
   // - Passenger Origin must come before Passenger Destination
   // - Parcel Origin must come before Parcel Destination
-  // Try different valid orders and pick the best
+  // Generate all valid route combinations and pick the best
+  
   const validRoutes: TSPPoint[][] = [];
+  const points = [
+    passengerOriginPoint,
+    passengerDestPoint,
+    parcelOriginPoint,
+    parcelDestPoint,
+  ];
 
-  if (packageFirst) {
-    validRoutes.push([
-      driverPoint,
-      parcelOriginPoint,
-      passengerOriginPoint,
-      passengerDestPoint,
-      parcelDestPoint,
-    ]);
-  } else {
-    // Passenger first - try different valid orders
-    validRoutes.push([
-      driverPoint,
-      passengerOriginPoint,
-      parcelOriginPoint,
-      passengerDestPoint,
-      parcelDestPoint,
-    ]);
-    validRoutes.push([
-      driverPoint,
-      parcelOriginPoint,
-      passengerOriginPoint,
-      passengerDestPoint,
-      parcelDestPoint,
-    ]);
+  // Generate all valid permutations where:
+  // - passengerOrigin comes before passengerDest
+  // - parcelOrigin comes before parcelDest
+  // - If packageFirst: parcelOrigin comes before passengerOrigin
+  // - If !packageFirst: passengerOrigin comes before parcelOrigin (or can be interleaved)
+  
+  function isValidRoute(route: TSPPoint[]): boolean {
+    const passengerOriginIdx = route.findIndex((p) => p.id === "passenger_origin");
+    const passengerDestIdx = route.findIndex((p) => p.id === "passenger_destination");
+    const parcelOriginIdx = route.findIndex((p) => p.id === "parcel_origin");
+    const parcelDestIdx = route.findIndex((p) => p.id === "parcel_destination");
+
+    // Check constraints
+    if (passengerOriginIdx >= passengerDestIdx) return false;
+    if (parcelOriginIdx >= parcelDestIdx) return false;
+
+    if (packageFirst) {
+      // Package origin must come before passenger origin
+      if (parcelOriginIdx >= passengerOriginIdx) return false;
+    }
+
+    return true;
+  }
+
+  // Generate all permutations of the 4 points
+  function permute(arr: TSPPoint[]): TSPPoint[][] {
+    if (arr.length <= 1) return [arr];
+    const result: TSPPoint[][] = [];
+    for (let i = 0; i < arr.length; i++) {
+      const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
+      const perms = permute(rest);
+      for (const perm of perms) {
+        result.push([arr[i], ...perm]);
+      }
+    }
+    return result;
+  }
+
+  // Generate all valid routes
+  const allPermutations = permute(points);
+  for (const perm of allPermutations) {
+    const route = [driverPoint, ...perm];
+    if (isValidRoute(route)) {
+      validRoutes.push(route);
+    }
+  }
+
+  // If no valid routes found (shouldn't happen), use fallback
+  if (validRoutes.length === 0) {
+    if (packageFirst) {
+      validRoutes.push([
+        driverPoint,
+        parcelOriginPoint,
+        passengerOriginPoint,
+        passengerDestPoint,
+        parcelDestPoint,
+      ]);
+    } else {
+      validRoutes.push([
+        driverPoint,
+        passengerOriginPoint,
+        parcelOriginPoint,
+        passengerDestPoint,
+        parcelDestPoint,
+      ]);
+    }
   }
 
   // Find the route with minimum distance

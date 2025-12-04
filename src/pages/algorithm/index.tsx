@@ -425,7 +425,9 @@ function AlgorithmPage() {
             data-animate="text"
             className="mb-4 text-xs leading-relaxed text-slate-300"
           >
-            مسیر باید محدودیت‌های زیر را رعایت کند تا منطقی و قابل اجرا باشد:
+            مسیر باید محدودیت‌های زیر را رعایت کند تا منطقی و قابل اجرا باشد.
+            الگوریتم <strong className="text-white">همه ترکیب‌های معتبر</strong>{" "}
+            را بررسی می‌کند و بهترین را انتخاب می‌کند.
           </p>
           <div className="space-y-2 mb-4">
             <div className="flex items-start gap-2 p-2 rounded-lg bg-green-900/10 border border-green-500/20">
@@ -433,6 +435,18 @@ function AlgorithmPage() {
               <div className="flex-1">
                 <div className="text-[10px] font-medium text-green-300 mb-0.5">
                   محدودیت ۱:
+                </div>
+                <div className="text-[10px] text-slate-400">
+                  راننده همیشه در ابتدای مسیر قرار می‌گیرد:{" "}
+                  <InlineMath math="Driver \rightarrow ..." />
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start gap-2 p-2 rounded-lg bg-green-900/10 border border-green-500/20">
+              <span className="text-green-300 text-sm">✓</span>
+              <div className="flex-1">
+                <div className="text-[10px] font-medium text-green-300 mb-0.5">
+                  محدودیت ۲:
                 </div>
                 <div className="text-[10px] text-slate-400">
                   مبدا مسافر باید قبل از مقصد مسافر باشد:{" "}
@@ -444,7 +458,7 @@ function AlgorithmPage() {
               <span className="text-green-300 text-sm">✓</span>
               <div className="flex-1">
                 <div className="text-[10px] font-medium text-green-300 mb-0.5">
-                  محدودیت ۲:
+                  محدودیت ۳:
                 </div>
                 <div className="text-[10px] text-slate-400">
                   مبدا بسته باید قبل از مقصد بسته باشد:{" "}
@@ -456,24 +470,50 @@ function AlgorithmPage() {
               <span className="text-green-300 text-sm">✓</span>
               <div className="flex-1">
                 <div className="text-[10px] font-medium text-green-300 mb-0.5">
-                  محدودیت ۳:
+                  محدودیت ۴:
                 </div>
                 <div className="text-[10px] text-slate-400">
-                ترتیب اولیه بر اساس تنظیمات کاربر (مسافر اول یا بسته اول)
+                  اگر "بسته اول" انتخاب شده باشد: مبدا بسته باید قبل از مبدا
+                  مسافر باشد
                 </div>
               </div>
             </div>
           </div>
-          <div className="rounded-lg bg-slate-900/50 p-3 border border-slate-700/30">
+          <div className="rounded-lg bg-slate-900/50 p-3 border border-slate-700/30 mb-3">
             <div className="text-[10px] text-slate-300 mb-3">
-              برای هر ترتیب معتبر، فاصله کل مسیر محاسبه می‌شود:
+              الگوریتم همه ترکیب‌های معتبر را تولید می‌کند:
+            </div>
+            <div className="bg-slate-800/40 rounded-lg p-3 mb-3">
+              <div className="font-mono text-[10px] text-slate-300 space-y-1.5">
+                <div>1. تولید همه جایگشت‌های ۴ نقطه (مبدا/مقصد مسافر و بسته)</div>
+                <div>2. فیلتر کردن ترکیب‌های نامعتبر (نقض محدودیت‌ها)</div>
+                <div>3. اضافه کردن راننده به ابتدای هر ترکیب معتبر</div>
+                <div>4. محاسبه فاصله کل برای هر مسیر:</div>
               </div>
+            </div>
             <div className="bg-slate-800/40 rounded-lg p-3 mb-3">
                 <BlockMath math="D_{total} = \sum_{i=1}^{n-1} d(point_i, point_{i+1})" />
               </div>
             <div className="text-[10px] text-slate-500">
               ترتیبی که کمترین <InlineMath math="D_{total}" /> را دارد به عنوان
               مسیر بهینه انتخاب می‌شود.
+            </div>
+          </div>
+          <div className="rounded-lg bg-purple-900/15 border border-purple-500/25 p-3">
+            <div className="text-[10px] font-medium text-purple-300 mb-1.5">
+              💡 مثال ترکیب‌های معتبر:
+            </div>
+            <div className="text-[10px] text-purple-200/80 space-y-1">
+              <div>
+                • Driver → P_passenger → P_parcel → D_passenger → D_parcel
+              </div>
+              <div>
+                • Driver → P_parcel → P_passenger → D_passenger → D_parcel
+              </div>
+              <div className="text-slate-400 mt-1.5">
+                (در حالت "بسته اول": فقط ترکیب‌هایی که P_parcel قبل از
+                P_passenger است معتبر هستند)
+              </div>
             </div>
           </div>
         </section>
@@ -496,37 +536,39 @@ function AlgorithmPage() {
             data-animate="text"
             className="mb-4 text-xs leading-relaxed text-slate-300"
           >
-            هر بسته بر اساس ۴ معیار مختلف امتیازدهی می‌شود.{" "}
+            هر بسته بر اساس ۴ معیار مختلف امتیازدهی می‌شود. برای مقایسه عادلانه،
+            همه معیارها ابتدا نرمال‌سازی می‌شوند (به بازه 0 تا 1) و سپس با وزن‌های
+            مشخص ترکیب می‌شوند.{" "}
             <strong className="text-white">امتیاز کمتر بهتر است</strong> و
             نشان‌دهنده مناسب‌تر بودن بسته برای راننده است.
           </p>
           <div className="rounded-lg bg-slate-900/50 p-3 border border-slate-700/30 mb-3">
             <div className="text-xs font-medium text-yellow-300 mb-3">
-              فرمول امتیازدهی:
+              فرمول امتیازدهی (با نرمال‌سازی):
             </div>
             <div className="bg-slate-800/40 rounded-lg p-3 mb-3">
-                <BlockMath math="Score = w_1 \times D_{total} + w_2 \times D_{detour} + w_3 \times D_{first} + w_4 \times A_{norm}" />
+                <BlockMath math="Score = w_1 \times D_{total}^{norm} + w_2 \times D_{detour}^{norm} + w_3 \times D_{first}^{norm} + w_4 \times A_{norm}" />
               </div>
-            <div className="space-y-2 text-[10px]">
+            <div className="space-y-2 text-[10px] mb-3">
               {[
                 {
                   w: "w₁ = 0.35",
-                  desc: "D_total: فاصله کل مسیر (کیلومتر)",
+                  desc: "D_total^norm: فاصله کل مسیر نرمال‌سازی شده",
                   color: "text-blue-300",
                 },
                 {
                   w: "w₂ = 0.30",
-                  desc: "D_detour: انحراف از مسیر مستقیم مسافر (کیلومتر)",
+                  desc: "D_detour^norm: انحراف از مسیر مستقیم نرمال‌سازی شده",
                   color: "text-red-300",
                 },
                 {
                   w: "w₃ = 0.15",
-                  desc: "D_first: فاصله راننده تا اولین نقطه برداشت (کیلومتر)",
+                  desc: "D_first^norm: فاصله تا اولین نقطه برداشت نرمال‌سازی شده",
                   color: "text-green-300",
                 },
                 {
                   w: "w₄ = 0.20",
-                  desc: "A_norm: هم‌راستایی مسیر (فاصله مقصد بسته تا وسط مسیر مسافر)",
+                  desc: "A_norm: هم‌راستایی مسیر (فاصله عمود مقصد بسته تا خط مسیر مسافر)",
                   color: "text-orange-300",
                 },
               ].map((item, idx) => (
@@ -544,22 +586,68 @@ function AlgorithmPage() {
                 </div>
               ))}
             </div>
+            <div className="rounded-lg bg-indigo-900/15 border border-indigo-500/25 p-2 mb-3">
+              <div className="text-[10px] font-medium text-indigo-300 mb-1.5">
+                💡 چرا نرمال‌سازی؟
+              </div>
+              <p className="text-[10px] text-indigo-200/80">
+                نرمال‌سازی باعث می‌شود همه معیارها در مقیاس یکسان (0 تا 1) قرار
+                گیرند و مقایسه عادلانه‌تری انجام شود. برای هر معیار، مقدار
+                حداکثر در بین تمام بسته‌های فیلتر شده پیدا می‌شود و همه مقادیر
+                بر آن تقسیم می‌شوند.
+              </p>
+            </div>
           </div>
           <div className="rounded-lg bg-blue-900/15 border border-blue-500/25 p-3">
             <div className="text-[10px] font-medium text-blue-300 mb-2">
-              فرمول‌های نرمال‌سازی:
+              فرمول‌های نرمال‌سازی و محاسبه:
               </div>
-            <div className="space-y-2">
-              <div className="bg-slate-900/40 rounded-lg p-2">
-                <BlockMath math="A_{norm} = \min\left(\frac{distance\_to\_route}{10}, 1\right)" />
-                <div className="text-[10px] text-slate-500 mt-1">
-                  هم‌راستایی مسیر (حداکثر 10 کیلومتر)
+            <div className="space-y-3">
+              <div className="bg-slate-900/40 rounded-lg p-3">
+                <div className="text-[10px] font-medium text-blue-200 mb-1.5">
+                  ۱. نرمال‌سازی فاصله کل:
+                </div>
+                <BlockMath math="D_{total}^{norm} = \frac{D_{total}}{D_{total}^{max}}" />
+                <div className="text-[10px] text-slate-500 mt-1.5">
+                  که در آن <InlineMath math="D_{total}^{max}" /> = حداکثر فاصله کل
+                  در بین تمام بسته‌های فیلتر شده
                 </div>
               </div>
-              <div className="bg-slate-900/40 rounded-lg p-2">
-                <BlockMath math="D_{detour} = \max(D_{total} - D_{direct}, 0)" />
-                <div className="text-[10px] text-slate-500 mt-1">
-                  انحراف از مسیر مستقیم (همیشه مثبت)
+              <div className="bg-slate-900/40 rounded-lg p-3">
+                <div className="text-[10px] font-medium text-blue-200 mb-1.5">
+                  ۲. نرمال‌سازی انحراف:
+                </div>
+                <div className="space-y-1.5">
+                  <BlockMath math="D_{detour} = \max(D_{total} - D_{direct}, 0)" />
+                  <BlockMath math="D_{detour}^{norm} = \frac{D_{detour}}{D_{detour}^{max}}" />
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1.5">
+                  <InlineMath math="D_{direct}" /> = فاصله مستقیم مسیر مسافر
+                  (بدون بسته)
+                </div>
+              </div>
+              <div className="bg-slate-900/40 rounded-lg p-3">
+                <div className="text-[10px] font-medium text-blue-200 mb-1.5">
+                  ۳. نرمال‌سازی فاصله اولیه:
+                </div>
+                <div className="space-y-1.5">
+                  <BlockMath math="D_{first} = \min(d(driver, parcel), d(driver, passenger))" />
+                  <BlockMath math="D_{first}^{norm} = \frac{D_{first}}{D_{first}^{max}}" />
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1.5">
+                  فاصله تا نزدیک‌ترین نقطه برداشت (بسته یا مسافر)
+                </div>
+              </div>
+              <div className="bg-slate-900/40 rounded-lg p-3">
+                <div className="text-[10px] font-medium text-blue-200 mb-1.5">
+                  ۴. هم‌راستایی مسیر:
+                </div>
+                <div className="space-y-1.5">
+                  <BlockMath math="A = d(D_{parcel}, line(P_{passenger}, D_{passenger}))" />
+                  <BlockMath math="A_{norm} = \min\left(\frac{A}{A^{max}}, 1\right)" />
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1.5">
+                  فاصله عمود از مقصد بسته تا خط مسیر مسافر (نه نقطه وسط!)
                 </div>
               </div>
             </div>
@@ -711,15 +799,60 @@ function AlgorithmPage() {
                   className="w-1.5 h-1.5 rounded-full bg-teal-300"
                 ></div>
                 <h3 className="text-xs font-medium text-teal-300">
-                  پیچیدگی مکانی
+                  پیچیدگی فضایی (حافظه)
                 </h3>
               </div>
               <div className="bg-slate-900/40 rounded-lg p-3 mb-2">
                 <div className="text-sm font-mono text-teal-300 mb-1.5">
                   <InlineMath math="O(m)" />
                 </div>
-                <div className="text-[10px] text-slate-500">
-                  برای ذخیره لیست بسته‌های فیلتر شده و امتیازهای محاسبه شده
+                <div className="text-[10px] text-slate-500 space-y-1.5 mb-2">
+                  <div>
+                    <InlineMath math="m" /> = تعداد بسته‌های فیلتر شده
+                  </div>
+                  <div className="text-slate-400 mt-2">
+                    <strong className="text-teal-300">پیچیدگی فضایی</strong> به
+                    میزان حافظه‌ای که الگوریتم در حین اجرا استفاده می‌کند اشاره
+                    دارد.
+                  </div>
+                </div>
+                <div className="rounded-lg bg-slate-800/60 p-2 border border-slate-700/40">
+                  <div className="text-[10px] font-medium text-teal-200 mb-1.5">
+                    داده‌های ذخیره شده در حافظه:
+                  </div>
+                  <div className="text-[10px] text-slate-400 space-y-1">
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-teal-300">•</span>
+                      <span>
+                        آرایه بسته‌های فیلتر شده: <InlineMath math="O(m)" />
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-teal-300">•</span>
+                      <span>
+                        داده‌های مسیر برای هر بسته: <InlineMath math="O(m)" />
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-teal-300">•</span>
+                      <span>
+                        امتیازهای محاسبه شده: <InlineMath math="O(m)" />
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <span className="text-teal-300">•</span>
+                      <span>
+                        آرایه نهایی پیشنهادات: <InlineMath math="O(m)" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-[10px] text-slate-500 mt-2 pt-2 border-t border-slate-700/40">
+                  <strong className="text-teal-300">نکته:</strong> برای هر بسته،
+                  یک مسیر (حداکثر 5 نقطه) محاسبه می‌شود اما این مسیرها به صورت
+                  موقت ذخیره می‌شوند و پس از محاسبه امتیاز، فقط امتیاز نهایی
+                  نگه داشته می‌شود. بنابراین پیچیدگی فضایی خطی است و به تعداد
+                  بسته‌های فیلتر شده بستگی دارد.
                 </div>
               </div>
             </div>

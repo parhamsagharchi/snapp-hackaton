@@ -7,7 +7,7 @@ function PassengersPage() {
   const passengers = useMapStore((state) => state.passengers);
 
   return (
-    <PageLayout title="مدیریت مسافر‌ها">
+    <PageLayout title="مسافر‌ها">
       <DataTable
         data={passengers}
         columns={[

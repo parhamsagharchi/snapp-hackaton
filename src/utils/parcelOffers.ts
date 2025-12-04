@@ -4,7 +4,6 @@ import type { ParcelOffer } from "./parcelOffers.types";
 import { getDefaultDestination } from "./parcelValidation";
 import {
   RADIUS_TOLERANCE,
-  MAX_ROUTE_ALIGNMENT_DISTANCE,
   AVERAGE_SPEED_KMH,
   SCORING_WEIGHTS,
   DEFAULT_MAX_OFFERS,
@@ -57,51 +56,70 @@ export function findBestParcelOffers(
 
   if (parcelsInRadius.length === 0) return [];
 
-  // Score each parcel
-  const offers: ParcelOffer[] = parcelsInRadius
-    .map((parcel) => {
-      // Use parcel destination or default offset (more realistic distance)
-      const parcelDest = parcel.destination || getDefaultDestination(parcel);
+  // Calculate all routes first to get normalization ranges
+  const routeData = parcelsInRadius.map((parcel) => {
+    const parcelDest = parcel.destination || getDefaultDestination(parcel);
+    const route = optimizeDriverRoute(
+      driver,
+      passenger,
+      passengerDest,
+      parcel,
+      parcelDest,
+      packageFirst
+    );
+    const totalDistance = route.totalDistance;
+    const detourDistance = Math.max(totalDistance - directPassengerRoute, 0);
+    const driverToParcel = calculateDistance(driver, parcel);
+    const driverToPassenger = calculateDistance(driver, passenger);
+    
+    // Calculate distance from parcel destination to passenger route line
+    // Using perpendicular distance formula for better accuracy
+    const parcelDestToRoute = calculateDistanceToLineSegment(
+      parcelDest,
+      passenger,
+      passengerDest
+    );
 
-      // Calculate optimized route using TSP
-      const route = optimizeDriverRoute(
-        driver,
-        passenger,
-        passengerDest,
-        parcel,
-        parcelDest,
-        packageFirst
-      );
+    return {
+      parcel,
+      route,
+      totalDistance,
+      detourDistance,
+      driverToParcel,
+      driverToPassenger,
+      parcelDestToRoute,
+    };
+  });
 
-      const totalDistance = route.totalDistance;
-      const detourDistance = totalDistance - directPassengerRoute;
+  // Find max values for normalization
+  const maxTotalDistance = Math.max(...routeData.map((r) => r.totalDistance), 1);
+  const maxDetourDistance = Math.max(...routeData.map((r) => r.detourDistance), 1);
+  const maxFirstPickup = Math.max(
+    ...routeData.map((r) => Math.min(r.driverToParcel, r.driverToPassenger)),
+    1
+  );
+  const maxRouteAlignment = Math.max(
+    ...routeData.map((r) => r.parcelDestToRoute),
+    1
+  );
 
-      // Calculate distances for scoring
-      const driverToParcel = calculateDistance(driver, parcel);
-      const driverToPassenger = calculateDistance(driver, passenger);
+  // Score each parcel with normalized values
+  const offers: ParcelOffer[] = routeData
+    .map((data) => {
+      const { parcel, totalDistance, detourDistance, driverToParcel, driverToPassenger, parcelDestToRoute } = data;
 
-      // Check if parcel destination is on the way
-      const passengerRouteMidpoint = {
-        lat: (passenger.lat + passengerDest.lat) / 2,
-        lng: (passenger.lng + passengerDest.lng) / 2,
-      };
-      const parcelDestToRoute = calculateDistance(
-        parcelDest,
-        passengerRouteMidpoint
-      );
+      // Normalize all factors to 0-1 range (lower is better)
+      const normalizedTotalDistance = totalDistance / maxTotalDistance;
+      const normalizedDetourDistance = detourDistance / maxDetourDistance;
+      const normalizedFirstPickup = Math.min(driverToParcel, driverToPassenger) / maxFirstPickup;
+      const normalizedRouteAlignment = Math.min(parcelDestToRoute / maxRouteAlignment, 1);
 
-      // Scoring algorithm (lower is better)
-      const routeAlignmentFactor = Math.min(
-        parcelDestToRoute / MAX_ROUTE_ALIGNMENT_DISTANCE,
-        1
-      );
-
+      // Calculate weighted score (lower is better)
       const score =
-        totalDistance * SCORING_WEIGHTS.TOTAL_DISTANCE +
-        Math.max(detourDistance, 0) * SCORING_WEIGHTS.DETOUR_DISTANCE +
-        Math.min(driverToParcel, driverToPassenger) *
-          SCORING_WEIGHTS.FIRST_PICKUP_DISTANCE +
-        routeAlignmentFactor * 10 * SCORING_WEIGHTS.ROUTE_ALIGNMENT;
+        normalizedTotalDistance * SCORING_WEIGHTS.TOTAL_DISTANCE +
+        normalizedDetourDistance * SCORING_WEIGHTS.DETOUR_DISTANCE +
+        normalizedFirstPickup * SCORING_WEIGHTS.FIRST_PICKUP_DISTANCE +
+        normalizedRouteAlignment * SCORING_WEIGHTS.ROUTE_ALIGNMENT;
 
       // Estimate time (assuming average speed)
       const estimatedTime = (totalDistance / AVERAGE_SPEED_KMH) * 60;
@@ -118,4 +136,42 @@ export function findBestParcelOffers(
     .slice(0, maxOffers);
 
   return offers;
+}
+
+/**
+ * Calculate perpendicular distance from a point to a line segment
+ * Returns the minimum distance from point to any point on the line segment
+ */
+function calculateDistanceToLineSegment(
+  point: { lat: number; lng: number },
+  lineStart: { lat: number; lng: number },
+  lineEnd: { lat: number; lng: number }
+): number {
+  // Convert to Cartesian-like coordinates for calculation
+  // Using simplified approach: calculate distance to closest point on line segment
+  
+  // Vector from lineStart to lineEnd
+  const dx = lineEnd.lng - lineStart.lng;
+  const dy = lineEnd.lat - lineStart.lat;
+  const lineLengthSq = dx * dx + dy * dy;
+
+  if (lineLengthSq === 0) {
+    // Line segment is a point
+    return calculateDistance(point, lineStart);
+  }
+
+  // Vector from lineStart to point
+  const px = point.lng - lineStart.lng;
+  const py = point.lat - lineStart.lat;
+
+  // Project point onto line segment
+  const t = Math.max(0, Math.min(1, (px * dx + py * dy) / lineLengthSq));
+  
+  // Closest point on line segment
+  const closestPoint = {
+    lat: lineStart.lat + t * dy,
+    lng: lineStart.lng + t * dx,
+  };
+
+  return calculateDistance(point, closestPoint);
 }

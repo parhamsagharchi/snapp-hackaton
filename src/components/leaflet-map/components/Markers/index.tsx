@@ -118,8 +118,8 @@ export const Markers = () => {
     currentPath === "/parcels" || 
     (currentPath === "/" && selectedPassenger !== null);
 
-  // Driver is always draggable on driver and settings pages
-  const driverIsActive = showDriver && (currentPath === "/driver" || currentPath === "/settings");
+  // Driver is draggable only on driver page
+  const driverIsActive = showDriver && currentPath === "/driver";
   const driverShortLabel = driver.displayName
     ? driver.displayName.charAt(0)
     : "ر";
