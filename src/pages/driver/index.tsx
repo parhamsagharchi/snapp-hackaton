@@ -46,8 +46,8 @@ function DriverPage() {
   if (!driver) {
     return (
       <PageLayout title="مدیریت راننده">
-        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
-          <p className="text-slate-300">در حال بارگذاری...</p>
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+          <p className="text-xs text-slate-300">در حال بارگذاری...</p>
         </div>
       </PageLayout>
     );
@@ -73,10 +73,10 @@ function DriverPage() {
   return (
     <PageLayout title="ویرایش اطلاعات راننده">
       {/* Form */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
+          className="space-y-3"
           autoCapitalize="off"
           autoComplete="off"
           spellCheck="false"

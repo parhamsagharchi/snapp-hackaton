@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import clsx from "clsx";
 import logo from "@/assets/images/logo.svg";
 import LeafletMap from "@/components/leaflet-map";
@@ -10,9 +10,13 @@ const navItems = [
   { to: "/parcels", label: "بسته‌ها" },
   { to: "/driver", label: "راننده" },
   { to: "/settings", label: "تنظیمات" },
+  { to: "/algorithm", label: "الگوریتم" },
 ];
 
 export function Layout() {
+  const location = useLocation();
+  const isAlgorithmPage = location.pathname === "/algorithm";
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 overflow-x-hidden">
       {/* Top header */}
@@ -50,32 +54,39 @@ export function Layout() {
       {/* Main content with overlap */}
       <main className="-mt-28 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-          {/* Two sections: Page Content and Map */}
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,2.5fr)_minmax(0,1.8fr)] w-full">
-            {/* Page Content Section */}
-            <section className="rounded-2xl border border-slate-700/70 bg-slate-800/80 p-6 shadow-xl shadow-black/40 overflow-y-auto max-h-[calc(100vh-200px)]">
+          {isAlgorithmPage ? (
+            /* Full width for algorithm page */
+            <section className="rounded-2xl border border-slate-700/70 bg-slate-800/80 p-3 shadow-xl shadow-black/40 overflow-y-auto max-h-[calc(100vh-200px)]">
               <Outlet />
             </section>
+          ) : (
+            /* Two sections: Page Content and Map */
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,2.25fr)_minmax(0,1.75fr)] w-full">
+              {/* Page Content Section */}
+              <section className="rounded-2xl border border-slate-700/70 bg-slate-800/80 p-6 shadow-xl shadow-black/40 overflow-y-auto max-h-[calc(100vh-200px)]">
+                <Outlet />
+              </section>
 
-            {/* Map Section */}
-            <section className="rounded-2xl border border-slate-700/10 bg-slate-800/10  shadow-xl shadow-black/40 overflow-hidden sticky top-4">
-              <div className="h-full min-h-[600px] w-full">
-                <LeafletMap
-                  className="h-full w-full"
-                  render={
-                    <>
-                      <LeafletMapItems.MapClickHandler />
-                      <LeafletMapItems.ActivePinMarker />
-                      <LeafletMapItems.Markers />
-                      <LeafletMapItems.Polygons />
-                      <LeafletMapItems.SelectionCircle />
-                      <LeafletMapItems.RoutePolyline />
-                    </>
-                  }
-                />
-              </div>
-            </section>
-          </div>
+              {/* Map Section */}
+              <section className="rounded-2xl border border-slate-700/10 bg-slate-800/10  shadow-xl shadow-black/40 overflow-hidden sticky top-4">
+                <div className="h-full min-h-[600px] w-full">
+                  <LeafletMap
+                    className="h-full w-full"
+                    render={
+                      <>
+                        <LeafletMapItems.MapClickHandler />
+                        <LeafletMapItems.ActivePinMarker />
+                        <LeafletMapItems.Markers />
+                        <LeafletMapItems.Polygons />
+                        <LeafletMapItems.SelectionCircle />
+                        <LeafletMapItems.RoutePolyline />
+                      </>
+                    }
+                  />
+                </div>
+              </section>
+            </div>
+          )}
 
           <footer className="mt-10 border-t border-slate-800/80 pt-4 text-xs text-neutral">
             © ۱۴۰۴ هکاتون اسنپ. تمامی حقوق محفوظ است.

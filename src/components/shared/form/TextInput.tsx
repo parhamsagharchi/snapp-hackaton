@@ -14,7 +14,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   ({ label, error, placeholder, className = "", ...props }, ref) => {
     return (
       <div>
-        <label className="mb-2 block text-xs font-normal text-slate-300">
+        <label className="mb-1.5 block text-xs font-normal text-slate-300">
           {label}
         </label>
         <input
@@ -24,7 +24,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           autoCapitalize="off"
           autoComplete="off"
           spellCheck="false"
-          className={`w-full rounded-lg border bg-slate-700/50 px-4 py-2 text-xs text-white placeholder-slate-400 focus:outline-none ${
+          className={`w-full rounded-md border bg-slate-700/50 px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none ${
             error
               ? "border-red-500 focus:border-red-500"
               : "border-slate-600 focus:border-primary"

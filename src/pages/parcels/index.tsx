@@ -81,13 +81,13 @@ function ParcelsPage() {
   return (
     <PageLayout title="مدیریت بسته‌ها">
       {/* Form */}
-      <div className="space-y-4">
-        <h2 className="text-base font-medium text-white">
+      <div className="space-y-3">
+        <h2 className="text-sm font-medium text-white">
           {editingIndex !== null ? "ویرایش بسته" : "افزودن بسته جدید"}
         </h2>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
+          className="space-y-3"
           autoCapitalize="off"
           autoComplete="off"
           spellCheck="false"

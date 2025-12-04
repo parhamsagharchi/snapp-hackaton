@@ -1,5 +1,6 @@
 import { Polyline, Marker, Popup } from "react-leaflet";
 import { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useMapStore } from "@/store/map.store";
 import { useSettingsStore } from "@/store/settings.store";
 import L from "leaflet";
@@ -259,6 +260,7 @@ function RouteArc({
 }
 
 export const RoutePolyline = () => {
+  const location = useLocation();
   const driver = useMapStore((state) => state.driver);
   const selectedPassenger = useMapStore((state) => state.selectedPassenger);
   const selectedParcel = useMapStore((state) => state.selectedParcel);
@@ -269,17 +271,22 @@ export const RoutePolyline = () => {
 
   const [activeArcIndex, setActiveArcIndex] = useState<number | null>(null);
 
+  // Only show route polylines on home page
+  const currentPath = location.pathname;
+  const isHomePage = currentPath === "/";
+
   // Reset active arc when simulation stops
   useEffect(() => {
     if (!simulationActive) {
       setActiveArcIndex(null);
-    } else if (activeArcIndex === null) {
-      // Start animation from first arc
+    } else if (activeArcIndex === null && isHomePage) {
+      // Start animation from first arc only on home page
       setActiveArcIndex(0);
     }
-  }, [simulationActive, activeArcIndex]);
+  }, [simulationActive, activeArcIndex, isHomePage]);
 
-  if (!selectedPassenger || !selectedParcel) {
+  // Don't show route polylines on other pages
+  if (!isHomePage || !selectedPassenger || !selectedParcel) {
     return null;
   }
 

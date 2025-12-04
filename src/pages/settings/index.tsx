@@ -23,18 +23,18 @@ function SettingPage() {
 
   return (
     <PageLayout title="تنظیمات">
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Route Order Preference */}
-        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
-          <h3 className="mb-4 text-lg font-semibold text-slate-100">
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+          <h3 className="mb-2 text-sm font-semibold text-slate-100">
             ترتیب مسیر
           </h3>
-          <p className="mb-4 text-sm text-slate-300">
+          <p className="mb-2 text-xs text-slate-300">
             انتخاب کنید که راننده ابتدا مسافر را سوار کند یا ابتدا بسته را
             بردارد
           </p>
-          <div className="space-y-3">
-            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 transition-all hover:bg-slate-800/50">
+          <div className="space-y-2">
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700/50 bg-slate-800/30 p-2 transition-all hover:bg-slate-800/50">
               <input
                 type="radio"
                 name="routeOrder"
@@ -45,10 +45,10 @@ function SettingPage() {
                     e.target.value as "passenger_first" | "package_first"
                   )
                 }
-                className="h-4 w-4 cursor-pointer accent-primary"
+                className="h-3.5 w-3.5 cursor-pointer accent-primary"
               />
               <div className="flex-1">
-                <div className="font-medium text-slate-100">
+                <div className="text-xs font-medium text-slate-100">
                   ابتدا مسافر را سوار کن
                 </div>
                 <div className="text-xs text-slate-400">
@@ -57,7 +57,7 @@ function SettingPage() {
               </div>
             </label>
 
-            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-4 transition-all hover:bg-slate-800/50">
+            <label className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700/50 bg-slate-800/30 p-2 transition-all hover:bg-slate-800/50">
               <input
                 type="radio"
                 name="routeOrder"
@@ -68,10 +68,10 @@ function SettingPage() {
                     e.target.value as "passenger_first" | "package_first"
                   )
                 }
-                className="h-4 w-4 cursor-pointer accent-primary"
+                className="h-3.5 w-3.5 cursor-pointer accent-primary"
               />
               <div className="flex-1">
-                <div className="font-medium text-slate-100">
+                <div className="text-xs font-medium text-slate-100">
                   ابتدا بسته را بردار
                 </div>
                 <div className="text-xs text-slate-400">
@@ -83,15 +83,15 @@ function SettingPage() {
         </div>
 
         {/* Origin Selection Radius */}
-        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
-          <h3 className="mb-4 text-lg font-semibold text-slate-100">
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+          <h3 className="mb-2 text-sm font-semibold text-slate-100">
             شعاع انتخاب مبدا (بین مبدا مسافر و مبدا بسته)
           </h3>
-          <p className="mb-4 text-sm text-slate-300">
+          <p className="mb-2 text-xs text-slate-300">
             تعیین کنید که مبدا بسته‌ها باید در چه شعاعی از مبدا مسافر باشند
           </p>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <input
                 type="range"
                 min="1000"
@@ -103,7 +103,7 @@ function SettingPage() {
                 }
                 className="flex-1 cursor-pointer accent-primary"
               />
-              <div className="min-w-[80px] text-right text-sm font-medium text-slate-100">
+              <div className="min-w-[70px] text-right text-xs font-medium text-slate-100">
                 {(originSelectionRadius / 1000).toFixed(1)} کیلومتر
               </div>
             </div>
@@ -115,15 +115,15 @@ function SettingPage() {
         </div>
 
         {/* Destination Selection Radius */}
-        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
-          <h3 className="mb-4 text-lg font-semibold text-slate-100">
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+          <h3 className="mb-2 text-sm font-semibold text-slate-100">
             شعاع انتخاب مقصد (بین مقصد مسافر و مقصد بسته)
           </h3>
-          <p className="mb-4 text-sm text-slate-300">
+          <p className="mb-2 text-xs text-slate-300">
             تعیین کنید که مقصد بسته‌ها باید در چه شعاعی از مقصد مسافر باشند
           </p>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <input
                 type="range"
                 min="1000"
@@ -135,7 +135,7 @@ function SettingPage() {
                 }
                 className="flex-1 cursor-pointer accent-primary"
               />
-              <div className="min-w-[80px] text-right text-sm font-medium text-slate-100">
+              <div className="min-w-[70px] text-right text-xs font-medium text-slate-100">
                 {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر
               </div>
             </div>

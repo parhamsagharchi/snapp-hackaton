@@ -45,13 +45,13 @@ export function DataTable<T = Record<string, unknown>>({
               {columns.map((column, idx) => (
                 <th
                   key={idx}
-                  className={`px-4 py-3 text-right text-xs font-medium text-slate-300 ${column.className || ""}`}
+                  className={`px-3 py-2 text-right text-xs font-medium text-slate-300 ${column.className || ""}`}
                 >
                   {column.header}
                 </th>
               ))}
               {showActions && (onEdit || onDelete) && (
-                <th className="px-4 py-3 text-right text-xs font-medium text-slate-300">
+                <th className="px-3 py-2 text-right text-xs font-medium text-slate-300">
                   عملیات
                 </th>
               )}
@@ -62,7 +62,7 @@ export function DataTable<T = Record<string, unknown>>({
               <tr>
                 <td
                   colSpan={columns.length + (showActions ? 1 : 0)}
-                  className="px-4 py-8 text-center text-slate-400"
+                  className="px-3 py-6 text-center text-xs text-slate-400"
                 >
                   {emptyMessage}
                 </td>
@@ -76,18 +76,18 @@ export function DataTable<T = Record<string, unknown>>({
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-4 py-3 text-xs text-slate-300 ${column.className || ""}`}
+                      className={`px-3 py-2 text-xs text-slate-300 ${column.className || ""}`}
                     >
                       {renderCell(column, row, rowIndex)}
                     </td>
                   ))}
                   {showActions && (onEdit || onDelete) && (
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1.5">
                         {onEdit && (
                           <button
                             onClick={() => onEdit(rowIndex)}
-                            className="rounded p-1 text-blue-400 transition hover:bg-blue-400/20"
+                            className="rounded p-0.5 text-blue-400 transition hover:bg-blue-400/20"
                             aria-label="ویرایش"
                           >
                             <Edit2 className="h-3.5 w-3.5" />
@@ -96,7 +96,7 @@ export function DataTable<T = Record<string, unknown>>({
                         {onDelete && (
                           <button
                             onClick={() => onDelete(rowIndex)}
-                            className="rounded p-1 text-red-400 transition hover:bg-red-400/20"
+                            className="rounded p-0.5 text-red-400 transition hover:bg-red-400/20"
                             aria-label="حذف"
                           >
                             <Trash2 className="h-3.5 w-3.5" />

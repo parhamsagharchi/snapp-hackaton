@@ -48,7 +48,14 @@ function HomePage() {
       );
     }
     return [];
-  }, [selectedPassenger, driver, parcels, routeOrderPreference, originSelectionRadius, destinationSelectionRadius]);
+  }, [
+    selectedPassenger,
+    driver,
+    parcels,
+    routeOrderPreference,
+    originSelectionRadius,
+    destinationSelectionRadius,
+  ]);
 
   const handleSelectPassenger = (passenger: IPassenger) => {
     if (passenger.orderOptionsActive) {
@@ -69,36 +76,37 @@ function HomePage() {
 
     // Check origin radius
     const originDistance = calculateDistance(selectedPassenger, parcel) * 1000; // Convert to meters
-    
+
     // Use passenger destination or default
     const passengerDest = selectedPassenger.destination || {
       lat: selectedPassenger.lat + 0.05,
       lng: selectedPassenger.lng + 0.05,
     };
-    
+
     // Use parcel destination or default
     const parcelDest = parcel.destination || {
       lat: parcel.lat + 0.05,
       lng: parcel.lng + 0.05,
     };
-    
+
     // Check destination radius
-    const destinationDistance = calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
-    
+    const destinationDistance =
+      calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
+
     if (originDistance > originSelectionRadius) {
       toast.error(
-        `مبدا این بسته خارج از محدوده انتخاب است (${(originDistance / 1000).toFixed(
-          1
-        )} کیلومتر)`
+        `مبدا این بسته خارج از محدوده انتخاب است (${(
+          originDistance / 1000
+        ).toFixed(1)} کیلومتر)`
       );
       return;
     }
-    
+
     if (destinationDistance > destinationSelectionRadius) {
       toast.error(
-        `مقصد این بسته خارج از محدوده انتخاب است (${(destinationDistance / 1000).toFixed(
-          1
-        )} کیلومتر)`
+        `مقصد این بسته خارج از محدوده انتخاب است (${(
+          destinationDistance / 1000
+        ).toFixed(1)} کیلومتر)`
       );
       return;
     }
@@ -139,23 +147,23 @@ function HomePage() {
 
   return (
     <PageLayout title="شبیه‌سازی مسیر">
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Simulation Controls */}
-        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-slate-100">
+              <h3 className="text-sm font-semibold text-slate-100">
                 کنترل شبیه‌سازی
               </h3>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-0.5 text-xs text-slate-400">
                 ابتدا مسافر و سپس بسته را انتخاب کنید
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-1.5">
               {simulationActive ? (
                 <button
                   onClick={handleStopSimulation}
-                  className="rounded-lg bg-red-600 px-4 py-2 font-medium text-white transition-colors hover:bg-red-700"
+                  className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-red-700"
                 >
                   توقف شبیه‌سازی
                 </button>
@@ -163,7 +171,7 @@ function HomePage() {
                 <button
                   onClick={handleStartSimulation}
                   disabled={!selectedPassenger || !selectedParcel}
-                  className="rounded-lg bg-primary px-4 py-2 font-medium text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   شروع شبیه‌سازی
                 </button>
@@ -171,7 +179,7 @@ function HomePage() {
               {(selectedPassenger || selectedParcel) && (
                 <button
                   onClick={handleClearSelection}
-                  className="rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 font-medium text-slate-300 transition-colors hover:bg-slate-600"
+                  className="rounded-md border border-slate-600 bg-slate-700 px-2.5 py-1 text-xs font-medium text-slate-300 transition-colors hover:bg-slate-600"
                 >
                   پاک کردن انتخاب‌ها
                 </button>
@@ -181,16 +189,16 @@ function HomePage() {
 
           {/* Selected Info */}
           {(selectedPassenger || selectedParcel) && (
-            <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="mt-2 grid gap-2 md:grid-cols-2">
               {selectedPassenger && (
-                <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">👤</span>
+                <div className="rounded-md border border-green-500/30 bg-green-500/10 p-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base">👤</span>
                     <div>
-                      <div className="font-semibold text-green-400">
+                      <div className="text-xs font-semibold text-green-400">
                         مسافر انتخاب شده
                       </div>
-                      <div className="text-sm text-slate-300">
+                      <div className="text-xs text-slate-300">
                         {selectedPassenger.displayName}
                       </div>
                     </div>
@@ -199,14 +207,14 @@ function HomePage() {
               )}
 
               {selectedParcel && (
-                <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 p-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">📦</span>
+                <div className="rounded-md border border-orange-500/30 bg-orange-500/10 p-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base">📦</span>
                     <div>
-                      <div className="font-semibold text-orange-400">
+                      <div className="text-xs font-semibold text-orange-400">
                         بسته انتخاب شده
                       </div>
-                      <div className="text-sm text-slate-300">
+                      <div className="text-xs text-slate-300">
                         {selectedParcel.displayName}
                       </div>
                     </div>
@@ -218,11 +226,11 @@ function HomePage() {
 
           {/* Route Info */}
           {optimizedRoute && optimizedRoute.length > 0 && (
-            <div className="mt-4 rounded-lg border border-blue-500/30 bg-blue-500/10 p-4">
-              <div className="font-semibold text-blue-400">
+            <div className="mt-2 rounded-md border border-blue-500/30 bg-blue-500/10 p-2">
+              <div className="text-xs font-semibold text-blue-400">
                 مسیر بهینه‌سازی شده
               </div>
-              <div className="mt-2 text-sm text-slate-300">
+              <div className="mt-1 text-xs text-slate-300">
                 تعداد نقاط: {optimizedRoute.length} | فاصله کل:{" "}
                 {optimizedRoute
                   .reduce((sum, point, i, arr) => {
@@ -237,17 +245,17 @@ function HomePage() {
         </div>
 
         {/* Passengers Section */}
-        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
-          <h3 className="mb-4 text-lg font-semibold text-slate-100">
+        <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+          <h3 className="mb-2 text-sm font-semibold text-slate-100">
             انتخاب مسافر
           </h3>
           {availablePassengers.length === 0 ? (
-            <p className="text-slate-400">
+            <p className="text-xs text-slate-400">
               هیچ مسافر مناسبی موجود نیست (مسافران با گزینه‌های سفارش فعال نمایش
               داده نمی‌شوند)
             </p>
           ) : (
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-1.5 md:grid-cols-2 lg:grid-cols-3">
               {availablePassengers.map((passenger, index) => {
                 const isSelected =
                   selectedPassenger &&
@@ -259,17 +267,17 @@ function HomePage() {
                   <div
                     key={index}
                     onClick={() => handleSelectPassenger(passenger)}
-                    className={`cursor-pointer rounded-lg border p-4 transition-all ${
+                    className={`cursor-pointer rounded-md border p-2 transition-all ${
                       isSelected
                         ? "border-green-500 bg-green-500/20"
                         : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">👤</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">👤</span>
                         <div>
-                          <div className="font-medium text-slate-100">
+                          <div className="text-xs font-medium text-slate-100">
                             {passenger.displayName}
                           </div>
                           <div className="text-xs text-slate-400">
@@ -277,7 +285,9 @@ function HomePage() {
                           </div>
                         </div>
                       </div>
-                      {isSelected && <span className="text-green-400">✓</span>}
+                      {isSelected && (
+                        <span className="text-xs text-green-400">✓</span>
+                      )}
                     </div>
                   </div>
                 );
@@ -288,16 +298,16 @@ function HomePage() {
 
         {/* Parcel Offers Section */}
         {selectedPassenger && (
-          <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-6">
-            <h3 className="mb-4 text-lg font-semibold text-slate-100">
+          <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
+            <h3 className="mb-2 text-sm font-semibold text-slate-100">
               پیشنهادات بسته (الگوریتم TSP)
             </h3>
             {parcelOffers.length === 0 ? (
-              <p className="text-slate-400">
+              <p className="text-xs text-slate-400">
                 بسته مناسبی در محدوده انتخاب شده یافت نشد
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-1.5">
                 {parcelOffers.map((offer, index) => {
                   const isSelected =
                     selectedParcel &&
@@ -312,7 +322,7 @@ function HomePage() {
                     <div
                       key={index}
                       onClick={() => handleSelectParcel(offer.parcel)}
-                      className={`cursor-pointer rounded-lg border p-4 transition-all ${
+                      className={`cursor-pointer rounded-md border p-2 transition-all ${
                         isSelected
                           ? "border-orange-500 bg-orange-500/20"
                           : index === 0
@@ -321,23 +331,25 @@ function HomePage() {
                       }`}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3">
-                          <span className="text-2xl">📦</span>
+                        <div className="flex items-start gap-1.5">
+                          <span className="text-sm">📦</span>
                           <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-slate-100">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-medium text-slate-100">
                                 {offer.parcel.displayName}
                               </span>
                               {index === 0 && (
-                                <span className="rounded bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-400">
+                                <span className="rounded bg-yellow-500/20 px-1 py-0.5 text-xs font-medium text-yellow-400">
                                   ⭐ بهترین پیشنهاد
                                 </span>
                               )}
                               {isSelected && (
-                                <span className="text-orange-400">✓</span>
+                                <span className="text-xs text-orange-400">
+                                  ✓
+                                </span>
                               )}
                             </div>
-                            <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-400">
+                            <div className="mt-1 grid grid-cols-2 gap-1 text-xs text-slate-400">
                               <div>
                                 فاصله تا مسافر: {distance.toFixed(2)} کیلومتر
                               </div>
