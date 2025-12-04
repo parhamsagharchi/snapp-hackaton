@@ -8,13 +8,14 @@ export interface IMapPin {
 
 export interface IPassenger extends IMapPin {
   displayName: string;
-  isActiveRideInHurry: boolean;
-  hasLuggage: boolean;
+  orderOptionsActive: boolean; // If true, algorithm should ignore this passenger
+  destination?: IMapPin; // Optional destination for passenger
 }
 
 export interface IParcel extends IMapPin {
   displayName: string;
   volume: number; // in litres
+  destination?: IMapPin; // Optional destination for parcel
 }
 
 export interface IDriver extends IMapPin {
@@ -27,6 +28,9 @@ interface IMapStore {
   parcels: IParcel[];
   driver: IDriver;
   activePin: IMapPin | null;
+  selectedPassenger: IPassenger | null;
+  selectedParcel: IParcel | null;
+  optimizedRoute: IMapPin[] | null; // TSP optimized route
 
   // Passengers methods
   pushPassenger: (passenger: IPassenger) => void;
@@ -49,6 +53,14 @@ interface IMapStore {
   setDriver: (driver: IDriver) => void;
   updateDriver: (driver: IDriver) => void;
 
+  // Selection methods
+  setSelectedPassenger: (passenger: IPassenger | null) => void;
+  setSelectedParcel: (parcel: IParcel | null) => void;
+  clearSelection: () => void;
+
+  // Route methods
+  setOptimizedRoute: (route: IMapPin[] | null) => void;
+
   // Active pin
   setActivePin: (pin: IMapPin | null) => void;
   resetMapState: () => void;
@@ -67,57 +79,49 @@ const initialPassengers: IPassenger[] = [
     displayName: "علی احمدی",
     lat: 35.73,
     lng: 51.46,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "فاطمه رضایی",
     lat: 35.71,
     lng: 51.47,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "محمد کریمی",
     lat: 35.75,
     lng: 51.48,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "زهرا موسوی",
     lat: 35.7,
     lng: 51.45,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "حسین نوری",
     lat: 35.74,
     lng: 51.46,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "مریم صادقی",
     lat: 35.72,
     lng: 51.48,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "رضا حسینی",
     lat: 35.69,
     lng: 51.46,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
   {
     displayName: "سارا محمدی",
     lat: 35.76,
     lng: 51.47,
-    isActiveRideInHurry: false,
-    hasLuggage: false,
+    orderOptionsActive: false,
   },
 ];
 
@@ -192,6 +196,9 @@ export const useMapStore = create<IMapStore>()(
       parcels: initialParcels,
       driver: initialDriver,
       activePin: null,
+      selectedPassenger: null,
+      selectedParcel: null,
+      optimizedRoute: null,
 
       // Passengers methods
       pushPassenger: (passenger) =>
@@ -266,6 +273,33 @@ export const useMapStore = create<IMapStore>()(
           driver,
         }),
 
+      // Selection methods
+      setSelectedPassenger: (passenger) =>
+        set({
+          selectedPassenger: passenger,
+          // Clear parcel selection when passenger changes
+          selectedParcel: null,
+          optimizedRoute: null,
+        }),
+
+      setSelectedParcel: (parcel) =>
+        set({
+          selectedParcel: parcel,
+        }),
+
+      clearSelection: () =>
+        set({
+          selectedPassenger: null,
+          selectedParcel: null,
+          optimizedRoute: null,
+        }),
+
+      // Route methods
+      setOptimizedRoute: (route) =>
+        set({
+          optimizedRoute: route,
+        }),
+
       // Active pin
       setActivePin: (pin) =>
         set({
@@ -278,25 +312,31 @@ export const useMapStore = create<IMapStore>()(
           parcels: initialParcels,
           driver: initialDriver,
           activePin: null,
+          selectedPassenger: null,
+          selectedParcel: null,
+          optimizedRoute: null,
         }),
     }),
     {
       name: "map-store",
       storage: createJSONStorage(() => localStorage),
-      version: 2, // Increment version to reset old data
+      version: 4, // Increment version to reset old data (changed passenger structure)
       merge: (persistedState: unknown, currentState: IMapStore) => {
         const persisted = persistedState as Partial<IMapStore> & {
           version?: number;
         };
 
         // If version mismatch or no version, use initial data
-        if (!persisted || persisted.version !== 2) {
+        if (!persisted || persisted.version !== 4) {
           return {
             ...currentState,
             passengers: initialPassengers,
             parcels: initialParcels,
             driver: initialDriver,
             activePin: null,
+            selectedPassenger: null,
+            selectedParcel: null,
+            optimizedRoute: null,
           } as IMapStore;
         }
 

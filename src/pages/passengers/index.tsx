@@ -14,8 +14,7 @@ import { useFormWithLocation } from "@/hooks/useFormWithLocation";
 
 type PassengerFormData = {
   displayName: string;
-  isActiveRideInHurry: boolean;
-  hasLuggage: boolean;
+  orderOptionsActive: boolean;
 };
 
 function PassengersPage() {
@@ -28,6 +27,10 @@ function PassengersPage() {
     (state) => state.updatePassengerByIndex
   );
   const setActivePin = useMapStore((state) => state.setActivePin);
+  const selectedPassenger = useMapStore((state) => state.selectedPassenger);
+  const setSelectedPassenger = useMapStore(
+    (state) => state.setSelectedPassenger
+  );
 
   const {
     register,
@@ -38,8 +41,7 @@ function PassengersPage() {
   } = useForm<PassengerFormData>({
     defaultValues: {
       displayName: "",
-      isActiveRideInHurry: false,
-      hasLuggage: false,
+      orderOptionsActive: false,
     },
   });
 
@@ -65,14 +67,35 @@ function PassengersPage() {
   const handleEdit = (index: number) => {
     const passenger = passengers[index];
     setValue("displayName", passenger.displayName || "");
-    setValue("isActiveRideInHurry", passenger.isActiveRideInHurry);
-    setValue("hasLuggage", passenger.hasLuggage);
+    setValue("orderOptionsActive", passenger.orderOptionsActive);
     setActivePin({ lat: passenger.lat, lng: passenger.lng });
     setEditingIndex(index);
   };
 
   const handleDelete = (index: number) => {
+    const passenger = passengers[index];
+    if (
+      selectedPassenger &&
+      selectedPassenger.lat === passenger.lat &&
+      selectedPassenger.lng === passenger.lng
+    ) {
+      setSelectedPassenger(null);
+    }
     removePassengerByIndex(index);
+  };
+
+  const handleSelect = (index: number) => {
+    const passenger = passengers[index];
+    if (
+      selectedPassenger &&
+      selectedPassenger.lat === passenger.lat &&
+      selectedPassenger.lng === passenger.lng
+    ) {
+      setSelectedPassenger(null);
+    } else {
+      setSelectedPassenger(passenger);
+      setActivePin({ lat: passenger.lat, lng: passenger.lng });
+    }
   };
 
   const handleCancel = () => {
@@ -101,13 +124,10 @@ function PassengersPage() {
             error={errors.displayName}
           />
 
-          <div className="flex items-center gap-6">
-            <CheckboxInput
-              label="عجله دارم"
-              {...register("isActiveRideInHurry")}
-            />
-            <CheckboxInput label="بار دارد" {...register("hasLuggage")} />
-          </div>
+          <CheckboxInput
+            label="فعال سازی گزینه های سفارش"
+            {...register("orderOptionsActive")}
+          />
 
           <LocationDisplay activePin={activePin} />
 
@@ -137,22 +157,34 @@ function PassengersPage() {
               `${passenger.lat.toFixed(4)}, ${passenger.lng.toFixed(4)}`,
           },
           {
-            header: "عجله دارم",
+            header: "گزینه های سفارش",
             accessor: (passenger) =>
-              passenger.isActiveRideInHurry ? (
-                <span className="text-green-400">بله</span>
+              passenger.orderOptionsActive ? (
+                <span className="text-yellow-400">فعال</span>
               ) : (
-                <span className="text-slate-500">خیر</span>
+                <span className="text-slate-500">غیرفعال</span>
               ),
           },
           {
-            header: "بار",
-            accessor: (passenger) =>
-              passenger.hasLuggage ? (
-                <span className="text-blue-400">بله</span>
-              ) : (
-                <span className="text-slate-500">خیر</span>
-              ),
+            header: "عملیات",
+            accessor: (passenger, index) => {
+              const isSelected =
+                selectedPassenger &&
+                selectedPassenger.lat === passenger.lat &&
+                selectedPassenger.lng === passenger.lng;
+              return (
+                <button
+                  onClick={() => handleSelect(index)}
+                  className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
+                    isSelected
+                      ? "bg-primary text-white hover:bg-primary/90"
+                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                  }`}
+                >
+                  {isSelected ? "لغو انتخاب" : "انتخاب"}
+                </button>
+              );
+            },
           },
         ]}
         emptyMessage="هیچ مسافری ثبت نشده است"

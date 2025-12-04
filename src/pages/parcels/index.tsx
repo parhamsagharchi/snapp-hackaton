@@ -11,6 +11,8 @@ import { PageLayout } from "@/components/shared/layout/PageLayout";
 import { validationRules } from "@/utils/validation";
 import { toastMessages } from "@/utils/toast-messages";
 import { useFormWithLocation } from "@/hooks/useFormWithLocation";
+import { useSettingsStore } from "@/store/settings.store";
+import { calculateDistance } from "@/utils/tsp";
 
 type ParcelFormData = {
   displayName: string;
@@ -23,6 +25,12 @@ function ParcelsPage() {
   const removeParcelByIndex = useMapStore((state) => state.removeParcelByIndex);
   const updateParcelByIndex = useMapStore((state) => state.updateParcelByIndex);
   const setActivePin = useMapStore((state) => state.setActivePin);
+  const selectedPassenger = useMapStore((state) => state.selectedPassenger);
+  const selectedParcel = useMapStore((state) => state.selectedParcel);
+  const setSelectedParcel = useMapStore((state) => state.setSelectedParcel);
+  const packageSelectionRadius = useSettingsStore(
+    (state) => state.packageSelectionRadius
+  );
 
   const {
     register,
@@ -65,7 +73,32 @@ function ParcelsPage() {
   };
 
   const handleDelete = (index: number) => {
+    const parcel = parcels[index];
+    if (selectedParcel && selectedParcel.lat === parcel.lat && selectedParcel.lng === parcel.lng) {
+      setSelectedParcel(null);
+    }
     removeParcelByIndex(index);
+  };
+
+  const handleSelect = (index: number) => {
+    if (!selectedPassenger) {
+      return; // Can't select parcel without passenger
+    }
+
+    const parcel = parcels[index];
+    const distance = calculateDistance(selectedPassenger, parcel) * 1000; // Convert to meters
+
+    if (distance > packageSelectionRadius) {
+      // Parcel is outside selection radius
+      return;
+    }
+
+    if (selectedParcel && selectedParcel.lat === parcel.lat && selectedParcel.lng === parcel.lng) {
+      setSelectedParcel(null);
+    } else {
+      setSelectedParcel(parcel);
+      setActivePin({ lat: parcel.lat, lng: parcel.lng });
+    }
   };
 
   const handleCancel = () => {
@@ -133,6 +166,47 @@ function ParcelsPage() {
             accessor: (parcel: IParcel) => (
               <span className="text-white">{parcel.volume} لیتر</span>
             ),
+          },
+          {
+            header: "عملیات",
+            accessor: (parcel, index) => {
+              const isSelected =
+                selectedParcel &&
+                selectedParcel.lat === parcel.lat &&
+                selectedParcel.lng === parcel.lng;
+              
+              if (!selectedPassenger) {
+                return (
+                  <span className="text-xs text-slate-500">
+                    ابتدا مسافر انتخاب کنید
+                  </span>
+                );
+              }
+
+              const distance = calculateDistance(selectedPassenger, parcel) * 1000;
+              const isInRange = distance <= packageSelectionRadius;
+
+              if (!isInRange) {
+                return (
+                  <span className="text-xs text-red-400">
+                    خارج از محدوده
+                  </span>
+                );
+              }
+
+              return (
+                <button
+                  onClick={() => handleSelect(index)}
+                  className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
+                    isSelected
+                      ? "bg-primary text-white hover:bg-primary/90"
+                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                  }`}
+                >
+                  {isSelected ? "لغو انتخاب" : "انتخاب"}
+                </button>
+              );
+            },
           },
         ]}
         emptyMessage="هیچ بسته‌ای ثبت نشده است"

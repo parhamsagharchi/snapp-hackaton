@@ -68,6 +68,8 @@ export function Layout() {
                       <LeafletMapItems.ActivePinMarker />
                       <LeafletMapItems.Markers />
                       <LeafletMapItems.Polygons />
+                      <LeafletMapItems.SelectionCircle />
+                      <LeafletMapItems.RoutePolyline />
                     </>
                   }
                 />

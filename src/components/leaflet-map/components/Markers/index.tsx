@@ -5,6 +5,7 @@ import type L from "leaflet";
 import { useMapStore } from "@/store/map.store";
 import type { ICoordinates } from "../../leaflet-map.types";
 import { CustomMarker } from "./CustomMarker";
+import { useRouteOptimization } from "@/hooks/useRouteOptimization";
 
 export const Markers = () => {
   const id = useId();
@@ -13,12 +14,17 @@ export const Markers = () => {
   const parcels = useMapStore((state) => state.parcels);
   const driver = useMapStore((state) => state.driver);
   const activePin = useMapStore((state) => state.activePin);
+  const selectedPassenger = useMapStore((state) => state.selectedPassenger);
+  const selectedParcel = useMapStore((state) => state.selectedParcel);
   const setActivePin = useMapStore((state) => state.setActivePin);
   const updateDriver = useMapStore((state) => state.updateDriver);
   const updatePassengerByIndex = useMapStore(
     (state) => state.updatePassengerByIndex
   );
   const updateParcelByIndex = useMapStore((state) => state.updateParcelByIndex);
+
+  // Calculate optimized route when passenger and parcel are selected
+  useRouteOptimization();
 
   const handleOnClickPin = (pin: ICoordinates) => {
     setActivePin(pin);
@@ -79,7 +85,8 @@ export const Markers = () => {
   const currentPath = location.pathname;
   const showDriver = currentPath === "/" || currentPath === "/driver";
   const showPassengers = currentPath === "/" || currentPath === "/passengers";
-  const showParcels = currentPath === "/parcels"; // Only show parcels on parcels page
+  // Show parcels when on parcels page OR when a passenger is selected
+  const showParcels = currentPath === "/parcels" || selectedPassenger !== null;
 
   const driverIsActive = showDriver && isActivePin(driver.lat, driver.lng);
   const driverShortLabel = driver.displayName
@@ -112,10 +119,11 @@ export const Markers = () => {
       {/* Passengers Markers */}
       {showPassengers &&
         passengers?.map((passenger, index) => {
-          const passengerIsActive = isActivePin(
-            passenger.lat,
-            passenger.lng
-          );
+          const passengerIsActive = isActivePin(passenger.lat, passenger.lng);
+          const isSelected =
+            selectedPassenger &&
+            selectedPassenger.lat === passenger.lat &&
+            selectedPassenger.lng === passenger.lng;
           const shortLabel = passenger.displayName
             ? passenger.displayName.charAt(0)
             : `${index + 1}`;
@@ -125,18 +133,29 @@ export const Markers = () => {
               position={[passenger.lat, passenger.lng]}
               label={passenger.displayName || `مسافر ${index + 1}`}
               shortLabel={shortLabel}
-              color="#10B981"
+              color={isSelected ? "#059669" : "#10B981"}
               onClick={() => handleOnClickPin(passenger)}
               draggable={passengerIsActive}
               onDragEnd={handlePassengerDragEnd(index)}
             >
               <Popup>
                 <div>
-                  <strong>{passenger.displayName || `مسافر ${index + 1}`}</strong>
-                  <div>
-                    عجله دارم: {passenger.isActiveRideInHurry ? "بله" : "خیر"}
+                  <strong>
+                    {passenger.displayName || `مسافر ${index + 1}`}
+                  </strong>
+                  {isSelected && (
+                    <div className="mt-1 text-xs font-semibold text-green-400">
+                      ✓ انتخاب شده
+                    </div>
+                  )}
+                  <div className="mt-1">
+                    گزینه های سفارش:{" "}
+                    {passenger.orderOptionsActive ? (
+                      <span className="text-yellow-400">فعال</span>
+                    ) : (
+                      <span className="text-slate-400">غیرفعال</span>
+                    )}
                   </div>
-                  <div>بار دارد: {passenger.hasLuggage ? "بله" : "خیر"}</div>
                 </div>
               </Popup>
             </CustomMarker>
@@ -147,6 +166,10 @@ export const Markers = () => {
       {showParcels &&
         parcels?.map((parcel, index) => {
           const parcelIsActive = isActivePin(parcel.lat, parcel.lng);
+          const isSelected =
+            selectedParcel &&
+            selectedParcel.lat === parcel.lat &&
+            selectedParcel.lng === parcel.lng;
           const shortLabel = parcel.displayName
             ? parcel.displayName.charAt(0)
             : `${index + 1}`;
@@ -156,7 +179,7 @@ export const Markers = () => {
               position={[parcel.lat, parcel.lng]}
               label={parcel.displayName || `بسته ${index + 1}`}
               shortLabel={shortLabel}
-              color="#F59E0B"
+              color={isSelected ? "#D97706" : "#F59E0B"}
               onClick={() => handleOnClickPin(parcel)}
               draggable={parcelIsActive}
               onDragEnd={handleParcelDragEnd(index)}
@@ -164,6 +187,11 @@ export const Markers = () => {
               <Popup>
                 <div>
                   <strong>{parcel.displayName || `بسته ${index + 1}`}</strong>
+                  {isSelected && (
+                    <div className="mt-1 text-xs font-semibold text-orange-400">
+                      ✓ انتخاب شده
+                    </div>
+                  )}
                   <div>حجم: {parcel.volume} لیتر</div>
                 </div>
               </Popup>
