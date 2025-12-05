@@ -147,13 +147,16 @@ export const useMapStore = create<IMapStore>()(
           version?: number;
         };
 
-        // If version mismatch or no version, use initial data
+        // Preserve driver from persisted state if it exists, even on version mismatch
+        const preservedDriver = persisted?.driver || initialDriver;
+
+        // If version mismatch or no version, use initial data but preserve driver
         if (!persisted || persisted.version !== 4) {
           return {
             ...currentState,
             passengers: initialPassengers,
             parcels: initialParcels,
-            driver: initialDriver,
+            driver: preservedDriver, // Preserve driver even on version mismatch
             selectedPassenger: null,
             selectedParcel: null,
             optimizedRoute: null,
@@ -165,9 +168,9 @@ export const useMapStore = create<IMapStore>()(
           ...currentState,
           ...persisted,
         } as IMapStore;
-        // Ensure driver is never null
-        if (!merged.driver) {
-          merged.driver = initialDriver;
+        // Ensure driver is never null - use persisted driver if available
+        if (!merged.driver || !merged.driver.lat || !merged.driver.lng) {
+          merged.driver = preservedDriver;
         }
         // Ensure initial passengers and parcels exist if arrays are empty
         if (!merged.passengers || merged.passengers.length === 0) {

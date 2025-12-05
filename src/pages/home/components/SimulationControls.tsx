@@ -29,7 +29,7 @@ export function SimulationControls({
             کنترل شبیه‌سازی
           </h3>
           <p className="mt-0.5 text-xs text-slate-400">
-            ابتدا مسافر و سپس بسته را انتخاب کنید
+            ابتدا مسافر را انتخاب کنید (انتخاب بسته اختیاری است)
           </p>
         </div>
         <div className="flex gap-1.5">
@@ -43,7 +43,7 @@ export function SimulationControls({
           ) : (
             <button
               onClick={onStartSimulation}
-              disabled={!selectedPassenger || !selectedParcel}
+              disabled={!selectedPassenger || !optimizedRoute || optimizedRoute.length === 0}
               className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               شروع شبیه‌سازی

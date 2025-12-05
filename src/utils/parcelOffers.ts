@@ -13,11 +13,15 @@ import {
 export type { ParcelOffer } from "./parcelOffers.types";
 
 /**
- * Find best parcel offers for a driver and passenger using TSP algorithm
+ * Find best parcel offers for a driver and passenger using simplified algorithm
  * Returns top N offers sorted by score (lower is better)
- * Filters parcels based on two radii:
- * 1. Origin radius: distance between passenger origin and parcel origin
- * 2. Destination radius: distance between passenger destination and parcel destination
+ * 
+ * Algorithm steps (matching /algorithm page):
+ * 1. Filter by origin radius: d(P_passenger, P_parcel) <= R_origin + tolerance
+ * 2. Filter by destination radius: d(D_passenger, D_parcel) <= R_destination + tolerance
+ * 3. Calculate optimized route for each valid parcel
+ * 4. Score each parcel based on 4 criteria (normalized)
+ * 5. Sort by score and return top N
  */
 export function findBestParcelOffers(
   driver: IDriver,
@@ -28,35 +32,87 @@ export function findBestParcelOffers(
   originSelectionRadius: number = 2000, // in meters, default 2km
   destinationSelectionRadius: number = 2000 // in meters, default 2km
 ): ParcelOffer[] {
-  if (parcels.length === 0) return [];
+  if (parcels.length === 0) {
+    console.log("🔍 [Algorithm] No parcels available");
+    return [];
+  }
 
-  // Use passenger destination or default offset (more realistic distance)
+  // Use passenger destination or default offset
   const passengerDest = passenger.destination || getDefaultDestination(passenger);
 
-  // Calculate direct passenger route distance (baseline)
+  // Calculate direct passenger route distance (baseline for detour calculation)
   const directPassengerRoute = calculateDistance(passenger, passengerDest);
 
-  // Filter parcels based on both origin and destination radii
-  // Add a small tolerance to account for rounding errors and make the filter more user-friendly
-  const parcelsInRadius = parcels.filter((parcel) => {
-    // Check origin radius: distance between passenger origin and parcel origin
+  console.log("🔍 [Algorithm] Starting calculation:", {
+    passenger: passenger.displayName,
+    passengerOrigin: { lat: passenger.lat, lng: passenger.lng },
+    passengerDest: { lat: passengerDest.lat, lng: passengerDest.lng },
+    originRadius: originSelectionRadius,
+    destinationRadius: destinationSelectionRadius,
+    totalParcels: parcels.length,
+  });
+
+  // STEP 1: Filter by origin radius
+  // Condition: d(P_passenger, P_parcel) <= R_origin + tolerance
+  const parcelsAfterOriginFilter = parcels.filter((parcel) => {
     const originDistance = calculateDistance(passenger, parcel) * 1000; // Convert to meters
     const originInRadius = originDistance <= originSelectionRadius + RADIUS_TOLERANCE;
 
-    // Use parcel destination or default offset
-    const parcelDest = parcel.destination || getDefaultDestination(parcel);
+    if (!originInRadius) {
+      console.log(`❌ [Filter Origin] ${parcel.displayName} rejected:`, {
+        distance: `${originDistance.toFixed(1)}m`,
+        maxAllowed: `${originSelectionRadius + RADIUS_TOLERANCE}m`,
+        parcelOrigin: { lat: parcel.lat, lng: parcel.lng },
+        passengerOrigin: { lat: passenger.lat, lng: passenger.lng },
+      });
+    } else {
+      console.log(`✅ [Filter Origin] ${parcel.displayName} passed:`, {
+        distance: `${originDistance.toFixed(1)}m`,
+        maxAllowed: `${originSelectionRadius + RADIUS_TOLERANCE}m`,
+      });
+    }
+    
+    return originInRadius;
+  });
 
-    // Check destination radius: distance between passenger destination and parcel destination
+  console.log(`✅ [Filter Origin] ${parcelsAfterOriginFilter.length} parcels passed origin filter:`, 
+    parcelsAfterOriginFilter.map(p => p.displayName)
+  );
+
+  // STEP 2: Filter by destination radius
+  // Condition: d(D_passenger, D_parcel) <= R_destination + tolerance
+  const parcelsInRadius = parcelsAfterOriginFilter.filter((parcel) => {
+    const parcelDest = parcel.destination || getDefaultDestination(parcel);
     const destinationDistance = calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
     const destinationInRadius = destinationDistance <= destinationSelectionRadius + RADIUS_TOLERANCE;
 
-    // Parcel must satisfy both conditions
-    return originInRadius && destinationInRadius;
+    if (!destinationInRadius) {
+      console.log(`❌ [Filter Destination] ${parcel.displayName} rejected:`, {
+        distance: `${destinationDistance.toFixed(1)}m`,
+        maxAllowed: `${destinationSelectionRadius + RADIUS_TOLERANCE}m`,
+        parcelDest: { lat: parcelDest.lat, lng: parcelDest.lng },
+        passengerDest: { lat: passengerDest.lat, lng: passengerDest.lng },
+      });
+    } else {
+      console.log(`✅ [Filter] ${parcel.displayName} passed both filters:`, {
+        originDistance: `${(calculateDistance(passenger, parcel) * 1000).toFixed(1)}m`,
+        destinationDistance: `${destinationDistance.toFixed(1)}m`,
+      });
+    }
+
+    return destinationInRadius;
   });
 
-  if (parcelsInRadius.length === 0) return [];
+  console.log(`✅ [Filter Destination] ${parcelsInRadius.length} parcels passed both filters:`, 
+    parcelsInRadius.map(p => p.displayName)
+  );
 
-  // Calculate all routes first to get normalization ranges
+  if (parcelsInRadius.length === 0) {
+    console.log("⚠️ [Algorithm] No parcels passed both filters");
+    return [];
+  }
+
+  // STEP 3: Calculate routes for all valid parcels
   const routeData = parcelsInRadius.map((parcel) => {
     const parcelDest = parcel.destination || getDefaultDestination(parcel);
     const route = optimizeDriverRoute(
@@ -73,7 +129,6 @@ export function findBestParcelOffers(
     const driverToPassenger = calculateDistance(driver, passenger);
     
     // Calculate distance from parcel destination to passenger route line
-    // Using perpendicular distance formula for better accuracy
     const parcelDestToRoute = calculateDistanceToLineSegment(
       parcelDest,
       passenger,
@@ -91,7 +146,7 @@ export function findBestParcelOffers(
     };
   });
 
-  // Find max values for normalization
+  // STEP 4: Find max values for normalization
   const maxTotalDistance = Math.max(...routeData.map((r) => r.totalDistance), 1);
   const maxDetourDistance = Math.max(...routeData.map((r) => r.detourDistance), 1);
   const maxFirstPickup = Math.max(
@@ -103,7 +158,14 @@ export function findBestParcelOffers(
     1
   );
 
-  // Score each parcel with normalized values
+  console.log("📊 [Normalization] Max values:", {
+    maxTotalDistance: maxTotalDistance.toFixed(2),
+    maxDetourDistance: maxDetourDistance.toFixed(2),
+    maxFirstPickup: maxFirstPickup.toFixed(2),
+    maxRouteAlignment: maxRouteAlignment.toFixed(2),
+  });
+
+  // STEP 5: Score each parcel with normalized values
   const offers: ParcelOffer[] = routeData
     .map((data) => {
       const { parcel, totalDistance, detourDistance, driverToParcel, driverToPassenger, parcelDestToRoute } = data;
@@ -124,6 +186,18 @@ export function findBestParcelOffers(
       // Estimate time (assuming average speed)
       const estimatedTime = (totalDistance / AVERAGE_SPEED_KMH) * 60;
 
+      console.log(`📈 [Scoring] ${parcel.displayName}:`, {
+        totalDistance: totalDistance.toFixed(2),
+        detourDistance: detourDistance.toFixed(2),
+        score: score.toFixed(4),
+        normalized: {
+          total: normalizedTotalDistance.toFixed(4),
+          detour: normalizedDetourDistance.toFixed(4),
+          first: normalizedFirstPickup.toFixed(4),
+          alignment: normalizedRouteAlignment.toFixed(4),
+        },
+      });
+
       return {
         parcel,
         score,
@@ -134,6 +208,13 @@ export function findBestParcelOffers(
     })
     .sort((a, b) => a.score - b.score)
     .slice(0, maxOffers);
+
+  console.log("🎯 [Algorithm] Final offers:", offers.map((o, i) => ({
+    rank: i + 1,
+    parcel: o.parcel.displayName,
+    score: o.score.toFixed(4),
+    totalDistance: o.totalDistance.toFixed(2),
+  })));
 
   return offers;
 }

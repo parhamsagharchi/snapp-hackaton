@@ -48,7 +48,7 @@ export function Layout() {
             </nav>
 
             <div className="flex items-center gap-3">
-              <img src={logo} alt="اسنپ" className="h-7" />
+              <img src={logo} alt="اسنپ" className="h-10" />
             </div>
           </div>
         </div>

@@ -11,14 +11,17 @@ export function usePassengerSelection() {
   );
 
   const handleSelectPassenger = (passenger: IPassenger) => {
-    if (passenger.orderOptionsActive) {
-      toast.error(
-        "این مسافر گزینه‌های سفارش فعال دارد و نمی‌تواند بسته دریافت کند"
-      );
-      return;
-    }
+    // Allow selection of passengers with orderOptionsActive
+    // They can be picked up but cannot receive parcels
     setSelectedPassenger(passenger);
-    toast.success(`مسافر ${passenger.displayName} انتخاب شد`);
+    if (passenger.orderOptionsActive) {
+      toast.success(
+        `مسافر ${passenger.displayName} انتخاب شد (این مسافر نمی‌تواند بسته دریافت کند)`,
+        { icon: "ℹ️" }
+      );
+    } else {
+      toast.success(`مسافر ${passenger.displayName} انتخاب شد`);
+    }
   };
 
   return { handleSelectPassenger };

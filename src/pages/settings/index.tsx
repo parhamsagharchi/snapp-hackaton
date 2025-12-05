@@ -95,7 +95,7 @@ function SettingPage() {
               <input
                 type="range"
                 min="1000"
-                max="2000"
+                max="5000"
                 step="100"
                 value={originSelectionRadius}
                 onChange={(e) =>
@@ -127,7 +127,7 @@ function SettingPage() {
               <input
                 type="range"
                 min="1000"
-                max="2000"
+                max="5000"
                 step="100"
                 value={destinationSelectionRadius}
                 onChange={(e) =>

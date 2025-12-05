@@ -22,13 +22,16 @@ export function useParcelOffers() {
     (state) => state.destinationSelectionRadius
   );
 
-  // Filter out passengers with orderOptionsActive = true
+  // Show all passengers (including those with orderOptionsActive)
+  // But only calculate parcel offers for passengers without orderOptionsActive
   const availablePassengers = useMemo(
-    () => passengers.filter((p) => !p.orderOptionsActive),
+    () => passengers, // Show all passengers
     [passengers]
   );
 
   // Calculate best parcel offers when passenger is selected
+  // IMPORTANT: Only calculate offers for passengers WITHOUT orderOptionsActive
+  // Passengers with orderOptionsActive = true can be selected but cannot receive parcels
   const parcelOffers = useMemo(() => {
     if (selectedPassenger && !selectedPassenger.orderOptionsActive) {
       return findBestParcelOffers(
@@ -41,6 +44,7 @@ export function useParcelOffers() {
         destinationSelectionRadius
       );
     }
+    // Return empty array if passenger has orderOptionsActive or no passenger selected
     return [];
   }, [
     selectedPassenger,

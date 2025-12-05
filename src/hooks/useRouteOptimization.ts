@@ -13,12 +13,15 @@ export function useRouteOptimization() {
   );
 
   useEffect(() => {
-    if (selectedPassenger && selectedParcel) {
+    if (selectedPassenger) {
       // Use default destinations if not provided
       const passengerDest = selectedPassenger.destination || {
         lat: selectedPassenger.lat + 0.01,
         lng: selectedPassenger.lng + 0.01,
       };
+
+      if (selectedParcel) {
+        // Route with passenger and parcel
       const parcelDest = selectedParcel.destination || {
         lat: selectedParcel.lat + 0.01,
         lng: selectedParcel.lng + 0.01,
@@ -34,6 +37,15 @@ export function useRouteOptimization() {
       );
 
       setOptimizedRoute(route.points);
+      } else {
+        // Route with only passenger (no parcel)
+        // Simple route: Driver -> Passenger Origin -> Passenger Destination
+        const route = {
+          points: [driver, selectedPassenger, passengerDest],
+          totalDistance: 0, // Will be calculated if needed
+        };
+        setOptimizedRoute(route.points);
+      }
     } else {
       setOptimizedRoute(null);
     }

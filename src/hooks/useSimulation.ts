@@ -21,17 +21,26 @@ export function useSimulation() {
       toast.error("ابتدا یک مسافر انتخاب کنید");
       return;
     }
-    if (!selectedParcel) {
-      toast.error("ابتدا یک بسته انتخاب کنید");
+    
+    // Parcel is optional - simulation can start without parcel
+    // But if passenger has orderOptionsActive, they cannot receive parcels
+    if (selectedPassenger.orderOptionsActive && selectedParcel) {
+      toast.error(
+        "این مسافر گزینه‌های سفارش فعال دارد و نمی‌تواند بسته دریافت کند"
+      );
       return;
     }
+    
     if (!optimizedRoute || optimizedRoute.length === 0) {
       toast.error("مسیر بهینه‌سازی نشده است");
       return;
     }
 
     setSimulationActive(true);
-    toast.success("شبیه‌سازی شروع شد");
+    const message = selectedParcel
+      ? "شبیه‌سازی با مسافر و بسته شروع شد"
+      : "شبیه‌سازی با مسافر (بدون بسته) شروع شد";
+    toast.success(message);
   };
 
   const handleStopSimulation = () => {

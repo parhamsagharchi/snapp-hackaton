@@ -114,6 +114,7 @@ function DriverPage() {
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-3"
+          noValidate
           autoCapitalize="off"
           autoComplete="off"
           spellCheck="false"

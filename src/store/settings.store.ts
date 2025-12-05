@@ -24,12 +24,12 @@ export const useSettingsStore = create<ISettingsStore>()(
 
       setOriginSelectionRadius: (radius) =>
         set({
-          originSelectionRadius: Math.min(Math.max(radius, 1000), 2000), // Clamp between 1km and 2km
+          originSelectionRadius: Math.min(Math.max(radius, 1000), 5000), // Clamp between 1km and 5km
         }),
 
       setDestinationSelectionRadius: (radius) =>
         set({
-          destinationSelectionRadius: Math.min(Math.max(radius, 1000), 2000), // Clamp between 1km and 2km
+          destinationSelectionRadius: Math.min(Math.max(radius, 1000), 5000), // Clamp between 1km and 5km
         }),
     }),
     {
@@ -42,19 +42,19 @@ export const useSettingsStore = create<ISettingsStore>()(
           ...persisted,
         } as ISettingsStore;
         
-        // Ensure originSelectionRadius is within valid range (1km - 2km)
+        // Ensure originSelectionRadius is within valid range (1km - 5km)
         if (merged.originSelectionRadius) {
           merged.originSelectionRadius = Math.min(
             Math.max(merged.originSelectionRadius, 1000),
-            2000
+            5000
           );
         }
         
-        // Ensure destinationSelectionRadius is within valid range (1km - 2km)
+        // Ensure destinationSelectionRadius is within valid range (1km - 5km)
         if (merged.destinationSelectionRadius) {
           merged.destinationSelectionRadius = Math.min(
             Math.max(merged.destinationSelectionRadius, 1000),
-            2000
+            5000
           );
         }
         
