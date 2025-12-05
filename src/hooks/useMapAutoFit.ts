@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
-import type L from "leaflet";
+import L from "leaflet";
 
 interface Coordinate {
   lat: number;

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
-import type L from "leaflet";
 
 /**
  * Hook to manage marker and route visibility based on zoom level
