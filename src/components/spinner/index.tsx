@@ -4,6 +4,7 @@ type SpinnerProps = {
   size?: "sm" | "md" | "lg";
   color?: "primary" | "secondary" | "neutral" | "white";
   className?: string;
+  fullScreen?: boolean;
 };
 
 const sizeMap: Record<NonNullable<SpinnerProps["size"]>, string> = {
@@ -23,8 +24,9 @@ export function Spinner({
   size = "md",
   color = "primary",
   className,
+  fullScreen = false,
 }: SpinnerProps) {
-  return (
+  const spinnerElement = (
     <span
       className={clsx(
         "inline-block animate-spin rounded-full border-2 border-t-transparent",
@@ -36,4 +38,14 @@ export function Spinner({
       role="status"
     />
   );
+
+  if (fullScreen) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm">
+        {spinnerElement}
+      </div>
+    );
+  }
+
+  return spinnerElement;
 }

@@ -23,7 +23,9 @@ const routes = [
       {
         path: "/",
         element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+          <Suspense
+            fallback={<Spinner size="lg" color="secondary" fullScreen />}
+          >
             <Home />
           </Suspense>
         ),
@@ -31,7 +33,9 @@ const routes = [
       {
         path: "passengers",
         element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+          <Suspense
+            fallback={<Spinner size="lg" color="secondary" fullScreen />}
+          >
             <Passengers />
           </Suspense>
         ),
@@ -39,7 +43,9 @@ const routes = [
       {
         path: "parcels",
         element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+          <Suspense
+            fallback={<Spinner size="lg" color="secondary" fullScreen />}
+          >
             <Parcels />
           </Suspense>
         ),
@@ -47,7 +53,9 @@ const routes = [
       {
         path: "driver",
         element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+          <Suspense
+            fallback={<Spinner size="lg" color="secondary" fullScreen />}
+          >
             <Driver />
           </Suspense>
         ),
@@ -55,7 +63,9 @@ const routes = [
       {
         path: "settings",
         element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+          <Suspense
+            fallback={<Spinner size="lg" color="secondary" fullScreen />}
+          >
             <Settings />
           </Suspense>
         ),
@@ -63,7 +73,9 @@ const routes = [
       {
         path: "pitch",
         element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
+          <Suspense
+            fallback={<Spinner size="lg" color="secondary" fullScreen />}
+          >
             <Pitch />
           </Suspense>
         ),
