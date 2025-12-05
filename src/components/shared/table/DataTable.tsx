@@ -1,4 +1,5 @@
 import { Edit2, Trash2 } from "lucide-react";
+import clsx from "clsx";
 import type { DataTableProps, Column } from "./DataTable.types";
 
 /**
@@ -30,7 +31,10 @@ export function DataTable<T = Record<string, unknown>>({
               {columns.map((column, idx) => (
                 <th
                   key={idx}
-                  className={`px-3 py-2 text-right text-xs font-medium text-slate-300 ${column.className || ""}`}
+                  className={clsx(
+                    "px-3 py-2 text-right text-xs font-medium text-slate-300",
+                    column.className
+                  )}
                 >
                   {column.header}
                 </th>
@@ -61,7 +65,10 @@ export function DataTable<T = Record<string, unknown>>({
                   {columns.map((column, colIndex) => (
                     <td
                       key={colIndex}
-                      className={`px-3 py-2 text-xs text-slate-300 ${column.className || ""}`}
+                      className={clsx(
+                        "px-3 py-2 text-xs text-slate-300",
+                        column.className
+                      )}
                     >
                       {renderCell(column, row, rowIndex)}
                     </td>

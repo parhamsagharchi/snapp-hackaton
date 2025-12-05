@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useMapStore } from "@/store/map.store";
 import { useSettingsStore } from "@/store/settings.store";
+import { useMapZoomVisibility } from "@/hooks/useMapZoomVisibility";
 import L from "leaflet";
 import toast from "react-hot-toast";
 
@@ -275,6 +276,9 @@ export const RoutePolyline = () => {
   const currentPath = location.pathname;
   const isHomePage = currentPath === "/";
 
+  // Check zoom level for route visibility
+  const { shouldShowRoute } = useMapZoomVisibility();
+
   // Reset active arc when simulation stops
   useEffect(() => {
     if (!simulationActive) {
@@ -285,8 +289,8 @@ export const RoutePolyline = () => {
     }
   }, [simulationActive, activeArcIndex, isHomePage]);
 
-  // Don't show route polylines on other pages
-  if (!isHomePage || !selectedPassenger || !selectedParcel) {
+  // Don't show route polylines on other pages or if zoom is too low
+  if (!isHomePage || !selectedPassenger || !selectedParcel || !shouldShowRoute) {
     return null;
   }
 

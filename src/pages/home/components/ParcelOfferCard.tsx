@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { IParcel } from "@/store/map.store";
 import type { ParcelOffer } from "@/utils/parcelOffers.types";
 import { calculateDistance } from "@/utils/tsp";
@@ -37,18 +38,20 @@ export function ParcelOfferCard({
   return (
     <div
       onClick={() => onSelect(offer.parcel)}
-      className={`group cursor-pointer rounded-xl border p-4 transition-all duration-300 ${getCardClassName()}`}
+      className={clsx(
+        "group cursor-pointer rounded-xl border p-4 transition-all duration-300",
+        getCardClassName()
+      )}
     >
       <div className="flex items-start gap-3">
         {/* Icon Section */}
         <div
-          className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg ${
-            isSelected
-              ? "bg-orange-500/30"
-              : isBestOffer
-              ? "bg-yellow-500/30"
-              : "bg-slate-700/50 group-hover:bg-slate-700/70"
-          } transition-colors`}
+          className={clsx(
+            "flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg transition-colors",
+            isSelected && "bg-orange-500/30",
+            !isSelected && isBestOffer && "bg-yellow-500/30",
+            !isSelected && !isBestOffer && "bg-slate-700/50 group-hover:bg-slate-700/70"
+          )}
         >
           <span className="text-xl">📦</span>
         </div>
@@ -122,13 +125,12 @@ export function ParcelOfferCard({
                 امتیاز:
               </span>
               <span
-                className={`text-[10px] font-bold ${
-                  isBestOffer
-                    ? "text-yellow-300"
-                    : isSelected
-                    ? "text-orange-300"
-                    : "text-slate-100"
-                }`}
+                className={clsx(
+                  "text-[10px] font-bold",
+                  isBestOffer && "text-yellow-300",
+                  !isBestOffer && isSelected && "text-orange-300",
+                  !isBestOffer && !isSelected && "text-slate-100"
+                )}
               >
                 {offer.score.toFixed(2)}
               </span>

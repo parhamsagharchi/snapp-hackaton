@@ -1,5 +1,7 @@
+import clsx from "clsx";
 import { ContentOnlyLayout } from "@/components/shared/layout/ContentOnlyLayout";
 import { useScrollAnimations } from "@/hooks/useScrollAnimations";
+import { SNAPP_SERVICES } from "./pitch.constant";
 
 function PitchPage() {
   const containerRef = useScrollAnimations();
@@ -154,7 +156,11 @@ function PitchPage() {
               <div
                 key={idx}
                 data-animate="stagger-item"
-                className={`rounded-lg ${item.color} border ${item.border} p-3`}
+                className={clsx(
+                  "rounded-lg border p-3",
+                  item.color,
+                  item.border
+                )}
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <span data-animate="icon" className="text-2xl">
@@ -376,17 +382,44 @@ function PitchPage() {
             با SnappShare می‌توانیم بخشی از سفارش‌های پرترافیک و حساس مجموعه‌های
             زیر را به‌صورت هوشمند هندل کنیم:
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-            {["اسنپ‌شاپ", "اسنپ‌دکتر", "اسنپ‌مارکت", "اسنپ‌باکس"].map(
-              (item, idx) => (
-                <div
-                  key={idx}
-                  className="p-2 rounded-lg bg-indigo-900/15 border border-indigo-500/25 text-center"
-                >
-                  <p className="text-xs text-indigo-300 font-medium">{item}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+            {SNAPP_SERVICES?.map((item, idx) => (
+              <div
+                key={idx}
+                data-animate="stagger-item"
+                className={clsx(
+                  "group relative p-4 rounded-xl bg-gradient-to-br border-2 text-center transition-all duration-300",
+                  // "hover:scale-105 hover:shadow-xl hover:-translate-y-1",
+                  "backdrop-blur-sm overflow-hidden",
+                  item.color,
+                  item.borderColor,
+                  "hover:border-opacity-70"
+                )}
+              >
+                <div className="relative z-10 flex flex-col items-center gap-2.5">
+                  <img
+                    src={item.iconUrl}
+                    alt={item.name}
+                    className="w-12 h-12 md:w-16 md:h-16"
+                  />
+                  <p
+                    className={clsx(
+                      "text-xs font-bold tracking-wide",
+                      item.textColor
+                    )}
+                  >
+                    {item.name}
+                  </p>
                 </div>
-              )
-            )}
+                <div
+                  className={clsx(
+                    "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300",
+                    "bg-gradient-to-br",
+                    item.color.replace("/20", "/40").replace("/20", "/40")
+                  )}
+                />
+              </div>
+            ))}
           </div>
           <p
             data-animate="text"

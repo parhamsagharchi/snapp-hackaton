@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import clsx from "clsx";
 import type { FieldError } from "react-hook-form";
 
 /**
@@ -6,11 +7,13 @@ import type { FieldError } from "react-hook-form";
  * Shared styles for all input components
  */
 export const getInputClassName = (error?: FieldError, className: string = "") => {
-  return `w-full rounded-md border bg-slate-700/50 px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none ${
+  return clsx(
+    "w-full rounded-md border bg-slate-700/50 px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none",
     error
       ? "border-red-500 focus:border-red-500"
-      : "border-slate-600 focus:border-primary"
-  } ${className}`;
+      : "border-slate-600 focus:border-primary",
+    className
+  );
 };
 
 export const getLabelClassName = () => {

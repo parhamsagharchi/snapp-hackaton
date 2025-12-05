@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Marker } from "react-leaflet";
 import L from "leaflet";
+import clsx from "clsx";
 import carIcon from "@/assets/images/car.png";
 
 export type MarkerIconType = "driver" | "passenger" | "parcel" | "default";
@@ -40,9 +41,9 @@ export const CustomMarker = ({
     // Create icon HTML based on type
     let iconHTML = "";
     if (iconType === "driver") {
-      // Car icon using car.png image - just the image, no background, border, or padding
+      // Car icon using car.png image - make it bigger to match other markers' visual size
       const carImageUrl = carIcon; // Vite returns the URL string
-      const carSize = size + 8; // Make car icon bigger (8px larger)
+      const carSize = size + 16; // Make car icon bigger to match visual size of other markers (with border/shadow)
       iconHTML = `
         <div style="
           margin-bottom: 2px;
@@ -57,6 +58,7 @@ export const CustomMarker = ({
               width: ${carSize}px; 
               height: ${carSize}px; 
               object-fit: contain;
+              filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
             "
           />
         </div>
@@ -129,7 +131,7 @@ export const CustomMarker = ({
     }
 
     return L.divIcon({
-      className: isHovered ? "custom-marker hovered-marker" : "custom-marker",
+      className: clsx("custom-marker", isHovered && "hovered-marker"),
       html: `
         <div style="
           display: flex;

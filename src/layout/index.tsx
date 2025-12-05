@@ -24,7 +24,7 @@ export function Layout() {
     <div className="min-h-screen bg-slate-900 text-slate-100 overflow-x-hidden">
       {/* Top header */}
       <header className="fixed top-0 z-50 bg-primary shadow-md w-full">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-2">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full py-4">
           {/* Row 1: navigation + logo */}
           <div className="flex items-center justify-between">
             <nav className="flex items-center gap-2">
@@ -35,7 +35,7 @@ export function Layout() {
                   end={item.end}
                   className={({ isActive }) =>
                     clsx(
-                      "px-2 py-1 rounded-lg text-[10px] font-medium transition-all duration-300",
+                      "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-300",
                       isActive
                         ? "bg-white text-primary shadow-lg shadow-white/20"
                         : "border border-white/30 text-white/90 hover:border-white/50 hover:text-white hover:bg-white/5"
@@ -56,7 +56,7 @@ export function Layout() {
 
       {/* Main content */}
       <main className="pb-12 bg-slate-900 pt-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full pt-4">
           {isContentOnly ? (
             /* Content-only pages: full width, page scroll, no box container */
             <div className="w-full">
@@ -77,6 +77,7 @@ export function Layout() {
                     className="h-full w-full"
                     render={
                       <>
+                        <LeafletMapItems.MapAutoFit />
                         <LeafletMapItems.Markers />
                         <LeafletMapItems.Polygons />
                         <LeafletMapItems.SelectionCircle />

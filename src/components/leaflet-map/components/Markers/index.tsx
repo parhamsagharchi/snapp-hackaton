@@ -6,6 +6,7 @@ import { useMapStore } from "@/store/map.store";
 import { CustomMarker } from "./CustomMarker";
 import { useRouteOptimization } from "@/hooks/useRouteOptimization";
 import { areCoordinatesEqual } from "@/utils/coordinates";
+import { useMapZoomVisibility } from "@/hooks/useMapZoomVisibility";
 
 export const Markers = () => {
   const id = useId();
@@ -25,6 +26,9 @@ export const Markers = () => {
 
   // Calculate optimized route when passenger and parcel are selected
   useRouteOptimization();
+
+  // Check zoom level for marker visibility
+  const { shouldShowMarkers } = useMapZoomVisibility();
 
   // Handle drag end for driver
   const handleDriverDragEnd = (e: L.DragEndEvent) => {
@@ -123,6 +127,11 @@ export const Markers = () => {
   const driverShortLabel = driver.displayName
     ? driver.displayName.charAt(0)
     : "ر";
+
+  // Don't render markers if zoom is too low
+  if (!shouldShowMarkers) {
+    return null;
+  }
 
   return (
     <>

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { IDriver, IPassenger } from "@/store/map.store";
 import { calculateDistance } from "@/utils/tsp";
 import { areCoordinatesEqual } from "@/utils/coordinates";
@@ -37,18 +38,20 @@ export function PassengerSelection({
       <div className="grid gap-1.5 md:grid-cols-2 lg:grid-cols-3">
         {passengers.map((passenger, index) => {
           const isSelected =
-            selectedPassenger && areCoordinatesEqual(selectedPassenger, passenger);
+            selectedPassenger &&
+            areCoordinatesEqual(selectedPassenger, passenger);
           const distance = calculateDistance(driver, passenger);
 
           return (
             <div
               key={index}
               onClick={() => onSelectPassenger(passenger)}
-              className={`cursor-pointer rounded-md border p-2 transition-all ${
+              className={clsx(
+                "cursor-pointer rounded-md border p-2 transition-all",
                 isSelected
                   ? "border-green-500 bg-green-500/20"
                   : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
-              }`}
+              )}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
@@ -58,7 +61,7 @@ export function PassengerSelection({
                       {passenger.displayName}
                     </div>
                     <div className="text-xs text-slate-400">
-                      فاصله: {distance.toFixed(2)} کیلومتر
+                      فاصله تا راننده: {distance.toFixed(2)} کیلومتر
                     </div>
                   </div>
                 </div>

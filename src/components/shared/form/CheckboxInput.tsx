@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import clsx from "clsx";
 
 interface CheckboxInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -11,7 +12,7 @@ interface CheckboxInputProps
 export const CheckboxInput = forwardRef<HTMLInputElement, CheckboxInputProps>(
   ({ label, className = "", ...props }, ref) => {
     return (
-      <label className={`flex items-center gap-1.5 text-xs text-slate-300 ${className}`}>
+      <label className={clsx("flex items-center gap-1.5 text-xs text-slate-300", className)}>
         <input
           ref={ref}
           type="checkbox"

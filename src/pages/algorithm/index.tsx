@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { ContentOnlyLayout } from "@/components/shared/layout/ContentOnlyLayout";
 import { InlineMath, BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -68,7 +69,10 @@ function AlgorithmPage() {
                 >
                   <div
                     data-animate="icon"
-                    className={`w-10 h-10 rounded-full bg-slate-700/40 flex items-center justify-center ${item.color} font-semibold text-base border border-slate-600/50 bg-slate-800/40`}
+                    className={clsx(
+                      "w-10 h-10 rounded-full bg-slate-700/40 flex items-center justify-center font-semibold text-base border border-slate-600/50 bg-slate-800/40",
+                      item.color
+                    )}
                   >
                     {item.step}
                   </div>
@@ -577,7 +581,7 @@ function AlgorithmPage() {
                   className="flex items-start gap-2 p-1.5 rounded bg-slate-800/20"
                 >
                   <span
-                    className={`font-mono font-semibold ${item.color} min-w-[3.5rem]`}
+                    className={clsx("font-mono font-semibold min-w-[3.5rem]", item.color)}
                   >
                     {item.w}
                   </span>
