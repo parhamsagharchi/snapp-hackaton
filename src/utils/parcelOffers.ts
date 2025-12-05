@@ -3,7 +3,6 @@ import { calculateDistance, optimizeDriverRoute } from "./tsp";
 import type { ParcelOffer } from "./parcelOffers.types";
 import { getDefaultDestination } from "./parcelValidation";
 import {
-  RADIUS_TOLERANCE,
   AVERAGE_SPEED_KMH,
   SCORING_WEIGHTS,
   DEFAULT_MAX_OFFERS,
@@ -53,22 +52,22 @@ export function findBestParcelOffers(
   });
 
   // STEP 1: Filter by origin radius
-  // Condition: d(P_passenger, P_parcel) <= R_origin + tolerance
+  // Condition: d(P_passenger, P_parcel) <= R_origin
   const parcelsAfterOriginFilter = parcels.filter((parcel) => {
     const originDistance = calculateDistance(passenger, parcel) * 1000; // Convert to meters
-    const originInRadius = originDistance <= originSelectionRadius + RADIUS_TOLERANCE;
+    const originInRadius = originDistance <= originSelectionRadius;
 
     if (!originInRadius) {
       console.log(`❌ [Filter Origin] ${parcel.displayName} rejected:`, {
         distance: `${originDistance.toFixed(1)}m`,
-        maxAllowed: `${originSelectionRadius + RADIUS_TOLERANCE}m`,
+        maxAllowed: `${originSelectionRadius}m`,
         parcelOrigin: { lat: parcel.lat, lng: parcel.lng },
         passengerOrigin: { lat: passenger.lat, lng: passenger.lng },
       });
     } else {
       console.log(`✅ [Filter Origin] ${parcel.displayName} passed:`, {
         distance: `${originDistance.toFixed(1)}m`,
-        maxAllowed: `${originSelectionRadius + RADIUS_TOLERANCE}m`,
+        maxAllowed: `${originSelectionRadius}m`,
       });
     }
     
@@ -80,16 +79,16 @@ export function findBestParcelOffers(
   );
 
   // STEP 2: Filter by destination radius
-  // Condition: d(D_passenger, D_parcel) <= R_destination + tolerance
+  // Condition: d(D_passenger, D_parcel) <= R_destination
   const parcelsInRadius = parcelsAfterOriginFilter.filter((parcel) => {
     const parcelDest = parcel.destination || getDefaultDestination(parcel);
     const destinationDistance = calculateDistance(passengerDest, parcelDest) * 1000; // Convert to meters
-    const destinationInRadius = destinationDistance <= destinationSelectionRadius + RADIUS_TOLERANCE;
+    const destinationInRadius = destinationDistance <= destinationSelectionRadius;
 
     if (!destinationInRadius) {
       console.log(`❌ [Filter Destination] ${parcel.displayName} rejected:`, {
         distance: `${destinationDistance.toFixed(1)}m`,
-        maxAllowed: `${destinationSelectionRadius + RADIUS_TOLERANCE}m`,
+        maxAllowed: `${destinationSelectionRadius}m`,
         parcelDest: { lat: parcelDest.lat, lng: parcelDest.lng },
         passengerDest: { lat: passengerDest.lat, lng: passengerDest.lng },
       });

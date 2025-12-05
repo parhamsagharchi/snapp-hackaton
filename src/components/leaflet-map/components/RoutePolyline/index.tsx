@@ -32,7 +32,7 @@ function calculateArcPoints(
   // Control point is at the midpoint, elevated perpendicular to the line
   const midLat = (start.lat + end.lat) / 2;
   const midLng = (start.lng + end.lng) / 2;
-  
+
   // Control point with arc height
   const controlLat = midLat + perpY * height;
   const controlLng = midLng + perpX * height;
@@ -40,7 +40,7 @@ function calculateArcPoints(
   // Generate smooth Bezier curve points
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    
+
     // Cubic Bezier curve formula: B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
     // For quadratic Bezier: B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂
     // Using quadratic Bezier for smoother arc
@@ -121,6 +121,49 @@ function createFlowMarkerIcon(color: string) {
   });
 }
 
+/**
+ * Generate a clear message for route movement
+ */
+function getMovementMessage(startLabel: string, endLabel: string): string {
+  const messages: Record<string, Record<string, string>> = {
+    راننده: {
+      مسافر: "راننده به سمت مبدا مسافر حرکت کرد",
+      بسته: "راننده به سمت مبدا بسته حرکت کرد",
+    },
+    مسافر: {
+      بسته: "راننده به سمت مبدا بسته حرکت کرد",
+      "مقصد مسافر": "راننده به سمت مقصد مسافر حرکت کرد",
+    },
+    بسته: {
+      مسافر: "راننده به سمت مبدا مسافر حرکت کرد",
+      "مقصد مسافر": "راننده به سمت مقصد مسافر حرکت کرد",
+      "مقصد بسته": "راننده به سمت مقصد بسته حرکت کرد",
+    },
+    "مقصد مسافر": {
+      "مقصد بسته": "راننده به سمت مقصد بسته حرکت کرد",
+    },
+  };
+
+  return (
+    messages[startLabel]?.[endLabel] ||
+    `راننده از ${startLabel} به سمت ${endLabel} حرکت کرد`
+  );
+}
+
+/**
+ * Generate a clear message for route completion
+ */
+function getArrivalMessage(endLabel: string): string {
+  const messages: Record<string, string> = {
+    مسافر: "راننده به مبدا مسافر رسیده است",
+    بسته: "راننده بسته را تحویل گرفته است",
+    "مقصد مسافر": "راننده به مقصد مسافر رسیده است",
+    "مقصد بسته": "راننده بسته را تحویل داده است",
+  };
+
+  return messages[endLabel] || `راننده به ${endLabel} رسیده است`;
+}
+
 interface RouteArcProps {
   start: { lat: number; lng: number };
   end: { lat: number; lng: number };
@@ -162,7 +205,8 @@ function RouteArc({
 
     // Show toast when arc starts animating
     if (isActive && currentPosition === 0) {
-      toast.success(`مرحله ${number}: ${startLabel} → ${endLabel}`, {
+      const movementMessage = getMovementMessage(startLabel, endLabel);
+      toast.success(movementMessage, {
         duration: 2000,
         icon: "🚗",
       });
@@ -170,7 +214,7 @@ function RouteArc({
 
     setIsVisible(true);
     startTimeRef.current = Date.now();
-    const duration = 3000; // 3 seconds per arc
+    const duration = 10000; // 10 seconds per arc - slower for better message readability
 
     const animate = () => {
       if (!startTimeRef.current) return;
@@ -183,7 +227,12 @@ function RouteArc({
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
-        // Animation complete
+        // Animation complete - show arrival message
+        const arrivalMessage = getArrivalMessage(endLabel);
+        toast.success(arrivalMessage, {
+          duration: 2000,
+          icon: "✅",
+        });
         onComplete();
         animationRef.current = null;
       }
@@ -290,7 +339,8 @@ export const RoutePolyline = () => {
   }, [simulationActive, activeArcIndex, isHomePage]);
 
   // Don't show route polylines on other pages or if zoom is too low
-  if (!isHomePage || !selectedPassenger || !selectedParcel || !shouldShowRoute) {
+  // Parcel is optional - route can be shown without parcel
+  if (!isHomePage || !selectedPassenger || !shouldShowRoute) {
     return null;
   }
 
@@ -298,10 +348,6 @@ export const RoutePolyline = () => {
   const passengerDest = selectedPassenger.destination || {
     lat: selectedPassenger.lat + 0.05,
     lng: selectedPassenger.lng + 0.05,
-  };
-  const parcelDest = selectedParcel.destination || {
-    lat: selectedParcel.lat + 0.05,
-    lng: selectedParcel.lng + 0.05,
   };
 
   const arcs: Array<{
@@ -313,7 +359,8 @@ export const RoutePolyline = () => {
     endLabel: string;
   }> = [];
 
-  if (routeOrderPreference === "passenger_first") {
+  // If no parcel is selected, show simple route: Driver -> Passenger -> Passenger Destination
+  if (!selectedParcel) {
     // 1: Driver -> Passenger
     arcs.push({
       start: driver,
@@ -324,76 +371,104 @@ export const RoutePolyline = () => {
       endLabel: "مسافر",
     });
 
-    // 2: Passenger -> Parcel
+    // 2: Passenger -> Passenger Destination
     arcs.push({
       start: selectedPassenger,
-      end: selectedParcel,
+      end: passengerDest,
       number: 2,
       color: "#10B981", // Green
       startLabel: "مسافر",
-      endLabel: "بسته",
-    });
-
-    // 3: Parcel -> Passenger Destination
-    arcs.push({
-      start: selectedParcel,
-      end: passengerDest,
-      number: 3,
-      color: "#F59E0B", // Orange
-      startLabel: "بسته",
       endLabel: "مقصد مسافر",
-    });
-
-    // 4: Passenger Destination -> Parcel Destination
-    arcs.push({
-      start: passengerDest,
-      end: parcelDest,
-      number: 4,
-      color: "#EF4444", // Red
-      startLabel: "مقصد مسافر",
-      endLabel: "مقصد بسته",
     });
   } else {
-    // package_first
-    // 1: Driver -> Parcel
-    arcs.push({
-      start: driver,
-      end: selectedParcel,
-      number: 1,
-      color: "#3B82F6", // Blue
-      startLabel: "راننده",
-      endLabel: "بسته",
-    });
+    // Parcel is selected - show full route
+    const parcelDest = selectedParcel.destination || {
+      lat: selectedParcel.lat + 0.05,
+      lng: selectedParcel.lng + 0.05,
+    };
 
-    // 2: Parcel -> Passenger
-    arcs.push({
-      start: selectedParcel,
-      end: selectedPassenger,
-      number: 2,
-      color: "#10B981", // Green
-      startLabel: "بسته",
-      endLabel: "مسافر",
-    });
+    if (routeOrderPreference === "passenger_first") {
+      // 1: Driver -> Passenger
+      arcs.push({
+        start: driver,
+        end: selectedPassenger,
+        number: 1,
+        color: "#3B82F6", // Blue
+        startLabel: "راننده",
+        endLabel: "مسافر",
+      });
 
-    // 3: Passenger -> Passenger Destination
-    arcs.push({
-      start: selectedPassenger,
-      end: passengerDest,
-      number: 3,
-      color: "#F59E0B", // Orange
-      startLabel: "مسافر",
-      endLabel: "مقصد مسافر",
-    });
+      // 2: Passenger -> Parcel
+      arcs.push({
+        start: selectedPassenger,
+        end: selectedParcel,
+        number: 2,
+        color: "#10B981", // Green
+        startLabel: "مسافر",
+        endLabel: "بسته",
+      });
 
-    // 4: Passenger Destination -> Parcel Destination
-    arcs.push({
-      start: passengerDest,
-      end: parcelDest,
-      number: 4,
-      color: "#EF4444", // Red
-      startLabel: "مقصد مسافر",
-      endLabel: "مقصد بسته",
-    });
+      // 3: Parcel -> Passenger Destination
+      arcs.push({
+        start: selectedParcel,
+        end: passengerDest,
+        number: 3,
+        color: "#F59E0B", // Orange
+        startLabel: "بسته",
+        endLabel: "مقصد مسافر",
+      });
+
+      // 4: Passenger Destination -> Parcel Destination
+      arcs.push({
+        start: passengerDest,
+        end: parcelDest,
+        number: 4,
+        color: "#EF4444", // Red
+        startLabel: "مقصد مسافر",
+        endLabel: "مقصد بسته",
+      });
+    } else {
+      // package_first
+      // 1: Driver -> Parcel
+      arcs.push({
+        start: driver,
+        end: selectedParcel,
+        number: 1,
+        color: "#3B82F6", // Blue
+        startLabel: "راننده",
+        endLabel: "بسته",
+      });
+
+      // 2: Parcel -> Passenger
+      arcs.push({
+        start: selectedParcel,
+        end: selectedPassenger,
+        number: 2,
+        color: "#10B981", // Green
+        startLabel: "بسته",
+        endLabel: "مسافر",
+      });
+
+      // 3: Passenger -> Passenger Destination
+      arcs.push({
+        start: selectedPassenger,
+        end: passengerDest,
+        number: 3,
+        color: "#F59E0B", // Orange
+        startLabel: "مسافر",
+        endLabel: "مقصد مسافر",
+      });
+
+      // 4: Passenger Destination -> Parcel Destination
+      arcs.push({
+        start: passengerDest,
+        end: parcelDest,
+        number: 4,
+        color: "#EF4444", // Red
+        startLabel: "مقصد مسافر",
+        endLabel: "مقصد بسته",
+      });
+    }
   }
 
   const handleArcComplete = () => {

@@ -16,6 +16,7 @@ export const Markers = () => {
   const driver = useMapStore((state) => state.driver);
   const selectedPassenger = useMapStore((state) => state.selectedPassenger);
   const selectedParcel = useMapStore((state) => state.selectedParcel);
+  const simulationActive = useMapStore((state) => state.simulationActive);
   const updateDriver = useMapStore((state) => state.updateDriver);
   const updatePassengerByIndex = useMapStore(
     (state) => state.updatePassengerByIndex
@@ -118,9 +119,10 @@ export const Markers = () => {
     currentPath === "/"; // Always show passengers on home, but filter will hide others when selected
   
   // Parcels: show on parcels page or when passenger is selected on home page
+  // BUT: Don't show parcels if selected passenger has orderOptionsActive
   const showParcels = 
     currentPath === "/parcels" || 
-    (currentPath === "/" && selectedPassenger !== null);
+    (currentPath === "/" && selectedPassenger !== null && !selectedPassenger.orderOptionsActive);
 
   // Driver is draggable only on driver page
   const driverIsActive = showDriver && currentPath === "/driver";
@@ -177,7 +179,11 @@ export const Markers = () => {
               <CustomMarker
                 key={`passenger-${index}-${passengers.length}-${passenger.lat}-${passenger.lng}-${id}`}
                 position={[passenger.lat, passenger.lng]}
-                label={passenger.displayName || `مسافر ${index + 1}`}
+                label={
+                  isSelected
+                    ? `مبدا ${passenger.displayName || `مسافر ${index + 1}`}`
+                    : passenger.displayName || `مسافر ${index + 1}`
+                }
                 shortLabel={shortLabel}
                 color={isSelected ? "#059669" : "#10B981"}
                 iconType="passenger"
@@ -242,6 +248,10 @@ export const Markers = () => {
       {showParcels &&
         parcels
           ?.filter((parcel) => {
+            // During simulation, only show the selected parcel to avoid clutter
+            if (simulationActive && selectedParcel) {
+              return areCoordinatesEqual(selectedParcel, parcel);
+            }
             // On home page, when a parcel is selected, only show the selected parcel
             if (currentPath === "/" && selectedParcel) {
               return areCoordinatesEqual(selectedParcel, parcel);
@@ -259,7 +269,11 @@ export const Markers = () => {
               <CustomMarker
                 key={`parcel-${index}-${parcels.length}-${parcel.lat}-${parcel.lng}-${id}`}
                 position={[parcel.lat, parcel.lng]}
-                label={parcel.displayName || `بسته ${index + 1}`}
+                label={
+                  isSelected
+                    ? `مبدا ${parcel.displayName || `بسته ${index + 1}`}`
+                    : parcel.displayName || `بسته ${index + 1}`
+                }
                 shortLabel={shortLabel}
                 color={isSelected ? "#D97706" : "#F59E0B"}
                 iconType="parcel"

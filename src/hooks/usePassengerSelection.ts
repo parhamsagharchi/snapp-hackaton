@@ -16,7 +16,7 @@ export function usePassengerSelection() {
     setSelectedPassenger(passenger);
     if (passenger.orderOptionsActive) {
       toast.success(
-        `مسافر ${passenger.displayName} انتخاب شد (این مسافر نمی‌تواند بسته دریافت کند)`,
+        `مسافر ${passenger.displayName} انتخاب شد (این مسافر گزینه‌های سفارش را فعال کرده است)`,
         { icon: "ℹ️" }
       );
     } else {
@@ -26,4 +26,3 @@ export function usePassengerSelection() {
 
   return { handleSelectPassenger };
 }
-

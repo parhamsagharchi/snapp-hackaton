@@ -22,23 +22,24 @@ export function useRouteOptimization() {
 
       if (selectedParcel) {
         // Route with passenger and parcel
-      const parcelDest = selectedParcel.destination || {
-        lat: selectedParcel.lat + 0.01,
-        lng: selectedParcel.lng + 0.01,
-      };
+        const parcelDest = selectedParcel.destination || {
+          lat: selectedParcel.lat + 0.01,
+          lng: selectedParcel.lng + 0.01,
+        };
 
-      const route = optimizeDriverRoute(
-        driver,
-        selectedPassenger,
-        passengerDest,
-        selectedParcel,
-        parcelDest,
-        routeOrderPreference === "package_first"
-      );
+        const route = optimizeDriverRoute(
+          driver,
+          selectedPassenger,
+          passengerDest,
+          selectedParcel,
+          parcelDest,
+          routeOrderPreference === "package_first"
+        );
 
-      setOptimizedRoute(route.points);
+        setOptimizedRoute(route.points);
       } else {
         // Route with only passenger (no parcel)
+        // This works for passengers with or without orderOptionsActive
         // Simple route: Driver -> Passenger Origin -> Passenger Destination
         const route = {
           points: [driver, selectedPassenger, passengerDest],
