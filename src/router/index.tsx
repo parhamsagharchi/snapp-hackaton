@@ -10,7 +10,6 @@ const Settings = lazy(() => import("../pages/settings"));
 const Passengers = lazy(() => import("../pages/passengers"));
 const Parcels = lazy(() => import("../pages/parcels"));
 const Driver = lazy(() => import("../pages/driver"));
-const Algorithm = lazy(() => import("../pages/algorithm"));
 const Pitch = lazy(() => import("../pages/pitch"));
 
 /**
@@ -58,14 +57,6 @@ const routes = [
         element: (
           <Suspense fallback={<Spinner size="md" color="secondary" />}>
             <Settings />
-          </Suspense>
-        ),
-      },
-      {
-        path: "algorithm",
-        element: (
-          <Suspense fallback={<Spinner size="md" color="secondary" />}>
-            <Algorithm />
           </Suspense>
         ),
       },
