@@ -1,4 +1,4 @@
-import { Circle, Popup } from "react-leaflet";
+import { Circle, Popup, Tooltip } from "react-leaflet";
 import { useLocation } from "react-router-dom";
 import { useMapStore } from "@/store/map.store";
 import { useSettingsStore } from "@/store/settings.store";
@@ -26,13 +26,18 @@ export const SelectionCircle = () => {
           center={[driver.lat, driver.lng]}
           radius={originSelectionRadius}
           pathOptions={{
-            color: "#4ECDC4",
-            fillColor: "#4ECDC4",
+            color: "#10B981",
+            fillColor: "#10B981",
             fillOpacity: 0.1,
             weight: 2,
             dashArray: "10, 5",
           }}
         >
+          <Tooltip permanent={false} direction="top" offset={[0, -10]}>
+            <div className="text-center font-semibold text-green-600">
+              شعاع مبدا
+            </div>
+          </Tooltip>
           <Popup>
             <div className="text-center">
               <strong>شعاع انتخاب مبدا</strong>
@@ -56,6 +61,11 @@ export const SelectionCircle = () => {
             dashArray: "5, 10",
           }}
         >
+          <Tooltip permanent={false} direction="top" offset={[0, -10]}>
+            <div className="text-center font-semibold text-orange-600">
+              شعاع مقصد
+            </div>
+          </Tooltip>
           <Popup>
             <div className="text-center">
               <strong>شعاع انتخاب مقصد</strong>
@@ -86,13 +96,18 @@ export const SelectionCircle = () => {
           center={[selectedPassenger.lat, selectedPassenger.lng]}
           radius={originSelectionRadius}
           pathOptions={{
-            color: "#4ECDC4",
-            fillColor: "#4ECDC4",
+            color: "#10B981",
+            fillColor: "#10B981",
             fillOpacity: 0.1,
             weight: 2,
             dashArray: "10, 5",
           }}
         >
+          <Tooltip permanent={false} direction="top" offset={[0, -10]}>
+            <div className="text-center font-semibold text-green-600">
+              شعاع مبدا
+            </div>
+          </Tooltip>
           <Popup>
             <div className="text-center">
               <strong>شعاع انتخاب مبدا</strong>
@@ -115,6 +130,11 @@ export const SelectionCircle = () => {
             dashArray: "5, 10",
           }}
         >
+          <Tooltip permanent={false} direction="top" offset={[0, -10]}>
+            <div className="text-center font-semibold text-orange-600">
+              شعاع مقصد
+            </div>
+          </Tooltip>
           <Popup>
             <div className="text-center">
               <strong>شعاع انتخاب مقصد</strong>
