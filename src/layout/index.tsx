@@ -12,7 +12,6 @@ const navItems = [
   { to: "/parcels", label: "بسته‌ها" },
   { to: "/driver", label: "راننده" },
   { to: "/settings", label: "تنظیمات" },
-  { to: "/algorithm", label: "الگوریتم" },
   { to: "/pitch", label: "ارائه ایده" },
 ];
 
