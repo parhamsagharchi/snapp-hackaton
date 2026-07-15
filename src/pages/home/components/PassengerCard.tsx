@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type { IPassenger, IDriver } from "@/store/map.store";
 import { calculateDistance } from "@/utils/tsp";
+import { useTranslation } from "@/i18n";
 
 interface PassengerCardProps {
   passenger: IPassenger;
@@ -15,6 +16,7 @@ export function PassengerCard({
   isSelected,
   onSelect,
 }: PassengerCardProps) {
+  const { t, tName } = useTranslation();
   const distance = calculateDistance(driver, passenger);
 
   return (
@@ -45,7 +47,7 @@ export function PassengerCard({
           {/* Name and Status */}
           <div className="flex-1 min-w-0">
             <div className="text-xs font-semibold text-slate-100 truncate leading-tight">
-              {passenger.displayName}
+              {tName(passenger.displayName)}
             </div>
           </div>
         </div>
@@ -70,7 +72,7 @@ export function PassengerCard({
         {/* Distance */}
         <div className="flex items-center justify-between">
           <span className="text-[10px] text-slate-400 leading-tight">
-            فاصله:
+            {t("home.passengerCard.distance")}
           </span>
           <span className="text-[10px] text-slate-200 font-medium leading-tight">
             {distance.toFixed(2)} km
@@ -81,7 +83,7 @@ export function PassengerCard({
         {passenger.destination && (
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-slate-400 leading-tight">
-              مقصد:
+              {t("home.passengerCard.destination")}
             </span>
             <span className="text-[9px] text-slate-300 font-medium truncate max-w-[100px] leading-tight">
               {passenger.destination.lat.toFixed(3)},{" "}

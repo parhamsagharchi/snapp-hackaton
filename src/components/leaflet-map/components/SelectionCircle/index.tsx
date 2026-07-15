@@ -2,8 +2,10 @@ import { Circle, Popup, Tooltip } from "react-leaflet";
 import { useLocation } from "react-router-dom";
 import { useMapStore } from "@/store/map.store";
 import { useSettingsStore } from "@/store/settings.store";
+import { useTranslation } from "@/i18n";
 
 export const SelectionCircle = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const selectedPassenger = useMapStore((state) => state.selectedPassenger);
   const driver = useMapStore((state) => state.driver);
@@ -35,18 +37,22 @@ export const SelectionCircle = () => {
         >
           <Tooltip permanent={false} direction="top" offset={[0, -10]}>
             <div className="text-center font-semibold text-green-600">
-              شعاع مبدا
+              {t("circle.originTooltip")}
             </div>
           </Tooltip>
           <Popup>
             <div className="text-center">
-              <strong>شعاع انتخاب مبدا</strong>
+              <strong>{t("circle.originTitle")}</strong>
               <br />
-              فاصله بین مبدا مسافر و مبدا بسته
+              {t("circle.originBetween")}
               <br />
-              شعاع فعلی: {(originSelectionRadius / 1000).toFixed(1)} کیلومتر
+              {t("circle.currentRadius", {
+                km: (originSelectionRadius / 1000).toFixed(1),
+              })}
               <br />
-              ({originSelectionRadius.toLocaleString()} متر)
+              {t("circle.metersParen", {
+                meters: originSelectionRadius.toLocaleString(),
+              })}
             </div>
           </Popup>
         </Circle>
@@ -63,18 +69,22 @@ export const SelectionCircle = () => {
         >
           <Tooltip permanent={false} direction="top" offset={[0, -10]}>
             <div className="text-center font-semibold text-orange-600">
-              شعاع مقصد
+              {t("circle.destTooltip")}
             </div>
           </Tooltip>
           <Popup>
             <div className="text-center">
-              <strong>شعاع انتخاب مقصد</strong>
+              <strong>{t("circle.destTitle")}</strong>
               <br />
-              فاصله بین مقصد مسافر و مقصد بسته
+              {t("circle.destBetween")}
               <br />
-              شعاع فعلی: {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر
+              {t("circle.currentRadius", {
+                km: (destinationSelectionRadius / 1000).toFixed(1),
+              })}
               <br />
-              ({destinationSelectionRadius.toLocaleString()} متر)
+              {t("circle.metersParen", {
+                meters: destinationSelectionRadius.toLocaleString(),
+              })}
             </div>
           </Popup>
         </Circle>
@@ -105,16 +115,18 @@ export const SelectionCircle = () => {
         >
           <Tooltip permanent={false} direction="top" offset={[0, -10]}>
             <div className="text-center font-semibold text-green-600">
-              شعاع مبدا
+              {t("circle.originTooltip")}
             </div>
           </Tooltip>
           <Popup>
             <div className="text-center">
-              <strong>شعاع انتخاب مبدا</strong>
+              <strong>{t("circle.originTitle")}</strong>
               <br />
-              مبدا بسته باید در این محدوده از مبدا مسافر باشد
+              {t("circle.originInRange")}
               <br />
-              شعاع: {(originSelectionRadius / 1000).toFixed(1)} کیلومتر
+              {t("circle.radius", {
+                km: (originSelectionRadius / 1000).toFixed(1),
+              })}
             </div>
           </Popup>
         </Circle>
@@ -132,16 +144,18 @@ export const SelectionCircle = () => {
         >
           <Tooltip permanent={false} direction="top" offset={[0, -10]}>
             <div className="text-center font-semibold text-orange-600">
-              شعاع مقصد
+              {t("circle.destTooltip")}
             </div>
           </Tooltip>
           <Popup>
             <div className="text-center">
-              <strong>شعاع انتخاب مقصد</strong>
+              <strong>{t("circle.destTitle")}</strong>
               <br />
-              مقصد بسته باید در این محدوده از مقصد مسافر باشد
+              {t("circle.destInRange")}
               <br />
-              شعاع: {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر
+              {t("circle.radius", {
+                km: (destinationSelectionRadius / 1000).toFixed(1),
+              })}
             </div>
           </Popup>
         </Circle>

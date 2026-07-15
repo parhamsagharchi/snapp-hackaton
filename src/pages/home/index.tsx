@@ -9,8 +9,10 @@ import { useSimulation } from "@/hooks/useSimulation";
 import { usePassengerSelection } from "@/hooks/usePassengerSelection";
 import { useParcelSelection } from "@/hooks/useParcelSelection";
 import { useParcelOffers } from "@/hooks/useParcelOffers";
+import { useTranslation } from "@/i18n";
 
 function HomePage() {
+  const { t } = useTranslation();
   const driver = useMapStore((state) => state.driver);
   const selectedPassenger = useMapStore((state) => state.selectedPassenger);
   const selectedParcel = useMapStore((state) => state.selectedParcel);
@@ -27,7 +29,7 @@ function HomePage() {
   } = useSimulation();
 
   return (
-    <PageLayout title="شبیه‌سازی مسیر">
+    <PageLayout title={t("home.title")}>
       <div className="space-y-3">
         <SimulationControls
           simulationActive={simulationActive}

@@ -1,16 +1,30 @@
+import { t } from "@/i18n";
+
 /**
- * Centralized toast messages following DRY principle
+ * Centralized toast messages following DRY principle.
+ * Getters read the active language at call time.
  */
 export const toastMessages = {
   errors: {
-    locationRequired: "لطفاً موقعیت را از نقشه انتخاب کنید",
+    get locationRequired() {
+      return t("toast.locationRequired");
+    },
   },
   success: {
-    passengerAdded: "مسافر با موفقیت اضافه شد",
-    passengerUpdated: "مسافر با موفقیت ویرایش شد",
-    parcelAdded: "بسته با موفقیت اضافه شد",
-    parcelUpdated: "بسته با موفقیت ویرایش شد",
-    driverUpdated: "اطلاعات راننده با موفقیت ویرایش شد",
+    get passengerAdded() {
+      return t("toast.passengerAdded");
+    },
+    get passengerUpdated() {
+      return t("toast.passengerUpdated");
+    },
+    get parcelAdded() {
+      return t("toast.parcelAdded");
+    },
+    get parcelUpdated() {
+      return t("toast.parcelUpdated");
+    },
+    get driverUpdated() {
+      return t("toast.driverUpdated");
+    },
   },
 } as const;
-

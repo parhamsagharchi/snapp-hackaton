@@ -1,3 +1,16 @@
+/*
+  Latin digits for English mode. The bundled font (IRANSansXFaNum) renders
+  the 0-9 codepoints with Persian glyphs, so we borrow the digits from a
+  local Latin font while keeping IRANSans for every other character.
+*/
+@font-face {
+  font-family: "AppLatinDigits";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica"),
+    local("Segoe UI"), local("Roboto"), local("Liberation Sans"),
+    local("Tahoma");
+  unicode-range: U+0030-0039;
+}
+
 html,
 body {
   height: 100%;
@@ -5,6 +18,18 @@ body {
   margin: 0;
   direction: rtl;
   background-color: rgb(15, 23, 42); /* slate-900 */
+}
+
+/* Left-to-right layout when English is active */
+html[dir="ltr"],
+html[dir="ltr"] body {
+  direction: ltr;
+}
+
+html[dir="ltr"] * {
+  direction: ltr;
+  /* Latin numerals first, then IRANSans for everything else */
+  font-family: "AppLatinDigits", theme("fontFamily.iran-sans");
 }
 
 * {

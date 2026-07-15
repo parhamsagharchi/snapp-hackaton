@@ -1,6 +1,7 @@
 import { Edit2, Trash2 } from "lucide-react";
 import clsx from "clsx";
 import type { DataTableProps, Column } from "./DataTable.types";
+import { useTranslation } from "@/i18n";
 
 /**
  * Reusable data table component following Single Responsibility and Open-Closed Principles
@@ -14,6 +15,7 @@ export function DataTable<T = Record<string, unknown>>({
   onDelete,
   showActions = true,
 }: DataTableProps<T>) {
+  const { t } = useTranslation();
   const renderCell = (column: Column<T>, row: T, index: number) => {
     if (typeof column.accessor === "function") {
       return column.accessor(row, index);
@@ -32,7 +34,7 @@ export function DataTable<T = Record<string, unknown>>({
                 <th
                   key={idx}
                   className={clsx(
-                    "px-3 py-2 text-right text-xs font-medium text-slate-300",
+                    "px-3 py-2 text-start text-xs font-medium text-slate-300",
                     column.className
                   )}
                 >
@@ -40,8 +42,8 @@ export function DataTable<T = Record<string, unknown>>({
                 </th>
               ))}
               {showActions && (onEdit || onDelete) && (
-                <th className="px-3 py-2 text-right text-xs font-medium text-slate-300">
-                  عملیات
+                <th className="px-3 py-2 text-start text-xs font-medium text-slate-300">
+                  {t("common.actions")}
                 </th>
               )}
             </tr>
@@ -80,7 +82,7 @@ export function DataTable<T = Record<string, unknown>>({
                           <button
                             onClick={() => onEdit(rowIndex)}
                             className="rounded p-0.5 text-blue-400 transition hover:bg-blue-400/20"
-                            aria-label="ویرایش"
+                            aria-label={t("common.edit")}
                           >
                             <Edit2 className="h-3.5 w-3.5" />
                           </button>
@@ -89,7 +91,7 @@ export function DataTable<T = Record<string, unknown>>({
                           <button
                             onClick={() => onDelete(rowIndex)}
                             className="rounded p-0.5 text-red-400 transition hover:bg-red-400/20"
-                            aria-label="حذف"
+                            aria-label={t("common.delete")}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>

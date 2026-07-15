@@ -2,12 +2,14 @@ import { useMapStore, type IParcel } from "@/store/map.store";
 import { DataTable } from "@/components/shared/table/DataTable";
 import { PageLayout } from "@/components/shared/layout/PageLayout";
 import { formatCoordinates } from "@/utils/coordinates";
+import { useTranslation } from "@/i18n";
 
 function ParcelsPage() {
+  const { t, tName } = useTranslation();
   const parcels = useMapStore((state) => state.parcels);
 
   return (
-    <PageLayout title="بسته‌ها">
+    <PageLayout title={t("parcelsPage.title")}>
       <DataTable
         data={parcels}
         columns={[
@@ -16,22 +18,24 @@ function ParcelsPage() {
             accessor: (_, index) => index + 1,
           },
           {
-            header: "نام",
-            accessor: "displayName",
+            header: t("parcelsPage.colName"),
+            accessor: (parcel: IParcel) => tName(parcel.displayName),
             className: "text-white",
           },
           {
-            header: "ونچر",
+            header: t("parcelsPage.colVendor"),
             accessor: (parcel: IParcel) => (
-              <span className="text-white">{parcel.vendor || "-"}</span>
+              <span className="text-white">
+                {parcel.vendor ? tName(parcel.vendor) : "-"}
+              </span>
             ),
           },
           {
-            header: "موقعیت",
+            header: t("parcelsPage.colLocation"),
             accessor: (parcel: IParcel) => formatCoordinates(parcel),
           },
         ]}
-        emptyMessage="هیچ بسته‌ای ثبت نشده است"
+        emptyMessage={t("parcelsPage.empty")}
         showActions={false}
       />
     </PageLayout>

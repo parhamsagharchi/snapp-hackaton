@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useTranslation } from "@/i18n";
 
 type SpinnerProps = {
   size?: "sm" | "md" | "lg";
@@ -26,6 +27,7 @@ export function Spinner({
   className,
   fullScreen = false,
 }: SpinnerProps) {
+  const { t } = useTranslation();
   const spinnerElement = (
     <span
       className={clsx(
@@ -34,7 +36,7 @@ export function Spinner({
         colorMap[color],
         className
       )}
-      aria-label="در حال بارگذاری"
+      aria-label={t("common.loadingAria")}
       role="status"
     />
   );

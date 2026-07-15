@@ -6,6 +6,15 @@ import { useSettingsStore } from "@/store/settings.store";
 import { useMapZoomVisibility } from "@/hooks/useMapZoomVisibility";
 import L from "leaflet";
 import toast from "react-hot-toast";
+import { t as translateStatic, useTranslation } from "@/i18n";
+
+/** Stable semantic identifiers for the points along a route. */
+type RoutePointKey =
+  | "driver"
+  | "passenger"
+  | "parcel"
+  | "passengerDest"
+  | "parcelDest";
 
 /**
  * Calculate points for a smooth arc between two points using Bezier curve
@@ -121,49 +130,6 @@ function createFlowMarkerIcon(color: string) {
   });
 }
 
-/**
- * Generate a clear message for route movement
- */
-function getMovementMessage(startLabel: string, endLabel: string): string {
-  const messages: Record<string, Record<string, string>> = {
-    راننده: {
-      مسافر: "راننده به سمت مبدا مسافر حرکت کرد",
-      بسته: "راننده به سمت مبدا بسته حرکت کرد",
-    },
-    مسافر: {
-      بسته: "راننده به سمت مبدا بسته حرکت کرد",
-      "مقصد مسافر": "راننده به سمت مقصد مسافر حرکت کرد",
-    },
-    بسته: {
-      مسافر: "راننده به سمت مبدا مسافر حرکت کرد",
-      "مقصد مسافر": "راننده به سمت مقصد مسافر حرکت کرد",
-      "مقصد بسته": "راننده به سمت مقصد بسته حرکت کرد",
-    },
-    "مقصد مسافر": {
-      "مقصد بسته": "راننده به سمت مقصد بسته حرکت کرد",
-    },
-  };
-
-  return (
-    messages[startLabel]?.[endLabel] ||
-    `راننده از ${startLabel} به سمت ${endLabel} حرکت کرد`
-  );
-}
-
-/**
- * Generate a clear message for route completion
- */
-function getArrivalMessage(endLabel: string): string {
-  const messages: Record<string, string> = {
-    مسافر: "راننده به مبدا مسافر رسیده است",
-    بسته: "راننده بسته را تحویل گرفته است",
-    "مقصد مسافر": "راننده به مقصد مسافر رسیده است",
-    "مقصد بسته": "راننده بسته را تحویل داده است",
-  };
-
-  return messages[endLabel] || `راننده به ${endLabel} رسیده است`;
-}
-
 interface RouteArcProps {
   start: { lat: number; lng: number };
   end: { lat: number; lng: number };
@@ -171,8 +137,8 @@ interface RouteArcProps {
   color: string;
   isActive: boolean;
   onComplete: () => void;
-  startLabel: string;
-  endLabel: string;
+  startKey: RoutePointKey;
+  endKey: RoutePointKey;
 }
 
 function RouteArc({
@@ -182,9 +148,10 @@ function RouteArc({
   color,
   isActive,
   onComplete,
-  startLabel,
-  endLabel,
+  startKey,
+  endKey,
 }: RouteArcProps) {
+  const { t } = useTranslation();
   const arcPoints = calculateArcPoints(start, end);
   const midPoint = arcPoints[Math.floor(arcPoints.length / 2)];
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -205,7 +172,7 @@ function RouteArc({
 
     // Show toast when arc starts animating
     if (isActive && currentPosition === 0) {
-      const movementMessage = getMovementMessage(startLabel, endLabel);
+      const movementMessage = translateStatic(`route.movement.${endKey}`);
       toast.success(movementMessage, {
         duration: 2000,
         icon: "🚗",
@@ -228,7 +195,7 @@ function RouteArc({
         animationRef.current = requestAnimationFrame(animate);
       } else {
         // Animation complete - show arrival message
-        const arrivalMessage = getArrivalMessage(endLabel);
+        const arrivalMessage = translateStatic(`route.arrival.${endKey}`);
         toast.success(arrivalMessage, {
           duration: 2000,
           icon: "✅",
@@ -245,7 +212,7 @@ function RouteArc({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isActive, number, startLabel, endLabel, onComplete]);
+  }, [isActive, number, startKey, endKey, onComplete]);
 
   // Calculate visible portion of arc
   const visiblePoints = isVisible
@@ -291,9 +258,9 @@ function RouteArc({
       <Marker position={midPoint} icon={createRouteNumberIcon(number, color)}>
         <Popup>
           <div className="text-center">
-            <strong>مرحله {number}</strong>
+            <strong>{t("route.step", { number })}</strong>
             <br />
-            {startLabel} → {endLabel}
+            {t(`route.point.${startKey}`)} → {t(`route.point.${endKey}`)}
           </div>
         </Popup>
       </Marker>
@@ -355,8 +322,8 @@ export const RoutePolyline = () => {
     end: { lat: number; lng: number };
     number: number;
     color: string;
-    startLabel: string;
-    endLabel: string;
+    startKey: RoutePointKey;
+    endKey: RoutePointKey;
   }> = [];
 
   // If no parcel is selected, show simple route: Driver -> Passenger -> Passenger Destination
@@ -367,8 +334,8 @@ export const RoutePolyline = () => {
       end: selectedPassenger,
       number: 1,
       color: "#3B82F6", // Blue
-      startLabel: "راننده",
-      endLabel: "مسافر",
+      startKey: "driver",
+      endKey: "passenger",
     });
 
     // 2: Passenger -> Passenger Destination
@@ -377,8 +344,8 @@ export const RoutePolyline = () => {
       end: passengerDest,
       number: 2,
       color: "#10B981", // Green
-      startLabel: "مسافر",
-      endLabel: "مقصد مسافر",
+      startKey: "passenger",
+      endKey: "passengerDest",
     });
   } else {
     // Parcel is selected - show full route
@@ -394,8 +361,8 @@ export const RoutePolyline = () => {
         end: selectedPassenger,
         number: 1,
         color: "#3B82F6", // Blue
-        startLabel: "راننده",
-        endLabel: "مسافر",
+        startKey: "driver",
+        endKey: "passenger",
       });
 
       // 2: Passenger -> Parcel
@@ -404,8 +371,8 @@ export const RoutePolyline = () => {
         end: selectedParcel,
         number: 2,
         color: "#10B981", // Green
-        startLabel: "مسافر",
-        endLabel: "بسته",
+        startKey: "passenger",
+        endKey: "parcel",
       });
 
       // 3: Parcel -> Passenger Destination
@@ -414,8 +381,8 @@ export const RoutePolyline = () => {
         end: passengerDest,
         number: 3,
         color: "#F59E0B", // Orange
-        startLabel: "بسته",
-        endLabel: "مقصد مسافر",
+        startKey: "parcel",
+        endKey: "passengerDest",
       });
 
       // 4: Passenger Destination -> Parcel Destination
@@ -424,8 +391,8 @@ export const RoutePolyline = () => {
         end: parcelDest,
         number: 4,
         color: "#EF4444", // Red
-        startLabel: "مقصد مسافر",
-        endLabel: "مقصد بسته",
+        startKey: "passengerDest",
+        endKey: "parcelDest",
       });
     } else {
       // package_first
@@ -435,8 +402,8 @@ export const RoutePolyline = () => {
         end: selectedParcel,
         number: 1,
         color: "#3B82F6", // Blue
-        startLabel: "راننده",
-        endLabel: "بسته",
+        startKey: "driver",
+        endKey: "parcel",
       });
 
       // 2: Parcel -> Passenger
@@ -445,8 +412,8 @@ export const RoutePolyline = () => {
         end: selectedPassenger,
         number: 2,
         color: "#10B981", // Green
-        startLabel: "بسته",
-        endLabel: "مسافر",
+        startKey: "parcel",
+        endKey: "passenger",
       });
 
       // 3: Passenger -> Passenger Destination
@@ -455,8 +422,8 @@ export const RoutePolyline = () => {
         end: passengerDest,
         number: 3,
         color: "#F59E0B", // Orange
-        startLabel: "مسافر",
-        endLabel: "مقصد مسافر",
+        startKey: "passenger",
+        endKey: "passengerDest",
       });
 
       // 4: Passenger Destination -> Parcel Destination
@@ -465,8 +432,8 @@ export const RoutePolyline = () => {
         end: parcelDest,
         number: 4,
         color: "#EF4444", // Red
-        startLabel: "مقصد مسافر",
-        endLabel: "مقصد بسته",
+        startKey: "passengerDest",
+        endKey: "parcelDest",
       });
     }
   }
@@ -477,7 +444,7 @@ export const RoutePolyline = () => {
       setActiveArcIndex(activeArcIndex + 1);
     } else {
       // All arcs completed
-      toast.success("شبیه‌سازی کامل شد! 🎉", { duration: 3000 });
+      toast.success(translateStatic("route.complete"), { duration: 3000 });
     }
   };
 

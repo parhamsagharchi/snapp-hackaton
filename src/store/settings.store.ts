@@ -5,6 +5,7 @@ import {
   DEFAULT_ROUTE_ORDER_PREFERENCE,
   DEFAULT_ORIGIN_SELECTION_RADIUS,
   DEFAULT_DESTINATION_SELECTION_RADIUS,
+  DEFAULT_UI_LANGUAGE,
 } from "./settings.constant";
 
 // Re-export types for backward compatibility
@@ -16,10 +17,16 @@ export const useSettingsStore = create<ISettingsStore>()(
       routeOrderPreference: DEFAULT_ROUTE_ORDER_PREFERENCE,
       originSelectionRadius: DEFAULT_ORIGIN_SELECTION_RADIUS,
       destinationSelectionRadius: DEFAULT_DESTINATION_SELECTION_RADIUS,
+      language: DEFAULT_UI_LANGUAGE,
 
       setRouteOrderPreference: (preference) =>
         set({
           routeOrderPreference: preference,
+        }),
+
+      setLanguage: (language) =>
+        set({
+          language,
         }),
 
       setOriginSelectionRadius: (radius) =>

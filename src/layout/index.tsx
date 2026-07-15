@@ -1,23 +1,36 @@
+import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import clsx from "clsx";
+import { Languages } from "lucide-react";
 import logo from "@/assets/images/logo.svg";
 import hackathonLogo from "@/assets/images/hackathon-logo.webp";
 import LeafletMap from "@/components/leaflet-map";
 import { LeafletMapItems } from "@/components/leaflet-map/components";
 import { isContentOnlyPage } from "./content-only-pages.constant";
-
-const navItems = [
-  { to: "/", label: "صفحه اصلی", end: true },
-  { to: "/passengers", label: "مسافر‌ها" },
-  { to: "/parcels", label: "بسته‌ها" },
-  { to: "/driver", label: "راننده" },
-  { to: "/settings", label: "تنظیمات" },
-  { to: "/pitch", label: "ارائه ایده" },
-];
+import { useTranslation, LANGUAGE_SHORT_LABELS } from "@/i18n";
 
 export function Layout() {
   const location = useLocation();
   const isContentOnly = isContentOnlyPage(location.pathname);
+  const { t, language, setLanguage, dir } = useTranslation();
+
+  // Keep the document in sync with the active language.
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = dir;
+    document.title = t("pitch.pageTitle");
+  }, [language, dir, t]);
+
+  const navItems = [
+    { to: "/", label: t("nav.home"), end: true },
+    { to: "/passengers", label: t("nav.passengers") },
+    { to: "/parcels", label: t("nav.parcels") },
+    { to: "/driver", label: t("nav.driver") },
+    { to: "/settings", label: t("nav.settings") },
+    { to: "/pitch", label: t("nav.pitch") },
+  ];
+
+  const nextLanguage = language === "fa" ? "en" : "fa";
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 overflow-x-hidden">
@@ -47,7 +60,17 @@ export function Layout() {
             </nav>
 
             <div className="flex items-center gap-3">
-              <img src={logo} alt="اسنپ" className="h-10" />
+              <button
+                type="button"
+                onClick={() => setLanguage(nextLanguage)}
+                title={t("header.switchLanguage")}
+                aria-label={t("header.switchLanguage")}
+                className="flex items-center gap-1.5 rounded-lg border border-white/30 px-2.5 py-1.5 text-sm font-semibold text-white/90 transition-colors duration-300 hover:border-white/50 hover:bg-white/10 hover:text-white"
+              >
+                <Languages className="h-4 w-4" />
+                <span>{LANGUAGE_SHORT_LABELS[nextLanguage]}</span>
+              </button>
+              <img src={logo} alt={t("header.logoAlt")} className="h-10" />
             </div>
           </div>
         </div>
@@ -94,7 +117,7 @@ export function Layout() {
               {/* Logo */}
               <img
                 src={hackathonLogo}
-                alt="لوگوی هکاتون اسنپ"
+                alt={t("header.hackathonLogoAlt")}
                 className="h-8 w-auto opacity-60 hover:opacity-80 transition-opacity"
               />
 
@@ -103,8 +126,12 @@ export function Layout() {
 
               {/* Team Info */}
               <div className="flex items-center gap-2.5">
-                <span className="text-xs text-slate-500">تیم شماره</span>
-                <span className="text-base font-bold text-primary">۲۷</span>
+                <span className="text-xs text-slate-500">
+                  {t("header.teamLabel")}
+                </span>
+                <span className="text-base font-bold text-primary">
+                  {t("header.teamNumber")}
+                </span>
                 <span className="text-xs text-slate-600">•</span>
                 <span className="text-sm font-semibold text-slate-300">
                   SnappShare

@@ -4,6 +4,7 @@ import type { ParcelOffer } from "@/utils/parcelOffers.types";
 import { calculateDistance } from "@/utils/tsp";
 import { areCoordinatesEqual } from "@/utils/coordinates";
 import type { IPassenger } from "@/store/map.store";
+import { useTranslation } from "@/i18n";
 
 interface ParcelOfferCardProps {
   offer: ParcelOffer;
@@ -20,6 +21,7 @@ export function ParcelOfferCard({
   selectedParcel,
   onSelect,
 }: ParcelOfferCardProps) {
+  const { t, tName } = useTranslation();
   const isSelected =
     selectedParcel && areCoordinatesEqual(selectedParcel, offer.parcel);
   const isBestOffer = index === 0;
@@ -62,11 +64,11 @@ export function ParcelOfferCard({
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="flex items-center gap-2 flex-wrap">
               <h4 className="text-sm font-bold text-white">
-                {offer.parcel.displayName}
+                {tName(offer.parcel.displayName)}
               </h4>
               {offer.parcel.vendor && (
                 <span className="inline-flex items-center rounded-md bg-primary/25 px-2 py-0.5 text-[10px] font-semibold text-primary border border-primary/40 shadow-sm">
-                  {offer.parcel.vendor}
+                  {tName(offer.parcel.vendor)}
                 </span>
               )}
             </div>
@@ -74,13 +76,13 @@ export function ParcelOfferCard({
               {isBestOffer && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-yellow-500/30 to-yellow-500/20 px-2.5 py-1 text-[10px] font-bold text-yellow-200 border border-yellow-500/50 shadow-sm">
                   <span className="text-xs">⭐</span>
-                  <span>بهترین</span>
+                  <span>{t("home.offerCard.best")}</span>
                 </span>
               )}
               {isSelected && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500/30 to-orange-500/20 px-2 py-1 text-[10px] font-semibold text-orange-200 border border-orange-500/50 shadow-sm">
                   <span>✓</span>
-                  <span>انتخاب شده</span>
+                  <span>{t("home.offerCard.selected")}</span>
                 </span>
               )}
             </div>
@@ -90,39 +92,39 @@ export function ParcelOfferCard({
           <div className="grid grid-cols-2 gap-x-4 gap-y-2">
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-medium">
-                فاصله تا مسافر:
+                {t("home.offerCard.distanceToPassenger")}
               </span>
               <span className="text-[10px] text-slate-200 font-semibold">
-                {distance.toFixed(2)} کیلومتر
+                {distance.toFixed(2)} {t("common.km")}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-medium">
-                فاصله کل:
+                {t("home.offerCard.totalDistance")}
               </span>
               <span className="text-[10px] text-slate-200 font-semibold">
-                {offer.totalDistance.toFixed(2)} کیلومتر
+                {offer.totalDistance.toFixed(2)} {t("common.km")}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-medium">
-                انحراف:
+                {t("home.offerCard.detour")}
               </span>
               <span className="text-[10px] text-slate-200 font-semibold">
-                {offer.detourDistance.toFixed(2)} کیلومتر
+                {offer.detourDistance.toFixed(2)} {t("common.km")}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-medium">
-                زمان:
+                {t("home.offerCard.time")}
               </span>
               <span className="text-[10px] text-slate-200 font-semibold">
-                {offer.estimatedTime.toFixed(0)} دقیقه
+                {offer.estimatedTime.toFixed(0)} {t("common.minute")}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-slate-500 font-medium">
-                امتیاز:
+                {t("home.offerCard.score")}
               </span>
               <span
                 className={clsx(

@@ -12,11 +12,13 @@ import {
   TTILE_LAYER_URL,
   DEFAULT_MAP_CENTER,
 } from "./leaflet-map.constant";
+import { useTranslation } from "@/i18n";
 
 // Global map instances tracker to prevent double initialization in React 19 StrictMode
 const initializedMaps = new WeakSet<HTMLDivElement>();
 
 function LeafletMap({ ref, style = {}, render, className }: ILeafletMap) {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
@@ -77,7 +79,7 @@ function LeafletMap({ ref, style = {}, render, className }: ILeafletMap) {
         style={{ height: "100%", width: "100%", ...style }}
       >
         <div className="flex h-full items-center justify-center text-slate-400">
-          در حال بارگذاری نقشه...
+          {t("common.loadingMap")}
         </div>
       </div>
     );
