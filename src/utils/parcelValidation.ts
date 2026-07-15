@@ -1,6 +1,7 @@
 import type { IParcel, IPassenger } from "@/store/map.types";
 import { calculateDistance } from "./tsp";
 import { DEFAULT_DESTINATION_OFFSET } from "./constants";
+import { t } from "@/i18n";
 
 /**
  * Get default destination for a point (offset by default distance)
@@ -43,18 +44,18 @@ export function validateParcelSelection(
   if (originDistance > originSelectionRadius) {
     return {
       isValid: false,
-      errorMessage: `مبدا این بسته خارج از محدوده انتخاب است (${(
-        originDistance / 1000
-      ).toFixed(1)} کیلومتر)`,
+      errorMessage: t("toast.parcelOriginOutOfRange", {
+        km: (originDistance / 1000).toFixed(1),
+      }),
     };
   }
 
   if (destinationDistance > destinationSelectionRadius) {
     return {
       isValid: false,
-      errorMessage: `مقصد این بسته خارج از محدوده انتخاب است (${(
-        destinationDistance / 1000
-      ).toFixed(1)} کیلومتر)`,
+      errorMessage: t("toast.parcelDestOutOfRange", {
+        km: (destinationDistance / 1000).toFixed(1),
+      }),
     };
   }
 

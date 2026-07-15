@@ -1,11 +1,13 @@
 import { useMapStore } from "@/store/map.store";
 import toast from "react-hot-toast";
+import { useTranslation } from "@/i18n";
 
 /**
  * Custom hook for simulation control logic following Single Responsibility Principle
  * Handles starting, stopping, and clearing simulation
  */
 export function useSimulation() {
+  const { t } = useTranslation();
   const selectedPassenger = useMapStore((state) => state.selectedPassenger);
   const selectedParcel = useMapStore((state) => state.selectedParcel);
   const optimizedRoute = useMapStore((state) => state.optimizedRoute);
@@ -18,41 +20,39 @@ export function useSimulation() {
 
   const handleStartSimulation = () => {
     if (!selectedPassenger) {
-      toast.error("ابتدا یک مسافر انتخاب کنید");
+      toast.error(t("toast.selectPassengerFirst"));
       return;
     }
     
     // Parcel is optional - simulation can start without parcel
     // But if passenger has orderOptionsActive, they cannot receive parcels
     if (selectedPassenger.orderOptionsActive && selectedParcel) {
-      toast.error(
-        "این مسافر گزینه‌های سفارش فعال دارد و نمی‌تواند بسته دریافت کند"
-      );
+      toast.error(t("toast.orderActiveNoParcel"));
       return;
     }
     
     if (!optimizedRoute || optimizedRoute.length === 0) {
-      toast.error("مسیر بهینه‌سازی نشده است");
+      toast.error(t("toast.routeNotOptimized"));
       return;
     }
 
     setSimulationActive(true);
     const message = selectedParcel
-      ? "شبیه‌سازی با مسافر و بسته شروع شد"
-      : "شبیه‌سازی با مسافر (بدون بسته) شروع شد";
+      ? t("toast.startedWithParcel")
+      : t("toast.startedWithoutParcel");
     toast.success(message);
   };
 
   const handleStopSimulation = () => {
     setSimulationActive(false);
-    toast("شبیه‌سازی متوقف شد", { icon: "ℹ️" });
+    toast(t("toast.stopped"), { icon: "ℹ️" });
   };
 
   const handleClearSelection = () => {
     setSelectedPassenger(null);
     setSelectedParcel(null);
     setSimulationActive(false);
-    toast("انتخاب‌ها پاک شد", { icon: "ℹ️" });
+    toast(t("toast.selectionsCleared"), { icon: "ℹ️" });
   };
 
   return {

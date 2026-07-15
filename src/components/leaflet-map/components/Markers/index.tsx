@@ -7,8 +7,10 @@ import { CustomMarker } from "./CustomMarker";
 import { useRouteOptimization } from "@/hooks/useRouteOptimization";
 import { areCoordinatesEqual } from "@/utils/coordinates";
 import { useMapZoomVisibility } from "@/hooks/useMapZoomVisibility";
+import { useTranslation } from "@/i18n";
 
 export const Markers = () => {
+  const { t, tName } = useTranslation();
   const id = useId();
   const location = useLocation();
   const passengers = useMapStore((state) => state.passengers);
@@ -126,9 +128,10 @@ export const Markers = () => {
 
   // Driver is draggable only on driver page
   const driverIsActive = showDriver && currentPath === "/driver";
-  const driverShortLabel = driver.displayName
-    ? driver.displayName.charAt(0)
-    : "ر";
+  const driverName = driver.displayName
+    ? tName(driver.displayName)
+    : t("map.driver");
+  const driverShortLabel = driverName.charAt(0) || t("map.driverInitial");
 
   // Don't render markers if zoom is too low
   if (!shouldShowMarkers) {
@@ -142,7 +145,7 @@ export const Markers = () => {
         <CustomMarker
           key={`driver-${driver.lat}-${driver.lng}-${id}`}
           position={[driver.lat, driver.lng]}
-          label={driver.displayName || "راننده"}
+          label={driverName}
           shortLabel={driverShortLabel}
           color="#3B82F6"
           iconType="driver"
@@ -152,7 +155,7 @@ export const Markers = () => {
         >
           <Popup>
             <div>
-              <strong>{driver.displayName || "راننده"}</strong>
+              <strong>{driverName}</strong>
             </div>
           </Popup>
         </CustomMarker>
@@ -172,8 +175,11 @@ export const Markers = () => {
           .map((passenger, index) => {
             const isSelected =
               selectedPassenger && areCoordinatesEqual(selectedPassenger, passenger);
+            const passengerName = passenger.displayName
+              ? tName(passenger.displayName)
+              : t("map.passengerN", { n: index + 1 });
             const shortLabel = passenger.displayName
-              ? passenger.displayName.charAt(0)
+              ? passengerName.charAt(0)
               : `${index + 1}`;
             return (
               <CustomMarker
@@ -181,8 +187,8 @@ export const Markers = () => {
                 position={[passenger.lat, passenger.lng]}
                 label={
                   isSelected
-                    ? `مبدا ${passenger.displayName || `مسافر ${index + 1}`}`
-                    : passenger.displayName || `مسافر ${index + 1}`
+                    ? t("map.originLabel", { name: passengerName })
+                    : passengerName
                 }
                 shortLabel={shortLabel}
                 color={isSelected ? "#059669" : "#10B981"}
@@ -193,20 +199,22 @@ export const Markers = () => {
               >
                 <Popup>
                   <div>
-                    <strong>
-                      {passenger.displayName || `مسافر ${index + 1}`}
-                    </strong>
+                    <strong>{passengerName}</strong>
                     {isSelected && (
                       <div className="mt-1 text-xs font-semibold text-green-400">
-                        ✓ انتخاب شده
+                        {t("map.selectedMark")}
                       </div>
                     )}
                     <div className="mt-1">
-                      گزینه های سفارش:{" "}
+                      {t("map.orderOptions")}{" "}
                       {passenger.orderOptionsActive ? (
-                        <span className="text-yellow-400">فعال</span>
+                        <span className="text-yellow-400">
+                          {t("common.active")}
+                        </span>
                       ) : (
-                        <span className="text-slate-400">غیرفعال</span>
+                        <span className="text-slate-400">
+                          {t("common.inactive")}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -223,12 +231,15 @@ export const Markers = () => {
             lat: selectedPassenger.lat + 0.05,
             lng: selectedPassenger.lng + 0.05,
           };
+          const passengerDestName = selectedPassenger.displayName
+            ? tName(selectedPassenger.displayName)
+            : t("map.passengerFallback");
           return (
             <CustomMarker
               key={`passenger-dest-${selectedPassenger.lat}-${selectedPassenger.lng}-${id}`}
               position={[passengerDest.lat, passengerDest.lng]}
-              label={`مقصد ${selectedPassenger.displayName || "مسافر"}`}
-              shortLabel="م"
+              label={t("map.destLabel", { name: passengerDestName })}
+              shortLabel={passengerDestName.charAt(0)}
               color="#059669"
               iconType="passenger"
               onClick={() => {}}
@@ -237,7 +248,9 @@ export const Markers = () => {
             >
               <Popup>
                 <div>
-                  <strong>مقصد {selectedPassenger.displayName || "مسافر"}</strong>
+                  <strong>
+                    {t("map.destLabel", { name: passengerDestName })}
+                  </strong>
                 </div>
               </Popup>
             </CustomMarker>
@@ -262,8 +275,11 @@ export const Markers = () => {
           .map((parcel, index) => {
             const isSelected =
               selectedParcel && areCoordinatesEqual(selectedParcel, parcel);
+            const parcelName = parcel.displayName
+              ? tName(parcel.displayName)
+              : t("map.parcelN", { n: index + 1 });
             const shortLabel = parcel.displayName
-              ? parcel.displayName.charAt(0)
+              ? parcelName.charAt(0)
               : `${index + 1}`;
             return (
               <CustomMarker
@@ -271,8 +287,8 @@ export const Markers = () => {
                 position={[parcel.lat, parcel.lng]}
                 label={
                   isSelected
-                    ? `مبدا ${parcel.displayName || `بسته ${index + 1}`}`
-                    : parcel.displayName || `بسته ${index + 1}`
+                    ? t("map.originLabel", { name: parcelName })
+                    : parcelName
                 }
                 shortLabel={shortLabel}
                 color={isSelected ? "#D97706" : "#F59E0B"}
@@ -283,10 +299,10 @@ export const Markers = () => {
               >
                 <Popup>
                   <div>
-                    <strong>{parcel.displayName || `بسته ${index + 1}`}</strong>
+                    <strong>{parcelName}</strong>
                     {isSelected && (
                       <div className="mt-1 text-xs font-semibold text-orange-400">
-                        ✓ انتخاب شده
+                        {t("map.selectedMark")}
                       </div>
                     )}
                   </div>
@@ -303,12 +319,15 @@ export const Markers = () => {
             lat: selectedParcel.lat + 0.05,
             lng: selectedParcel.lng + 0.05,
           };
+          const parcelDestName = selectedParcel.displayName
+            ? tName(selectedParcel.displayName)
+            : t("map.parcelFallback");
           return (
             <CustomMarker
               key={`parcel-dest-${selectedParcel.lat}-${selectedParcel.lng}-${id}`}
               position={[parcelDest.lat, parcelDest.lng]}
-              label={`مقصد ${selectedParcel.displayName || "بسته"}`}
-              shortLabel="م"
+              label={t("map.destLabel", { name: parcelDestName })}
+              shortLabel={parcelDestName.charAt(0)}
               color="#D97706"
               iconType="parcel"
               onClick={() => {}}
@@ -317,7 +336,7 @@ export const Markers = () => {
             >
               <Popup>
                 <div>
-                  <strong>مقصد {selectedParcel.displayName || "بسته"}</strong>
+                  <strong>{t("map.destLabel", { name: parcelDestName })}</strong>
                 </div>
               </Popup>
             </CustomMarker>

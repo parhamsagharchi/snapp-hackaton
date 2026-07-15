@@ -8,8 +8,9 @@ import {
   FormActions,
 } from "@/components/shared/form";
 import { PageLayout } from "@/components/shared/layout/PageLayout";
-import { validationRules } from "@/utils/validation";
+import { getValidationRules } from "@/utils/validation";
 import { toastMessages } from "@/utils/toast-messages";
+import { useTranslation } from "@/i18n";
 
 type DriverFormData = {
   displayName: string;
@@ -18,6 +19,8 @@ type DriverFormData = {
 };
 
 function DriverPage() {
+  const { t } = useTranslation();
+  const validationRules = getValidationRules(t);
   const driver = useMapStore((state) => state.driver);
   const updateDriver = useMapStore((state) => state.updateDriver);
 
@@ -83,9 +86,9 @@ function DriverPage() {
 
   if (!driver) {
     return (
-      <PageLayout title="مدیریت راننده">
+      <PageLayout title={t("driver.titleLoading")}>
         <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
-          <p className="text-xs text-slate-300">در حال بارگذاری...</p>
+          <p className="text-xs text-slate-300">{t("common.loading")}</p>
         </div>
       </PageLayout>
     );
@@ -93,7 +96,7 @@ function DriverPage() {
 
   const onSubmit = (data: DriverFormData) => {
     if (!driver) {
-      toast.error("راننده یافت نشد");
+      toast.error(t("driver.notFound"));
       return;
     }
 
@@ -108,7 +111,7 @@ function DriverPage() {
   };
 
   return (
-    <PageLayout title="ویرایش اطلاعات راننده">
+    <PageLayout title={t("driver.titleEdit")}>
       {/* Form */}
       <div className="space-y-3">
         <form
@@ -120,40 +123,40 @@ function DriverPage() {
           spellCheck="false"
         >
           <TextInput
-            label="نام *"
-            placeholder="نام راننده"
+            label={t("driver.nameLabel")}
+            placeholder={t("driver.namePlaceholder")}
             autoFocus
             {...register("displayName", validationRules.displayName)}
             error={errors.displayName}
           />
 
           <NumberInput
-            label="عرض جغرافیایی (Latitude) *"
-            placeholder="مثال: 35.72"
+            label={t("driver.latLabel")}
+            placeholder={t("driver.latPlaceholder")}
             step="0.0001"
             {...register("lat", {
-              required: "عرض جغرافیایی الزامی است",
+              required: t("driver.latRequired"),
               valueAsNumber: true,
-              min: { value: -90, message: "عرض جغرافیایی باید بین -90 تا 90 باشد" },
-              max: { value: 90, message: "عرض جغرافیایی باید بین -90 تا 90 باشد" },
+              min: { value: -90, message: t("driver.latRange") },
+              max: { value: 90, message: t("driver.latRange") },
             })}
             error={errors.lat}
           />
 
           <NumberInput
-            label="طول جغرافیایی (Longitude) *"
-            placeholder="مثال: 51.45"
+            label={t("driver.lngLabel")}
+            placeholder={t("driver.lngPlaceholder")}
             step="0.0001"
             {...register("lng", {
-              required: "طول جغرافیایی الزامی است",
+              required: t("driver.lngRequired"),
               valueAsNumber: true,
-              min: { value: -180, message: "طول جغرافیایی باید بین -180 تا 180 باشد" },
-              max: { value: 180, message: "طول جغرافیایی باید بین -180 تا 180 باشد" },
+              min: { value: -180, message: t("driver.lngRange") },
+              max: { value: 180, message: t("driver.lngRange") },
             })}
             error={errors.lng}
           />
 
-          <FormActions isEditing={false} submitLabel="ویرایش" />
+          <FormActions isEditing={false} submitLabel={t("driver.submit")} />
         </form>
       </div>
     </PageLayout>

@@ -1,6 +1,7 @@
 import type { IParcel, IPassenger } from "@/store/map.store";
 import type { ParcelOffer } from "@/utils/parcelOffers.types";
 import { ParcelOfferCard } from "./ParcelOfferCard";
+import { useTranslation } from "@/i18n";
 
 interface ParcelOffersProps {
   selectedPassenger: IPassenger;
@@ -15,16 +16,17 @@ export function ParcelOffers({
   parcelOffers,
   onSelectParcel,
 }: ParcelOffersProps) {
+  const { t } = useTranslation();
+
   // If passenger has orderOptionsActive, they cannot receive parcels
   if (selectedPassenger?.orderOptionsActive) {
     return (
       <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3">
         <h3 className="mb-2 text-sm font-semibold text-yellow-300">
-          پیشنهادات بسته (الگوریتم TSP)
+          {t("home.offers.title")}
         </h3>
         <p className="text-xs text-yellow-200/80">
-          این مسافر گزینه‌های سفارش فعال دارد و راننده نمی‌تواند بسته دریافت
-          کند. می‌توانید شبیه‌سازی را بدون بسته شروع کنید.
+          {t("home.offers.orderActiveWarning")}
         </p>
       </div>
     );
@@ -34,12 +36,9 @@ export function ParcelOffers({
     return (
       <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
         <h3 className="mb-2 text-sm font-semibold text-slate-100">
-          پیشنهادات بسته (الگوریتم TSP)
+          {t("home.offers.title")}
         </h3>
-        <p className="text-xs text-slate-400">
-          بسته مناسبی در محدوده انتخاب شده یافت نشد. می‌توانید شبیه‌سازی را بدون
-          بسته شروع کنید.
-        </p>
+        <p className="text-xs text-slate-400">{t("home.offers.none")}</p>
       </div>
     );
   }
@@ -47,7 +46,7 @@ export function ParcelOffers({
   return (
     <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
       <h3 className="mb-2 text-sm font-semibold text-slate-100">
-        پیشنهادات بسته (الگوریتم TSP)
+        {t("home.offers.title")}
       </h3>
       <div className="space-y-2">
         {parcelOffers.map((offer, index) => (

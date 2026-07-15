@@ -4,12 +4,14 @@ import { useScrollAnimations } from "@/hooks/useScrollAnimations";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 import { SNAPP_SERVICES } from "./pitch.constant";
+import { useTranslation } from "@/i18n";
 
 function PitchPage() {
   const containerRef = useScrollAnimations();
+  const { t, tName, tDigits } = useTranslation();
 
   return (
-    <ContentOnlyLayout title="SnappShare – استفاده هوشمند از ظرفیت خالی خودروها برای حمل مرسوله">
+    <ContentOnlyLayout title={t("pitch.pageTitle")}>
       <div ref={containerRef} className="space-y-5 text-sm text-slate-300">
         {/* Hero Section */}
         <section
@@ -22,27 +24,22 @@ function PitchPage() {
               data-animate="heading"
               className="text-xl font-semibold text-white"
             >
-              ایده ما
+              {t("pitch.hero.heading")}
             </h2>
           </div>
           <p
             data-animate="text"
             className="text-sm leading-relaxed text-slate-200 mb-4"
           >
-            در شرایط امروز که قیمت بنزین به‌طور مداوم افزایش یافته و آلودگی هوا
-            به یکی از مسائل جدی شهرهای بزرگ تبدیل شده، اهمیت کاهش هزینه‌ها،
-            مسئولیت‌پذیری اجتماعی و بهینه‌سازی سفرهای شهری بیش از هر زمان دیگری
-            احساس می‌شود.
+            {t("pitch.hero.p1")}
           </p>
           <p
             data-animate="text"
             className="text-sm leading-relaxed text-slate-200"
           >
-            تیم ما با همین نگاه، طرح{" "}
-            <strong className="text-primary">SnappShare</strong> را طراحی کرده
-            است؛ راهکاری هوشمند که از ظرفیت بلااستفاده صندوق عقب خودروهای اسنپ،
-            بدون ایجاد کوچک‌ترین اختلال در سفر مسافر، برای حمل مرسولات کوچک و
-            میان‌رده استفاده می‌کند.
+            {t("pitch.hero.p2Before")}
+            <strong className="text-primary">SnappShare</strong>
+            {t("pitch.hero.p2After")}
           </p>
         </section>
 
@@ -57,16 +54,14 @@ function PitchPage() {
               data-animate="heading"
               className="text-lg font-semibold text-white"
             >
-              مسئله‌ای که وجود دارد
+              {t("pitch.problem.heading")}
             </h2>
           </div>
           <p
             data-animate="text"
             className="mb-4 text-sm leading-relaxed text-slate-200"
           >
-            روزانه هزاران راننده اسنپ مسیرهای طولانی را بدون همراه داشتن هیچ بار
-            یا مرسوله‌ای طی می‌کنند؛ در حالی که هم‌زمان در بازار سفارش‌هایی وجود
-            دارد که:
+            {t("pitch.problem.intro")}
           </p>
           <div data-animate="stagger" className="space-y-3">
             <div
@@ -78,7 +73,7 @@ function PitchPage() {
               </span>
               <div className="flex-1">
                 <p className="text-sm text-slate-200">
-                  برای بایک بیش از حد بزرگ یا سنگین هستند
+                  {t("pitch.problem.item1")}
                 </p>
               </div>
             </div>
@@ -91,14 +86,14 @@ function PitchPage() {
               </span>
               <div className="flex-1">
                 <p className="text-sm text-slate-200">
-                  و برای وانت سبک بسیار کوچک و کم‌وزن‌اند
+                  {t("pitch.problem.item2")}
                 </p>
               </div>
             </div>
           </div>
           <div className="mt-4 p-4 rounded-lg bg-red-900/25 border border-red-500/40">
             <p className="text-sm text-red-100 font-medium">
-              در نتیجه بخش بزرگی از یک نیاز واقعی بازار، بی‌پاسخ باقی می‌ماند.
+              {t("pitch.problem.conclusion")}
             </p>
           </div>
         </section>
@@ -114,43 +109,42 @@ function PitchPage() {
               data-animate="heading"
               className="text-lg font-semibold text-white"
             >
-              راه‌حل SnappShare
+              {t("pitch.solution.heading")}
             </h2>
           </div>
           <p
             data-animate="text"
             className="mb-5 text-sm leading-relaxed text-slate-200 font-medium"
           >
-            ما این ظرفیت خالی و استفاده‌نشده را به یک منبع درآمد جدید، بهینه و
-            پایدار تبدیل می‌کنیم. در این طرح:
+            {t("pitch.solution.intro")}
           </p>
           <div data-animate="stagger" className="grid gap-4 md:grid-cols-2">
             {[
               {
                 icon: "👤",
-                title: "مسافر",
-                desc: "بدون هیچ تغییری در کیفیت سفر جابه‌جا می‌شود",
+                title: t("pitch.solution.passengerTitle"),
+                desc: t("pitch.solution.passengerDesc"),
                 color: "bg-blue-900/20",
                 border: "border-blue-500/30",
               },
               {
                 icon: "🚗",
-                title: "راننده",
-                desc: "از همان مسیر واقعی خود، درآمد اضافی بدون هزینه اضافی به دست می‌آورد",
+                title: t("pitch.solution.driverTitle"),
+                desc: t("pitch.solution.driverDesc"),
                 color: "bg-green-900/20",
                 border: "border-green-500/30",
               },
               {
                 icon: "📱",
-                title: "پلتفرم اسنپ",
-                desc: "سفارش‌های جدید و ارزشمند جذب می‌کند",
+                title: t("pitch.solution.platformTitle"),
+                desc: t("pitch.solution.platformDesc"),
                 color: "bg-purple-900/20",
                 border: "border-purple-500/30",
               },
               {
                 icon: "🌱",
-                title: "شهر",
-                desc: "از کاهش تردد اضافه و کاهش آلودگی هوا بهره‌مند می‌شود",
+                title: t("pitch.solution.cityTitle"),
+                desc: t("pitch.solution.cityDesc"),
                 color: "bg-teal-900/20",
                 border: "border-teal-500/30",
               },
@@ -191,74 +185,65 @@ function PitchPage() {
               data-animate="heading"
               className="text-lg font-semibold text-white"
             >
-              چطور کار می‌کند؟
+              {t("pitch.how.heading")}
             </h2>
           </div>
           <div className="space-y-4">
             <div className="rounded-lg bg-slate-800/50 p-4 border border-slate-700/40">
               <h3 className="text-sm font-medium text-blue-300 mb-3">
-                ۱. ثبت سفارش Car Cargo
+                {t("pitch.how.step1Title")}
               </h3>
               <p className="text-sm text-slate-200 leading-relaxed mb-3">
-                کاربر یک سفارش <strong className="text-white">Car Cargo</strong>{" "}
-                ثبت می‌کند؛ سفارش‌هایی در محدوده ابعاد صندوق عقب که بین «Bike
-                Box» و «Van Cargo» قرار می‌گیرند.
+                {t("pitch.how.step1Before")}
+                <strong className="text-white">Car Cargo</strong>
+                {t("pitch.how.step1After")}
               </p>
               <div className="mt-3 p-3.5 rounded-lg bg-blue-900/20 border border-blue-500/30">
                 <p className="text-sm font-medium text-blue-200 mb-2">
-                  برای ایجاد اعتماد حداکثری، کاربر جزئیاتی مثل:
+                  {t("pitch.how.step1TrustIntro")}
                 </p>
                 <ul className="space-y-1.5 text-sm text-blue-100">
-                  <li>• نوع و ماهیت بسته</li>
-                  <li>• ارزش تقریبی</li>
-                  <li>• وزن و ابعاد</li>
-                  <li>• شرایط خاص حمل</li>
+                  <li>• {t("pitch.how.step1Detail1")}</li>
+                  <li>• {t("pitch.how.step1Detail2")}</li>
+                  <li>• {t("pitch.how.step1Detail3")}</li>
+                  <li>• {t("pitch.how.step1Detail4")}</li>
                 </ul>
                 <p className="text-sm text-blue-100 mt-2">
-                  را به‌وضوح مشخص می‌کند.
+                  {t("pitch.how.step1TrustOutro")}
                 </p>
               </div>
             </div>
 
             <div className="rounded-lg bg-slate-800/50 p-4 border border-slate-700/40">
               <h3 className="text-sm font-medium text-purple-300 mb-3">
-                ۲. الگوریتم هوشمند تطبیق مسیر
+                {t("pitch.how.step2Title")}
               </h3>
               <div className="space-y-2.5 text-sm text-slate-200">
-                <p className="mb-2">پس از ثبت سفارش:</p>
+                <p className="mb-2">{t("pitch.how.step2AfterOrder")}</p>
                 <div className="flex items-start gap-2.5">
                   <span className="text-purple-300 font-semibold text-base">
                     →
                   </span>
-                  <p className="leading-relaxed">
-                    سیستم، سفرهایی را که مبدا و مقصدشان در شعاع مناسب با سفارش
-                    قرار دارد، شناسایی می‌کند
-                  </p>
+                  <p className="leading-relaxed">{t("pitch.how.step2B1")}</p>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <span className="text-purple-300 font-semibold text-base">
                     →
                   </span>
-                  <p className="leading-relaxed">
-                    سفارش برای رانندگان نزدیک ارسال می‌شود
-                  </p>
+                  <p className="leading-relaxed">{t("pitch.how.step2B2")}</p>
                 </div>
                 <div className="flex items-start gap-2.5">
                   <span className="text-purple-300 font-semibold text-base">
                     →
                   </span>
-                  <p className="leading-relaxed">
-                    راننده با مشاهده جزئیات بار، می‌تواند سفارش را بپذیرد یا
-                    صرفاً سفر معمولی خود را ادامه دهد
-                  </p>
+                  <p className="leading-relaxed">{t("pitch.how.step2B3")}</p>
                 </div>
                 <div className="mt-3 p-3.5 rounded-lg bg-purple-900/20 border border-purple-500/30">
                   <p className="text-sm text-purple-100 leading-relaxed">
                     <strong className="text-purple-200 font-semibold">
-                      الگوریتم ما
-                    </strong>{" "}
-                    بهترین ترکیب بین سفر مسافر + سفارش کارگو را بدون ایجاد
-                    انحراف یا تأخیر ارائه می‌دهد
+                      {t("pitch.how.step2HighlightStrong")}
+                    </strong>
+                    {t("pitch.how.step2HighlightRest")}
                   </p>
                 </div>
               </div>
@@ -266,16 +251,14 @@ function PitchPage() {
 
             <div className="rounded-lg bg-slate-800/50 p-4 border border-slate-700/40">
               <h3 className="text-sm font-medium text-green-300 mb-3">
-                ۳. تحویل بدون اختلال
+                {t("pitch.how.step3Title")}
               </h3>
               <p className="text-sm text-slate-200 leading-relaxed mb-3">
-                راننده طبق روال مسافر را جابه‌جا کرده و در نهایت بسته را در مقصد
-                یا نزدیک‌ترین نقطه تحویل می‌دهد.
+                {t("pitch.how.step3P")}
               </p>
               <div className="mt-3 p-3.5 rounded-lg bg-green-900/20 border border-green-500/30">
                 <p className="text-sm text-green-100 leading-relaxed">
-                  این فرآیند بدون هیچ اختلالی در تجربه سفر مسافر طراحی شده و
-                  کاملاً با مسیر طبیعی راننده هماهنگ است.
+                  {t("pitch.how.step3Note")}
                 </p>
               </div>
             </div>
@@ -293,16 +276,16 @@ function PitchPage() {
               data-animate="heading"
               className="text-lg font-semibold text-white"
             >
-              مزایای کلیدی طرح
+              {t("pitch.benefits.heading")}
             </h2>
           </div>
           <div data-animate="stagger" className="grid gap-3 md:grid-cols-2">
             {[
-              "درآمد اضافه و بدون هزینه برای راننده",
-              "افزایش سفارش و درآمد برای پلتفرم",
-              "کاهش سفرهای اضافه و کمک به کاهش آلودگی",
-              "پاسخ دقیق به نیاز بازار در بازه‌ی «بین موتور و وانت»",
-              "ایجاد یک شبکه هوشمند، کارآمد و پایدار در حمل‌ونقل شهری",
+              t("pitch.benefits.b1"),
+              t("pitch.benefits.b2"),
+              t("pitch.benefits.b3"),
+              t("pitch.benefits.b4"),
+              t("pitch.benefits.b5"),
             ].map((benefit, idx) => (
               <div
                 key={idx}
@@ -331,14 +314,14 @@ function PitchPage() {
               data-animate="heading"
               className="text-lg font-semibold text-white"
             >
-              محدودیت‌های فاز اول
+              {t("pitch.limits.heading")}
             </h2>
           </div>
           <p
             data-animate="text"
             className="mb-4 text-sm leading-relaxed text-slate-200"
           >
-            برای ارائه یک پروتوتایپ دقیق و پایدار:
+            {t("pitch.limits.intro")}
           </p>
           <div data-animate="stagger" className="space-y-3">
             <div
@@ -350,7 +333,7 @@ function PitchPage() {
               </span>
               <div className="flex-1">
                 <p className="text-sm text-slate-200 leading-relaxed">
-                  سفارش‌های چندمقصدی در این فاز پشتیبانی نمی‌شود
+                  {t("pitch.limits.item1")}
                 </p>
               </div>
             </div>
@@ -363,16 +346,14 @@ function PitchPage() {
               </span>
               <div className="flex-1">
                 <p className="text-sm text-slate-200 leading-relaxed">
-                  سفرهای دارای مقصد دوم، توقف میانی یا بار اضافی فعلاً وارد
-                  تطبیق نمی‌شوند
+                  {t("pitch.limits.item2")}
                 </p>
               </div>
             </div>
           </div>
           <div className="mt-4 p-4 rounded-lg bg-orange-900/25 border border-orange-500/40">
             <p className="text-sm text-orange-100 leading-relaxed">
-              این محدودیت‌ها باعث می‌شود نسخه اولیه سریع‌تر و با تجربه کاربری
-              ساده‌تر ارائه شود.
+              {t("pitch.limits.note")}
             </p>
           </div>
         </section>
@@ -388,15 +369,14 @@ function PitchPage() {
               data-animate="heading"
               className="text-lg font-semibold text-white"
             >
-              فرصت بزرگ پیش‌ رو
+              {t("pitch.opportunity.heading")}
             </h2>
           </div>
           <p
             data-animate="text"
             className="mb-4 text-sm leading-relaxed text-slate-200"
           >
-            با SnappShare می‌توانیم بخشی از سفارش‌های پرترافیک و حساس مجموعه‌های
-            زیر را به‌صورت هوشمند هندل کنیم:
+            {t("pitch.opportunity.intro")}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             {SNAPP_SERVICES?.map((item, idx) => (
@@ -415,7 +395,7 @@ function PitchPage() {
                 <div className="relative z-10 flex flex-col items-center gap-2.5">
                   <img
                     src={item.iconUrl}
-                    alt={item.name}
+                    alt={tName(item.name)}
                     className="w-12 h-12 md:w-16 md:h-16"
                   />
                   <p
@@ -424,7 +404,7 @@ function PitchPage() {
                       item.textColor
                     )}
                   >
-                    {item.name}
+                    {tName(item.name)}
                   </p>
                 </div>
                 <div
@@ -441,21 +421,14 @@ function PitchPage() {
             data-animate="text"
             className="mb-4 text-sm leading-relaxed text-slate-200"
           >
-            به‌خصوص در زمان‌های اوج مانند عید، سال تحویل، بلک‌فرایدی و
-            مناسبت‌های پرترافیک.
+            {t("pitch.opportunity.peak")}
           </p>
           <div className="space-y-3">
             <p className="text-sm text-slate-200 leading-relaxed">
-              از طرفی با افزایش قیمت بنزین، هزینه سفرها بالا رفته و احتمال کاهش
-              سفارش‌ها وجود دارد. SnappShare نه‌تنها از کاهش جلوگیری می‌کند،
-              بلکه با ایجاد یک مسیر نوآورانه، حجم سفرها و سفارش‌ها را به‌شدت
-              افزایش می‌دهد.
+              {t("pitch.opportunity.p1")}
             </p>
             <p className="text-sm text-slate-200 leading-relaxed">
-              هم‌اکنون بسیاری از رانندگان، هم‌زمان با سفر خود در پلتفرم‌های دیگر
-              بار جابه‌جا می‌کنند که باعث خروج درآمد ارزشمند از اکوسیستم اسنپ
-              می‌شود. SnappShare این فرایند را قانونمند، ایمن و منسجم می‌کند و
-              درآمدی که پیش‌تر از دست می‌رفت را دوباره به پلتفرم بازمی‌گرداند.
+              {t("pitch.opportunity.p2")}
             </p>
           </div>
         </section>
@@ -473,22 +446,20 @@ function PitchPage() {
                 data-animate="heading"
                 className="text-2xl font-bold text-white drop-shadow-sm"
               >
-                الگوریتم TSP فروشنده دور گرد
+                {t("pitch.algo.heading")}
               </h2>
             </div>
             <p
               data-animate="text"
               className="text-sm leading-relaxed text-slate-100 mb-6 bg-slate-900/30 rounded-lg p-4 border border-slate-700/30"
             >
-              این سیستم از الگوریتم TSP (فروشنده دورگرد) با روش{" "}
+              {t("pitch.algo.introBefore")}
               <strong className="text-primary font-semibold">
                 Nearest Neighbor
-              </strong>{" "}
-              و بهبود{" "}
-              <strong className="text-primary font-semibold">2-opt</strong> برای
-              محاسبه مسیر بهینه استفاده می‌کند. بسته‌ها ابتدا بر اساس شعاع‌های
-              مبدا و مقصد فیلتر می‌شوند، سپس مسیر بهینه محاسبه و بر اساس ۴ معیار
-              نرمال‌سازی شده امتیازدهی می‌شوند.
+              </strong>
+              {t("pitch.algo.introMiddle")}
+              <strong className="text-primary font-semibold">2-opt</strong>
+              {t("pitch.algo.introAfter")}
             </p>
             <div className="flex items-center gap-3 mb-5">
               <div className="h-1 w-14 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 rounded-full shadow-md shadow-indigo-500/20"></div>
@@ -496,39 +467,18 @@ function PitchPage() {
                 data-animate="heading"
                 className="text-xl font-bold text-white"
               >
-                مراحل الگوریتم
+                {t("pitch.algo.stepsHeading")}
               </h2>
             </div>
             <div data-animate="stagger" className="space-y-4">
               {[
-                {
-                  num: "۱",
-                  text: "فیلتر بسته‌ها بر اساس شعاع مبدا: فاصله بین مبدا مسافر و مبدا بسته باید کمتر یا مساوی R_origin + tolerance (پیش‌فرض: 2 کیلومتر) باشد",
-                },
-                {
-                  num: "۲",
-                  text: "فیلتر بسته‌ها بر اساس شعاع مقصد: فاصله بین مقصد مسافر و مقصد بسته باید کمتر یا مساوی R_destination + tolerance (پیش‌فرض: 2 کیلومتر) باشد",
-                },
-                {
-                  num: "۳",
-                  text: "محاسبه مسیر بهینه با TSP: برای هر بسته معتبر، تمام ترکیبات معتبر مسیر (با رعایت محدودیت‌های ترتیب: مبدا مسافر قبل از مقصد، مبدا بسته قبل از مقصد) تولید و کوتاه‌ترین مسیر انتخاب می‌شود",
-                },
-                {
-                  num: "۴",
-                  text: "بهبود مسیر با الگوریتم 2-opt: مسیر اولیه با Nearest Neighbor به‌دست آمده و سپس با الگوریتم 2-opt بهبود داده می‌شود تا مسیر بهینه‌تر شود",
-                },
-                {
-                  num: "۵",
-                  text: "محاسبه ۴ معیار برای هر بسته: طول کل مسیر، مسافت اضافی، فاصله تا اولین توقف، و هم‌راستایی با مسیر مسافر",
-                },
-                {
-                  num: "۶",
-                  text: "نرمال‌سازی و امتیازدهی: تمام معیارها به بازه 0-1 نرمال‌سازی شده و با وزن‌های مشخص ترکیب می‌شوند",
-                },
-                {
-                  num: "۷",
-                  text: "مرتب‌سازی و برگرداندن N بسته برتر: بسته‌ها بر اساس امتیاز (کمتر بهتر است) مرتب شده و N بسته برتر برگردانده می‌شود",
-                },
+                { num: 1, text: t("pitch.algo.step1") },
+                { num: 2, text: t("pitch.algo.step2") },
+                { num: 3, text: t("pitch.algo.step3") },
+                { num: 4, text: t("pitch.algo.step4") },
+                { num: 5, text: t("pitch.algo.step5") },
+                { num: 6, text: t("pitch.algo.step6") },
+                { num: 7, text: t("pitch.algo.step7") },
               ].map((item, idx) => (
                 <div
                   key={idx}
@@ -537,7 +487,7 @@ function PitchPage() {
                 >
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500/30 via-purple-500/30 to-pink-500/30 border-2 border-indigo-400/50 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
                     <span className="text-indigo-100 font-bold text-sm">
-                      {item.num}
+                      {tDigits(item.num)}
                     </span>
                   </div>
                   <div className="flex-1 text-sm text-slate-100 leading-relaxed pt-0.5">
@@ -550,18 +500,18 @@ function PitchPage() {
               data-animate="text"
               className="mb-6 mt-6 text-sm leading-relaxed text-slate-100 bg-slate-900/30 rounded-lg p-4 border border-slate-700/30"
             >
-              هر بسته بر اساس ۴ معیار نرمال‌سازی شده امتیازدهی می‌شود.{" "}
+              {t("pitch.algo.scoreIntroBefore")}
               <strong className="text-green-300 font-semibold">
-                امتیاز کمتر بهتر است.
-              </strong>{" "}
-              فاصله‌ها با فرمول Haversine (با در نظر گیری کروی بودن زمین) محاسبه
-              می‌شوند.
+                {t("pitch.algo.scoreIntroStrong")}
+              </strong>
+              {t("pitch.algo.scoreIntroAfter")}
             </p>
             <div className="mt-5 pt-5 border-t border-slate-700/50 bg-slate-900/20 rounded-lg p-4 border-r-4 border-r-indigo-400/50">
               <p className="text-sm text-slate-200 leading-relaxed">
-                <strong className="text-indigo-200 font-semibold">نکته:</strong>{" "}
-                تمام معیارها به بازه 0-1 نرمال‌سازی می‌شوند (تقسیم بر حداکثر
-                مقدار در بین تمام بسته‌های معتبر) تا مقایسه عادلانه انجام شود.
+                <strong className="text-indigo-200 font-semibold">
+                  {t("pitch.algo.noteLabel")}
+                </strong>{" "}
+                {t("pitch.algo.noteText")}
               </p>
             </div>
 
@@ -569,7 +519,7 @@ function PitchPage() {
               <div className="flex items-center gap-2 mb-5">
                 <div className="h-1 w-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
                 <div className="text-base font-bold text-yellow-200 drop-shadow-sm">
-                  فرمول امتیازدهی:
+                  {t("pitch.algo.formulaLabel")}
                 </div>
               </div>
               <div className="bg-gradient-to-br from-slate-800/70 to-slate-800/50 rounded-xl p-5 mb-5 border border-slate-700/40 shadow-inner">
@@ -579,28 +529,28 @@ function PitchPage() {
                 {[
                   {
                     w: "w₁ = 0.35",
-                    desc: "طول کل مسیر: مجموع فاصله تمام نقاط مسیر بهینه شده با الگوریتم TSP",
+                    desc: t("pitch.algo.w1Desc"),
                     color: "text-blue-300",
                     bgColor: "from-blue-500/10 to-blue-600/5",
                     borderColor: "border-blue-500/30",
                   },
                   {
                     w: "w₂ = 0.30",
-                    desc: "مسافت اضافی: اگر راننده فقط مسافر را برساند، مسیر مستقیم است. اما با اضافه کردن بسته، مسیر طولانی‌تر می‌شود. این تفاوت همان مسافت اضافی است",
+                    desc: t("pitch.algo.w2Desc"),
                     color: "text-red-300",
                     bgColor: "from-red-500/10 to-red-600/5",
                     borderColor: "border-red-500/30",
                   },
                   {
                     w: "w₃ = 0.15",
-                    desc: "فاصله تا اولین توقف: کمترین فاصله بین راننده تا مبدا بسته یا مبدا مسافر (نزدیک‌ترین نقطه برای شروع)",
+                    desc: t("pitch.algo.w3Desc"),
                     color: "text-green-300",
                     bgColor: "from-green-500/10 to-green-600/5",
                     borderColor: "border-green-500/30",
                   },
                   {
                     w: "w₄ = 0.20",
-                    desc: "هم‌راستایی با مسیر مسافر: فاصله عمود از مقصد بسته تا خط مستقیم بین مبدا و مقصد مسافر (هرچه کمتر، بهتر)",
+                    desc: t("pitch.algo.w4Desc"),
                     color: "text-orange-300",
                     bgColor: "from-orange-500/10 to-orange-600/5",
                     borderColor: "border-orange-500/30",

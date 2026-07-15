@@ -1,7 +1,9 @@
 import { PageLayout } from "@/components/shared/layout/PageLayout";
 import { useSettingsStore } from "@/store/settings.store";
+import { useTranslation } from "@/i18n";
 
 function SettingPage() {
+  const { t } = useTranslation();
   const routeOrderPreference = useSettingsStore(
     (state) => state.routeOrderPreference
   );
@@ -22,16 +24,15 @@ function SettingPage() {
   );
 
   return (
-    <PageLayout title="تنظیمات">
+    <PageLayout title={t("settings.title")}>
       <div className="space-y-3">
         {/* Route Order Preference */}
         <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
           <h3 className="mb-2 text-sm font-semibold text-slate-100">
-            ترتیب مسیر
+            {t("settings.routeOrder.title")}
           </h3>
           <p className="mb-2 text-xs text-slate-300">
-            انتخاب کنید که راننده ابتدا مسافر را سوار کند یا ابتدا بسته را
-            بردارد
+            {t("settings.routeOrder.desc")}
           </p>
           <div className="space-y-2">
             <label className="flex cursor-pointer items-center gap-2 rounded-md border border-slate-700/50 bg-slate-800/30 p-2 transition-all hover:bg-slate-800/50">
@@ -49,10 +50,10 @@ function SettingPage() {
               />
               <div className="flex-1">
                 <div className="text-xs font-medium text-slate-100">
-                  ابتدا مسافر را سوار کن
+                  {t("settings.routeOrder.passengerFirstTitle")}
                 </div>
                 <div className="text-xs text-slate-400">
-                  راننده ابتدا مسافر را سوار می‌کند، سپس بسته را برمی‌دارد
+                  {t("settings.routeOrder.passengerFirstDesc")}
                 </div>
               </div>
             </label>
@@ -72,10 +73,10 @@ function SettingPage() {
               />
               <div className="flex-1">
                 <div className="text-xs font-medium text-slate-100">
-                  ابتدا بسته را بردار
+                  {t("settings.routeOrder.packageFirstTitle")}
                 </div>
                 <div className="text-xs text-slate-400">
-                  راننده ابتدا بسته را برمی‌دارد، سپس مسافر را سوار می‌کند
+                  {t("settings.routeOrder.packageFirstDesc")}
                 </div>
               </div>
             </label>
@@ -85,10 +86,10 @@ function SettingPage() {
         {/* Origin Selection Radius */}
         <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
           <h3 className="mb-2 text-sm font-semibold text-slate-100">
-            شعاع انتخاب مبدا (بین مبدا مسافر و مبدا بسته)
+            {t("settings.originRadius.title")}
           </h3>
           <p className="mb-2 text-xs text-slate-300">
-            تعیین کنید که مبدا بسته‌ها باید در چه شعاعی از مبدا مسافر باشند
+            {t("settings.originRadius.desc")}
           </p>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -104,12 +105,16 @@ function SettingPage() {
                 className="flex-1 cursor-pointer accent-primary"
               />
               <div className="min-w-[70px] text-right text-xs font-medium text-slate-100">
-                {(originSelectionRadius / 1000).toFixed(1)} کیلومتر
+                {t("settings.kmValue", {
+                  km: (originSelectionRadius / 1000).toFixed(1),
+                })}
               </div>
             </div>
             <div className="text-xs text-slate-400">
-              محدوده فعلی: {originSelectionRadius.toLocaleString()} متر (
-              {(originSelectionRadius / 1000).toFixed(1)} کیلومتر)
+              {t("settings.currentRange", {
+                meters: originSelectionRadius.toLocaleString(),
+                km: (originSelectionRadius / 1000).toFixed(1),
+              })}
             </div>
           </div>
         </div>
@@ -117,10 +122,10 @@ function SettingPage() {
         {/* Destination Selection Radius */}
         <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-3">
           <h3 className="mb-2 text-sm font-semibold text-slate-100">
-            شعاع انتخاب مقصد (بین مقصد مسافر و مقصد بسته)
+            {t("settings.destRadius.title")}
           </h3>
           <p className="mb-2 text-xs text-slate-300">
-            تعیین کنید که مقصد بسته‌ها باید در چه شعاعی از مقصد مسافر باشند
+            {t("settings.destRadius.desc")}
           </p>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -136,12 +141,16 @@ function SettingPage() {
                 className="flex-1 cursor-pointer accent-primary"
               />
               <div className="min-w-[70px] text-right text-xs font-medium text-slate-100">
-                {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر
+                {t("settings.kmValue", {
+                  km: (destinationSelectionRadius / 1000).toFixed(1),
+                })}
               </div>
             </div>
             <div className="text-xs text-slate-400">
-              محدوده فعلی: {destinationSelectionRadius.toLocaleString()} متر (
-              {(destinationSelectionRadius / 1000).toFixed(1)} کیلومتر)
+              {t("settings.currentRange", {
+                meters: destinationSelectionRadius.toLocaleString(),
+                km: (destinationSelectionRadius / 1000).toFixed(1),
+              })}
             </div>
           </div>
         </div>

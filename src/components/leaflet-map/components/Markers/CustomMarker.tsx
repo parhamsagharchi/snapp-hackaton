@@ -3,6 +3,7 @@ import { Marker } from "react-leaflet";
 import L from "leaflet";
 import clsx from "clsx";
 import carIcon from "@/assets/images/car.png";
+import { useTranslation } from "@/i18n";
 
 export type MarkerIconType = "driver" | "passenger" | "parcel" | "default";
 
@@ -31,6 +32,7 @@ export const CustomMarker = ({
   draggable = false,
   onDragEnd,
 }: CustomMarkerProps) => {
+  const { t } = useTranslation();
   const icon = useMemo(() => {
     const size = isHovered || draggable ? 32 : 28;
     const borderWidth = isHovered || draggable ? "4px" : "3px";
@@ -53,7 +55,7 @@ export const CustomMarker = ({
         ">
           <img 
             src="${carImageUrl}" 
-            alt="ماشین" 
+            alt="${t("map.carAlt")}" 
             style="
               width: ${carSize}px; 
               height: ${carSize}px; 
@@ -162,7 +164,7 @@ export const CustomMarker = ({
       iconSize: [80, 45],
       iconAnchor: [40, 45],
     });
-  }, [color, label, shortLabel, iconType, isHovered, draggable, carIcon]);
+  }, [color, label, shortLabel, iconType, isHovered, draggable, t]);
 
   return (
     <Marker
